@@ -7,7 +7,6 @@ import { Gifts } from "@/components/Gifts";
 import { Rsvp } from "@/components/Rsvp";
 import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/config/site";
-import { Header } from "@/components/Header";
 import { DressCode } from "@/components/DressCode";
 import { Hotels } from "@/components/Hotels";
 import { MusicToggle } from "@/components/MusicToggle";
@@ -19,7 +18,6 @@ export default function Home() {
       <main className="flex-1">
         {siteConfig.sections.music && <MusicToggle />}
         <Hero />
-        <Header />
         {siteConfig.sections.story && <OurStory />}
         {siteConfig.sections.timeline && <Timeline />}
         {siteConfig.sections.dressCode && <DressCode />}

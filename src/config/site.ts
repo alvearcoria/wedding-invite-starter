@@ -86,17 +86,17 @@ export const siteConfig = {
   ]
 };
 
-// Filtrar dinámicamente los enlaces de navegación según la configuración
-siteConfig.navLinks = siteConfig.navLinks.filter(link => {
-    if (link.href === '#our-story') return siteConfig.sections.story;
-    if (link.href === '#timeline') return siteConfig.sections.timeline;
-    if (link.href === '#dress-code') return siteConfig.sections.dressCode;
-    if (link.href === '#venues') return siteConfig.sections.venues;
-    if (link.href === '#gallery') return siteConfig.sections.gallery;
-    if (link.href === '#gifts') return siteConfig.sections.gifts;
-    if (link.href === '#hotels') return siteConfig.sections.hotels;
-    return true;
-});
+// This filtering logic is no longer needed as the header is removed.
+// siteConfig.navLinks = siteConfig.navLinks.filter(link => {
+//     if (link.href === '#our-story') return siteConfig.sections.story;
+//     if (link.href === '#timeline') return siteConfig.sections.timeline;
+//     if (link.href === '#dress-code') return siteConfig.sections.dressCode;
+//     if (link.href === '#venues') return siteConfig.sections.venues;
+//     if (link.href === '#gallery') return siteConfig.sections.gallery;
+//     if (link.href === '#gifts') return siteConfig.sections.gifts;
+//     if (link.href === '#hotels') return siteConfig.sections.hotels;
+//     return true;
+// });
 
 
 export type SiteConfig = typeof siteConfig;
