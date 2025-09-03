@@ -1,7 +1,7 @@
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
-import { Shirt } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { WomanDress } from "./icons/WomanDress";
+import { ManSuit } from "./icons/ManSuit";
 
 export function DressCode() {
   const { dressCode } = siteConfig;
@@ -11,19 +11,23 @@ export function DressCode() {
         title={dressCode.title}
         description={dressCode.description}
       />
-      <div className="mx-auto max-w-md">
-        <Card className="text-center">
-            <CardHeader className="items-center">
-                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent">
-                    <Shirt className="h-8 w-8 text-accent-foreground" />
-                </div>
-                <CardTitle className="font-headline">Atuendo Formal</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-lg text-foreground/80">{dressCode.note}</p>
-            </CardContent>
-        </Card>
+      <div className="mx-auto grid max-w-lg grid-cols-1 gap-12 text-center md:grid-cols-2">
+        <div className="flex flex-col items-center gap-4">
+          <WomanDress className="h-32 w-32 text-foreground/80" />
+          <div className="font-headline">
+            <h3 className="text-xl font-semibold">Mujeres</h3>
+            <p className="text-foreground/70">Vestido Largo</p>
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-4">
+          <ManSuit className="h-32 w-32 text-foreground/80" />
+          <div className="font-headline">
+            <h3 className="text-xl font-semibold">Hombres</h3>
+            <p className="text-foreground/70">Traje</p>
+          </div>
+        </div>
       </div>
+       <p className="mt-12 text-center text-lg text-foreground/80">{dressCode.note}</p>
     </SectionWrapper>
   );
 }
