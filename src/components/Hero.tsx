@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { Countdown } from "./Countdown";
 import { FormattedDate } from "./FormattedDate";
 import { ArrowDown } from "lucide-react";
+import { Heart } from "./icons/Heart";
 
 export function Hero() {
   return (
@@ -14,12 +15,13 @@ export function Hero() {
         alt="Mely y Noe"
         data-ai-hint="romantic couple"
         fill
-        className="object-cover"
+        className="object-cover animate-zoom-in"
         priority
       />
 
       <div className="container relative z-20 mx-auto flex flex-col items-center justify-center px-4 text-center">
         <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <Heart className="mx-auto mb-4 h-8 w-8 text-white/90" />
           <p className="text-lg tracking-widest uppercase">
             ¡Nos vamos a casar!
           </p>
@@ -37,11 +39,11 @@ export function Hero() {
         </div>
 
         <div className="animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            {siteConfig.showCountdown && <Countdown />}
+          <Countdown />
         </div>
         
-        <a href="#our-story" aria-label="Scroll down" className="absolute bottom-10 z-20 animate-bounce">
-            <ArrowDown className="h-8 w-8 text-white/80"/>
+        <a href="#our-story" aria-label="Desplázate hacia abajo" className="absolute bottom-10 z-20 animate-bounce rounded-full border-2 border-white/50 p-2 transition-colors hover:bg-white/10">
+            <ArrowDown className="h-6 w-6 text-white/80"/>
         </a>
       </div>
     </section>
