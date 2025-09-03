@@ -1,6 +1,6 @@
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
-import { Tie } from "lucide-react";
+import { Shirt } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 export function DressCode() {
@@ -15,7 +15,7 @@ export function DressCode() {
         <Card className="text-center">
             <CardHeader className="items-center">
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent">
-                    <Tie className="h-8 w-8 text-accent-foreground" />
+                    <Shirt className="h-8 w-8 text-accent-foreground" />
                 </div>
                 <CardTitle className="font-headline">Atuendo Formal</CardTitle>
             </CardHeader>
