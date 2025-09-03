@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['PT Sans', 'sans-serif'],
-        headline: ['Playfair Display', 'serif'],
+        body: ['Montserrat', 'sans-serif'],
+        headline: ['Cormorant Garamond', 'serif'],
       },
       colors: {
         background: 'hsl(var(--background))',
