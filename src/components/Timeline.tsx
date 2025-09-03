@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,29 +18,30 @@ const timelineEvents = [
 
 const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const isEven = index % 2 === 0;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
+          entry.target.classList.add('is-visible');
+        } else {
+          entry.target.classList.remove('is-visible');
         }
       },
       {
-        threshold: 0.1, // Trigger when 10% of the item is visible
+        threshold: 0.5, // Se activa cuando el 50% del elemento es visible
       }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);
@@ -49,8 +50,9 @@ const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: 
     <div
       ref={ref}
       className={cn(
-        "relative flex items-center transition-all duration-1000",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+        "timeline-item relative flex items-center transition-all duration-700 ease-out",
+        "opacity-50 translate-y-4 scale-95", // Estado inicial
+        "[&.is-visible]:opacity-100 [&.is-visible]:translate-y-0 [&.is-visible]:scale-100" // Estado visible
       )}
     >
       {/* Content Block */}
@@ -67,7 +69,10 @@ const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: 
 
       {/* Icon in the middle */}
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
+        <div className={cn(
+            "flex h-12 w-12 items-center justify-center rounded-full bg-accent transition-colors duration-500",
+            "timeline-item-icon"
+            )}>
           <item.icon className="h-6 w-6 text-accent-foreground" />
         </div>
       </div>
@@ -87,13 +92,26 @@ export function Timeline() {
         description="Esto es lo que pueden esperar durante la celebración de nuestra boda."
       />
       <div className="relative mx-auto max-w-2xl">
-        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border" />
+        {/* Usamos un pseudo-elemento para la línea, controlado por CSS */}
+        <div 
+          className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border"
+          aria-hidden="true"
+        />
         <div className="space-y-12">
           {timelineEvents.map((item, index) => (
              <TimelineItem key={index} item={item} index={index} />
           ))}
         </div>
       </div>
+      <style jsx global>{`
+        .timeline-item.is-visible .timeline-item-icon {
+          background-color: hsl(var(--primary));
+          color: hsl(var(--primary-foreground));
+        }
+        .timeline-item.is-visible .timeline-item-icon > svg {
+            color: hsl(var(--primary-foreground));
+        }
+      `}</style>
     </SectionWrapper>
   );
 }
