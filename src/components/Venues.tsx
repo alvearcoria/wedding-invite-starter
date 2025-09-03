@@ -10,14 +10,14 @@ export function Venues() {
   return (
     <SectionWrapper id="venues">
       <SectionHeader
-        title="Ceremony & Reception"
-        description="Find your way to our celebration. We can't wait to see you there."
+        title="Ceremonia y Recepción"
+        description="Encuentra el camino a nuestra celebración. ¡Estamos ansiosos por verte allí!"
       />
       <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2">
         <Card className="overflow-hidden">
           <MapWrapper location={siteConfig.ceremony.location} name={siteConfig.ceremony.name} />
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">The Ceremony</CardTitle>
+            <CardTitle className="font-headline text-2xl">La Ceremonia</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="font-semibold">{siteConfig.ceremony.name}</p>
@@ -25,7 +25,7 @@ export function Venues() {
             <Button variant="outline" asChild>
               <a href={siteConfig.ceremony.mapsLink} target="_blank" rel="noopener noreferrer">
                 <MapPin className="mr-2 h-4 w-4" />
-                Open in Maps
+                Abrir en Mapas
               </a>
             </Button>
           </CardContent>
@@ -33,7 +33,7 @@ export function Venues() {
         <Card className="overflow-hidden">
           <MapWrapper location={siteConfig.reception.location} name={siteConfig.reception.name} />
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">The Reception</CardTitle>
+            <CardTitle className="font-headline text-2xl">La Recepción</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="font-semibold">{siteConfig.reception.name}</p>
@@ -41,7 +41,7 @@ export function Venues() {
             <Button variant="outline" asChild>
               <a href={siteConfig.reception.mapsLink} target="_blank" rel="noopener noreferrer">
                 <MapPin className="mr-2 h-4 w-4" />
-                Open in Maps
+                Abrir en Mapas
               </a>
             </Button>
           </CardContent>

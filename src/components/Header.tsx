@@ -46,7 +46,7 @@ export function Header() {
         </nav>
         <div className="hidden md:block">
           <Button asChild>
-            <Link href="#rsvp">Confirm Assistance</Link>
+            <Link href="#rsvp">Confirmar Asistencia</Link>
           </Button>
         </div>
         <div className="md:hidden">
@@ -56,7 +56,7 @@ export function Header() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            <span className="sr-only">Toggle menu</span>
+            <span className="sr-only">Alternar menú</span>
           </Button>
         </div>
       </div>
@@ -74,7 +74,7 @@ export function Header() {
               </Link>
             ))}
             <Button asChild onClick={() => setIsMenuOpen(false)}>
-              <Link href="#rsvp">Confirm Assistance</Link>
+              <Link href="#rsvp">Confirmar Asistencia</Link>
             </Button>
           </nav>
         </div>

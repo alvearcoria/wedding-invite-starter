@@ -2,19 +2,19 @@ import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { Cake, Camera, GlassWater, Music, HeartHandshake } from "lucide-react";
 
 const timelineEvents = [
-  { time: "4:00 PM", event: "Ceremony", description: "Witness our vows and the start of our forever.", icon: HeartHandshake },
-  { time: "5:00 PM", event: "Cocktail Hour", description: "Enjoy drinks and light bites while we take photos.", icon: GlassWater },
-  { time: "6:30 PM", event: "Reception", description: "Join us for dinner and toasts.", icon: Camera },
-  { time: "8:00 PM", event: "First Dance & Party", description: "Let's hit the dance floor!", icon: Music },
-  { time: "10:00 PM", event: "Cake Cutting", description: "A sweet moment to share.", icon: Cake },
+  { time: "4:00 PM", event: "Ceremonia", description: "Sean testigos de nuestros votos y el comienzo de nuestro para siempre.", icon: HeartHandshake },
+  { time: "5:00 PM", event: "Hora del Cóctel", description: "Disfruten de bebidas y bocadillos mientras nos tomamos fotos.", icon: GlassWater },
+  { time: "6:30 PM", event: "Recepción", description: "Acompáñennos para la cena y los brindis.", icon: Camera },
+  { time: "8:00 PM", event: "Primer Baile y Fiesta", description: "¡Vamos a la pista de baile!", icon: Music },
+  { time: "10:00 PM", event: "Corte del Pastel", description: "Un dulce momento para compartir.", icon: Cake },
 ];
 
 export function Timeline() {
   return (
     <SectionWrapper id="timeline" className="bg-card">
       <SectionHeader
-        title="The Big Day"
-        description="Here’s what to expect during our wedding celebration."
+        title="El Gran Día"
+        description="Esto es lo que pueden esperar durante la celebración de nuestra boda."
       />
       <div className="relative mx-auto max-w-2xl">
         <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border" />

@@ -6,15 +6,15 @@ export function Rsvp() {
   return (
     <SectionWrapper id="rsvp" className="bg-card">
       <SectionHeader
-        title="Confirm Your Assistance"
-        description="Please let us know if you can make it by November 14, 2024. We can't wait to celebrate with you!"
+        title="Confirma Tu Asistencia"
+        description="Por favor, haznos saber si podrás asistir antes del 14 de noviembre de 2024. ¡Estamos ansiosos por celebrar contigo!"
       />
       <div className="mx-auto max-w-lg">
         <Card>
           <CardHeader>
             <CardTitle className="font-headline text-2xl">RSVP</CardTitle>
             <CardDescription>
-              Fill out the form below to let us know you're coming.
+              Llena el siguiente formulario para informarnos que vendrás.
             </CardDescription>
           </CardHeader>
           <CardContent>

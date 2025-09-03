@@ -26,8 +26,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const rsvpFormSchema = z.object({
-  name: z.string().min(2, { message: "Please enter your full name." }),
-  guests: z.coerce.number().min(1, { message: "Please select the number of guests." }).max(5),
+  name: z.string().min(2, { message: "Por favor, ingresa tu nombre completo." }),
+  guests: z.coerce.number().min(1, { message: "Por favor, selecciona el número de invitados." }).max(5),
   dietary: z.string().optional(),
   message: z.string().optional(),
 });
@@ -50,14 +50,14 @@ export function RsvpForm() {
     const result = await submitRsvp(data);
     if (result.success) {
       toast({
-        title: "Confirmation Received!",
+        title: "¡Confirmación Recibida!",
         description: result.success,
       });
       form.reset();
     } else {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
+        title: "¡Oh no! Algo salió mal.",
         description: result.error,
       });
     }
@@ -71,9 +71,9 @@ export function RsvpForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>Nombre Completo</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder="Juan Pérez" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,17 +84,17 @@ export function RsvpForm() {
           name="guests"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Number of Guests</FormLabel>
+              <FormLabel>Número de Invitados</FormLabel>
               <Select onValueChange={(value) => field.onChange(Number(value))} value={String(field.value)}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select number of guests" />
+                    <SelectValue placeholder="Selecciona el número de invitados" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {[1, 2, 3, 4, 5].map((num) => (
                     <SelectItem key={num} value={String(num)}>
-                      {num} {num > 1 ? "guests" : "guest"}
+                      {num} {num > 1 ? "invitados" : "invitado"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -108,9 +108,9 @@ export function RsvpForm() {
           name="dietary"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Dietary Restrictions</FormLabel>
+              <FormLabel>Restricciones Alimenticias</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., vegetarian, gluten-free" {...field} />
+                <Input placeholder="Ej: vegetariano, sin gluten" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,16 +121,16 @@ export function RsvpForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Leave a Message (Optional)</FormLabel>
+              <FormLabel>Deja un Mensaje (Opcional)</FormLabel>
               <FormControl>
-                <Textarea placeholder="We're so excited to celebrate with you!" {...field} />
+                <Textarea placeholder="¡Estamos muy emocionados de celebrar con ustedes!" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Sending..." : "Send Confirmation"}
+          {form.formState.isSubmitting ? "Enviando..." : "Enviar Confirmación"}
         </Button>
       </form>
     </Form>

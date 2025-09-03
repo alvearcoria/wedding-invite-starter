@@ -8,7 +8,7 @@ const MapWrapper = ({ location, name }: { location: { lat: number; lng: number }
   if (!apiKey) {
     return (
       <div className="flex aspect-video w-full items-center justify-center bg-muted text-center text-sm text-muted-foreground">
-        Google Maps API Key is missing. <br /> Please add it to your environment variables.
+        Falta la clave de API de Google Maps. <br /> Agrégala a tus variables de entorno.
       </div>
     );
   }

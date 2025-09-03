@@ -5,20 +5,20 @@ export function OurStory() {
   return (
     <SectionWrapper id="our-story">
       <SectionHeader 
-        title="Our Story"
-        description="A journey of a thousand miles begins with a single step. Here is ours."
+        title="Nuestra Historia"
+        description="Un viaje de mil millas comienza con un solo paso. Aquí está el nuestro."
       />
       <div className="mx-auto max-w-5xl">
         <div className="grid items-center gap-8 md:grid-cols-2 lg:gap-12">
           <div className="space-y-4 text-foreground/80">
             <p>
-              It all started on a crisp autumn evening, under the soft glow of city lights. A chance meeting, a shared laugh, and a spark that neither of us could ignore. What began as a simple conversation soon blossomed into a beautiful connection, built on shared dreams, endless support, and a love for late-night pizza.
+              Todo comenzó en una fresca tarde de otoño, bajo el suave resplandor de las luces de la ciudad. Un encuentro casual, una risa compartida y una chispa que ninguno de los dos pudo ignorar. Lo que empezó como una simple conversación pronto floreció en una hermosa conexión, construida sobre sueños compartidos, apoyo infinito y un amor por la pizza a altas horas de la noche.
             </p>
             <p>
-              Through seasons of change and adventures big and small, we found in each other a partner, a confidant, and a best friend. We've navigated life's beautiful complexities hand-in-hand, and our bond has only grown stronger with every passing day.
+              A través de temporadas de cambio y aventuras grandes y pequeñas, encontramos en el otro un compañero, un confidente y un mejor amigo. Hemos navegado las hermosas complejidades de la vida de la mano, y nuestro vínculo solo se ha fortalecido con cada día que pasa.
             </p>
             <p>
-              Now, we're taking the next step in our journey together, and we couldn't be more excited to say "I do." We are so grateful for the love and support of our family and friends, and we can't wait to celebrate this special day with all of you.
+              Ahora, estamos dando el siguiente paso en nuestro viaje juntos, y no podríamos estar más emocionados de decir "Sí, acepto". Estamos muy agradecidos por el amor y el apoyo de nuestra familia y amigos, y no podemos esperar para celebrar este día tan especial con todos ustedes.
             </p>
           </div>
           <div className="order-first md:order-last">

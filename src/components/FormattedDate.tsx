@@ -9,7 +9,7 @@ export async function FormattedDate() {
   } catch (error) {
     console.error("AI date formatting failed, falling back to simple format.", error);
     const date = new Date(siteConfig.weddingDate);
-    const fallbackDate = date.toLocaleDateString('en-US', {
+    const fallbackDate = date.toLocaleDateString('es-MX', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',

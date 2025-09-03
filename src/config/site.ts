@@ -5,7 +5,7 @@ export const siteConfig = {
   },
   weddingDate: "2024-12-14T16:00:00", // YYYY-MM-DDTHH:mm:ss
 
-  // Section visibility
+  // Visibilidad de las secciones
   showCountdown: true,
   showOurStory: true,
   showTimeline: true,
@@ -14,48 +14,48 @@ export const siteConfig = {
   showGifts: true,
   showRsvp: true,
 
-  // Navigation links
+  // Enlaces de navegación
   navLinks: [
-    { name: "Our Story", href: "#our-story", enabled: true },
-    { name: "Timeline", href: "#timeline", enabled: true },
-    { name: "Venues", href: "#venues", enabled: true },
-    { name: "Gallery", href: "#gallery", enabled: true },
-    { name: "Gifts", href: "#gifts", enabled: true },
+    { name: "Nuestra Historia", href: "#our-story", enabled: true },
+    { name: "Itinerario", href: "#timeline", enabled: true },
+    { name: "Lugar", href: "#venues", enabled: true },
+    { name: "Galería", href: "#gallery", enabled: true },
+    { name: "Regalos", href: "#gifts", enabled: true },
   ],
 
-  // Venue Details
+  // Detalles del lugar
   ceremony: {
-    name: "St. Mary's Church",
-    address: "123 Church St, Vows Ville, VV 45678",
+    name: "Iglesia de Santa María",
+    address: "Calle de la Iglesia 123, Villa Votos, VV 45678",
     mapsLink: "https://www.google.com/maps/search/?api=1&query=St.+Mary%27s+Church",
-    location: { lat: 40.712776, lng: -74.005974 }, // Example: NYC City Hall
+    location: { lat: 40.712776, lng: -74.005974 }, // Ejemplo: Ayuntamiento de Nueva York
   },
   reception: {
-    name: "The Grand Hall",
-    address: "456 Celebration Ave, Party Town, PT 87654",
+    name: "El Gran Salón",
+    address: "Avenida Celebración 456, Pueblo Fiesta, PT 87654",
     mapsLink: "https://www.google.com/maps/search/?api=1&query=The+Grand+Hall",
-    location: { lat: 40.7580, lng: -73.9855 }, // Example: Times Square
+    location: { lat: 40.7580, lng: -73.9855 }, // Ejemplo: Times Square
   },
 
-  // Gift Registry & Bank Details
+  // Mesa de regalos y datos bancarios
   giftRegistry: {
     enabled: true,
     url: "https://www.example.com/gift-registry",
   },
   bankDetails: {
     enabled: true,
-    accountHolder: "M. & N. Wedding Fund",
+    accountHolder: "Fondo de Boda M. & N.",
     iban: "ES1234567890123456789012",
   },
 
-  // Photo Gallery
+  // Galería de fotos
   galleryImages: [
-    { src: "https://picsum.photos/id/1015/1200/800", alt: "A loving couple embracing", dataAiHint: "wedding couple" },
-    { src: "https://picsum.photos/id/1027/800/1200", alt: "Close up of the couple smiling", dataAiHint: "happy couple" },
-    { src: "https://picsum.photos/id/1040/1200/800", alt: "Couple walking on a beach", dataAiHint: "couple beach" },
-    { src: "https://picsum.photos/id/106/800/1200", alt: "A beautiful landscape shot of the couple", dataAiHint: "couple landscape" },
-    { src: "https://picsum.photos/id/119/1200/800", alt: "Couple sharing a laugh", dataAiHint: "couple laughing" },
-    { src: "https://picsum.photos/id/129/800/1200", alt: "Couple looking out at a view", dataAiHint: "couple view" },
+    { src: "https://picsum.photos/id/1015/1200/800", alt: "Una pareja de enamorados abrazándose", dataAiHint: "wedding couple" },
+    { src: "https://picsum.photos/id/1027/800/1200", alt: "Primer plano de la pareja sonriendo", dataAiHint: "happy couple" },
+    { src: "https://picsum.photos/id/1040/1200/800", alt: "Pareja caminando en la playa", dataAiHint: "couple beach" },
+    { src: "https://picsum.photos/id/106/800/1200", alt: "Una hermosa foto de paisaje de la pareja", dataAiHint: "couple landscape" },
+    { src: "https://picsum.photos/id/119/1200/800", alt: "Pareja compartiendo una risa", dataAiHint: "couple laughing" },
+    { src: "https://picsum.photos/id/129/800/1200", alt: "Pareja mirando una vista", dataAiHint: "couple view" },
   ],
   collaborativeAlbum: {
     enabled: true,
@@ -63,7 +63,7 @@ export const siteConfig = {
   },
 };
 
-// Dynamically filter nav links based on config
+// Filtrar dinámicamente los enlaces de navegación según la configuración
 siteConfig.navLinks = siteConfig.navLinks.filter(link => {
     if (link.href === '#our-story') return siteConfig.showOurStory;
     if (link.href === '#timeline') return siteConfig.showTimeline;

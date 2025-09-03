@@ -15,8 +15,8 @@ export function Gallery() {
   return (
     <SectionWrapper id="gallery" className="bg-card">
       <SectionHeader
-        title="Our Moments"
-        description="A glimpse into our journey together. We look forward to creating new memories with you."
+        title="Nuestros Momentos"
+        description="Un vistazo a nuestro viaje juntos. Esperamos crear nuevos recuerdos con ustedes."
       />
       <div className="mx-auto max-w-5xl">
         <Carousel
@@ -52,9 +52,9 @@ export function Gallery() {
 
         {siteConfig.collaborativeAlbum.enabled && (
             <div className="mt-16 flex flex-col items-center justify-center gap-6 rounded-lg border-2 border-dashed border-border bg-background p-8 text-center">
-                <h3 className="font-headline text-2xl font-semibold">Share Your Photos!</h3>
+                <h3 className="font-headline text-2xl font-semibold">¡Comparte Tus Fotos!</h3>
                 <p className="max-w-md text-foreground/70">
-                Help us capture the joy! Scan the QR code to upload your photos and videos from our special day to our shared album.
+                ¡Ayúdanos a capturar la alegría! Escanea el código QR para subir tus fotos y videos de nuestro día especial a nuestro álbum compartido.
                 </p>
                 <a href={siteConfig.collaborativeAlbum.url} target="_blank" rel="noopener noreferrer">
                     <QrCode value={siteConfig.collaborativeAlbum.url} />

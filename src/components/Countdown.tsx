@@ -46,24 +46,24 @@ export function Countdown() {
   return (
     <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
        {hasEnded ? (
-        <div className="font-headline text-xl">The day is here!</div>
+        <div className="font-headline text-xl">¡El día ha llegado!</div>
        ) : (
         <>
             <div className="flex flex-col">
                 <span className="font-mono text-4xl md:text-5xl">{String(timeLeft.days).padStart(2, '0')}</span>
-                <span className="text-xs uppercase tracking-widest">Days</span>
+                <span className="text-xs uppercase tracking-widest">Días</span>
             </div>
             <div className="flex flex-col">
                 <span className="font-mono text-4xl md:text-5xl">{String(timeLeft.hours).padStart(2, '0')}</span>
-                <span className="text-xs uppercase tracking-widest">Hours</span>
+                <span className="text-xs uppercase tracking-widest">Horas</span>
             </div>
             <div className="flex flex-col">
                 <span className="font-mono text-4xl md:text-5xl">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                <span className="text-xs uppercase tracking-widest">Minutes</span>
+                <span className="text-xs uppercase tracking-widest">Minutos</span>
             </div>
             <div className="flex flex-col">
                 <span className="font-mono text-4xl md:text-5xl">{String(timeLeft.seconds).padStart(2, '0')}</span>
-                <span className="text-xs uppercase tracking-widest">Seconds</span>
+                <span className="text-xs uppercase tracking-widest">Segundos</span>
             </div>
         </>
        )}

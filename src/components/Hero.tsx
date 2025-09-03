@@ -16,7 +16,7 @@ export function Hero() {
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h1>
         <p className="mt-4 max-w-[700px] text-lg text-foreground/80 md:text-xl">
-          We're getting married!
+          ¡Nos vamos a casar!
         </p>
         <div className="my-8 flex flex-col items-center gap-2">
             <Suspense fallback={<div className="h-8 w-48 animate-pulse rounded-md bg-muted" />}>
@@ -25,7 +25,7 @@ export function Hero() {
             {siteConfig.showCountdown && <Countdown />}
         </div>
         <Button size="lg" asChild>
-          <Link href="#rsvp">Confirm Assistance</Link>
+          <Link href="#rsvp">Confirmar Asistencia</Link>
         </Button>
       </div>
     </section>
