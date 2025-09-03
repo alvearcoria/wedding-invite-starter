@@ -24,13 +24,11 @@ const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
+        // Set visibility based on whether the element is intersecting
+        setIsVisible(entry.isIntersecting);
       },
       {
-        threshold: 0.2,
+        threshold: 0.5, // Trigger when 50% of the item is visible
       }
     );
 
@@ -51,8 +49,7 @@ const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: 
       ref={ref}
       className={cn(
         "timeline-item relative flex items-center transition-all duration-500 ease-[cubic-bezier(.22,.61,.36,1)]",
-        "opacity-0 transform translate-y-3",
-        isVisible && "opacity-100 translate-y-0"
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
       )}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
@@ -67,8 +64,11 @@ const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: 
         <p className="text-sm text-foreground/70">{item.description}</p>
       </div>
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent">
-          <item.icon className="h-6 w-6 text-accent-foreground" />
+        <div className={cn(
+          "flex h-12 w-12 items-center justify-center rounded-full bg-accent transition-colors duration-500",
+          isVisible && "bg-primary text-primary-foreground"
+          )}>
+          <item.icon className="h-6 w-6" />
         </div>
       </div>
       <div className={cn("w-1/2", isEven ? "pl-8" : "pr-8")} />
