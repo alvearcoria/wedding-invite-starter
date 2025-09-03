@@ -3,7 +3,7 @@ export const siteConfig = {
     her: "Mely",
     him: "Noe",
   },
-  weddingDate: "2024-12-14T16:00:00", // YYYY-MM-DDTHH:mm:ss
+  weddingDate: "2025-11-29T16:00:00", // YYYY-MM-DDTHH:mm:ss
 
   // Visibilidad de las secciones
   showCountdown: true,

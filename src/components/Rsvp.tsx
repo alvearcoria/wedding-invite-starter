@@ -7,7 +7,7 @@ export function Rsvp() {
     <SectionWrapper id="rsvp" className="bg-card">
       <SectionHeader
         title="Confirma Tu Asistencia"
-        description="Por favor, haznos saber si podrás asistir antes del 14 de noviembre de 2024. ¡Estamos ansiosos por celebrar contigo!"
+        description="Por favor, haznos saber si podrás asistir antes del 29 de octubre de 2025. ¡Estamos ansiosos por celebrar contigo!"
       />
       <div className="mx-auto max-w-lg">
         <Card>
