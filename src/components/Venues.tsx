@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import MapWrapper from "./Map";
 
 export function Venues() {
+  const { ceremony, reception } = siteConfig.venues;
   return (
     <SectionWrapper id="venues">
       <SectionHeader
@@ -15,15 +16,15 @@ export function Venues() {
       />
       <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2">
         <Card className="overflow-hidden">
-          <MapWrapper location={siteConfig.ceremony.location} name={siteConfig.ceremony.name} />
+          <MapWrapper location={ceremony.location} name={ceremony.name} />
           <CardHeader>
             <CardTitle className="font-headline text-2xl">La Ceremonia</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="font-semibold">{siteConfig.ceremony.name}</p>
-            <p className="text-foreground/70">{siteConfig.ceremony.address}</p>
+            <p className="font-semibold">{ceremony.name}</p>
+            <p className="text-foreground/70">{ceremony.address}</p>
             <Button variant="outline" asChild>
-              <a href={siteConfig.ceremony.mapsLink} target="_blank" rel="noopener noreferrer">
+              <a href={ceremony.mapsUrl} target="_blank" rel="noopener noreferrer">
                 <MapPin className="mr-2 h-4 w-4" />
                 Abrir en Mapas
               </a>
@@ -31,15 +32,15 @@ export function Venues() {
           </CardContent>
         </Card>
         <Card className="overflow-hidden">
-          <MapWrapper location={siteConfig.reception.location} name={siteConfig.reception.name} />
+          <MapWrapper location={reception.location} name={reception.name} />
           <CardHeader>
             <CardTitle className="font-headline text-2xl">La Recepción</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="font-semibold">{siteConfig.reception.name}</p>
-            <p className="text-foreground/70">{siteConfig.reception.address}</p>
+            <p className="font-semibold">{reception.name}</p>
+            <p className="text-foreground/70">{reception.address}</p>
             <Button variant="outline" asChild>
-              <a href={siteConfig.reception.mapsLink} target="_blank" rel="noopener noreferrer">
+              <a href={reception.mapsUrl} target="_blank" rel="noopener noreferrer">
                 <MapPin className="mr-2 h-4 w-4" />
                 Abrir en Mapas
               </a>

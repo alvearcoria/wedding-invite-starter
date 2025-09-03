@@ -2,9 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { submitRsvp } from "@/app/actions";
+import { rsvpSchema, type RsvpInput } from "@/types/rsvp";
+import confetti from "canvas-confetti";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,35 +25,42 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
-const rsvpFormSchema = z.object({
-  name: z.string().min(2, { message: "Por favor, ingresa tu nombre completo." }),
-  guests: z.coerce.number().min(1, { message: "Por favor, selecciona el número de invitados." }).max(5),
-  dietary: z.string().optional(),
-  message: z.string().optional(),
-});
-
-type RsvpFormValues = z.infer<typeof rsvpFormSchema>;
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { siteConfig } from "@/config/site";
 
 export function RsvpForm() {
   const { toast } = useToast();
-  const form = useForm<RsvpFormValues>({
-    resolver: zodResolver(rsvpFormSchema),
+  const form = useForm<RsvpInput>({
+    resolver: zodResolver(rsvpSchema),
     defaultValues: {
       name: "",
-      guests: 1,
-      dietary: "",
+      email: "",
+      phone: "",
+      attending: undefined,
+      companions: 0,
+      diet: "",
       message: "",
+      slug: siteConfig.slug,
+      _hp: "",
     },
   });
 
-  const onSubmit = async (data: RsvpFormValues) => {
+  const onSubmit = async (data: RsvpInput) => {
     const result = await submitRsvp(data);
     if (result.success) {
       toast({
         title: "¡Confirmación Recibida!",
         description: result.success,
       });
+
+      if (data.attending) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      }
+
       form.reset();
     } else {
       toast({
@@ -71,7 +79,7 @@ export function RsvpForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre Completo</FormLabel>
+              <FormLabel>Nombre Completo*</FormLabel>
               <FormControl>
                 <Input placeholder="Juan Pérez" {...field} />
               </FormControl>
@@ -81,20 +89,79 @@ export function RsvpForm() {
         />
         <FormField
           control={form.control}
-          name="guests"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Número de Invitados</FormLabel>
+              <FormLabel>Correo Electrónico</FormLabel>
+              <FormControl>
+                <Input placeholder="juan.perez@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Teléfono</FormLabel>
+              <FormControl>
+                <Input placeholder="8112345678" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="attending"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>¿Nos acompañarás?*</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={(value) => field.onChange(value === "true")}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="true" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      Sí, ¡ahí estaré!
+                    </FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="false" />
+                    </FormControl>
+                    <FormLabel className="font-normal">
+                      No podré asistir, pero los recordaré.
+                    </FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="companions"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Acompañantes*</FormLabel>
               <Select onValueChange={(value) => field.onChange(Number(value))} value={String(field.value)}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona el número de invitados" />
+                    <SelectValue placeholder="Selecciona el número de acompañantes" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {[1, 2, 3, 4, 5].map((num) => (
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <SelectItem key={num} value={String(num)}>
-                      {num} {num > 1 ? "invitados" : "invitado"}
+                      {num} {num === 1 ? "acompañante" : "acompañantes"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -105,7 +172,7 @@ export function RsvpForm() {
         />
         <FormField
           control={form.control}
-          name="dietary"
+          name="diet"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Restricciones Alimenticias</FormLabel>
@@ -126,6 +193,18 @@ export function RsvpForm() {
                 <Textarea placeholder="¡Estamos muy emocionados de celebrar con ustedes!" {...field} />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* Honeypot field */}
+        <FormField
+          control={form.control}
+          name="_hp"
+          render={({ field }) => (
+            <FormItem className="hidden">
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
             </FormItem>
           )}
         />

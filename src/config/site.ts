@@ -3,49 +3,66 @@ export const siteConfig = {
     her: "Mely",
     him: "Noe",
   },
-  weddingDate: "2025-11-29T16:00:00", // YYYY-MM-DDTHH:mm:ss
+  slug: "mely-y-noe",
+  weddingDate: "2025-11-29T17:00:00-06:00", // YYYY-MM-DDTHH:mm:ss con TZ
+  city: "Apodaca, N.L., México",
 
   // Visibilidad de las secciones
-  showCountdown: true,
-  showOurStory: true,
-  showTimeline: true,
-  showVenues: true,
-  showGallery: true,
-  showGifts: true,
-  showRsvp: true,
+  sections: {
+    music: true,
+    story: true,
+    timeline: true,
+    dressCode: true,
+    venues: true,
+    gallery: true,
+    qrAlbum: true,
+    gifts: true,
+    hotels: true,
+    rsvp: true,
+  },
 
-  // Enlaces de navegación
+  musicUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Placeholder
+
+  // Enlaces de navegación (se filtran automáticamente abajo)
   navLinks: [
-    { name: "Nuestra Historia", href: "#our-story", enabled: true },
-    { name: "Itinerario", href: "#timeline", enabled: true },
-    { name: "Lugar", href: "#venues", enabled: true },
-    { name: "Galería", href: "#gallery", enabled: true },
-    { name: "Regalos", href: "#gifts", enabled: true },
+    { name: "Nuestra Historia", href: "#our-story" },
+    { name: "Itinerario", href: "#timeline" },
+    { name: "Vestimenta", href: "#dress-code"},
+    { name: "Lugar", href: "#venues" },
+    { name: "Galería", href: "#gallery" },
+    { name: "Regalos", href: "#gifts" },
+    { name: "Hospedaje", href: "#hotels"},
   ],
 
   // Detalles del lugar
-  ceremony: {
-    name: "Iglesia de Santa María",
-    address: "Calle de la Iglesia 123, Villa Votos, VV 45678",
-    mapsLink: "https://www.google.com/maps/search/?api=1&query=St.+Mary%27s+Church",
-    location: { lat: 40.712776, lng: -74.005974 }, // Ejemplo: Ayuntamiento de Nueva York
+  venues: {
+    ceremony: {
+      name: "Iglesia de Santa María",
+      address: "Calle de la Iglesia 123, Villa Votos, VV 45678",
+      mapsUrl: "https://www.google.com/maps/search/?api=1&query=St.+Mary%27s+Church",
+      location: { lat: 40.712776, lng: -74.005974 }, // Ejemplo: Ayuntamiento de Nueva York
+    },
+    reception: {
+      name: "El Gran Salón",
+      address: "Avenida Celebración 456, Pueblo Fiesta, PT 87654",
+      mapsUrl: "https://www.google.com/maps/search/?api=1&query=The+Grand+Hall",
+      location: { lat: 40.7580, lng: -73.9855 }, // Ejemplo: Times Square
+    },
   },
-  reception: {
-    name: "El Gran Salón",
-    address: "Avenida Celebración 456, Pueblo Fiesta, PT 87654",
-    mapsLink: "https://www.google.com/maps/search/?api=1&query=The+Grand+Hall",
-    location: { lat: 40.7580, lng: -73.9855 }, // Ejemplo: Times Square
+  
+  dressCode: {
+    title: "Código de Vestimenta",
+    description: "Para que te sientas cómodo y te veas increíble, aquí te dejamos una guía.",
+    note: "Formal. Evitar blanco. Gracias 💛"
   },
 
   // Mesa de regalos y datos bancarios
-  giftRegistry: {
-    enabled: true,
-    url: "https://www.example.com/gift-registry",
-  },
-  bankDetails: {
-    enabled: true,
-    accountHolder: "Fondo de Boda M. & N.",
-    iban: "ES1234567890123456789012",
+  gifts: {
+    mode: "bank", // 'bank' or 'list'
+    bankLabel: "CLABE Interbancaria",
+    bankValueMasked: "1234 **** **** 5678",
+    bankValueFull: "123456789012345678",
+    giftListUrl: "https://www.example.com/gift-registry",
   },
 
   // Galería de fotos
@@ -57,19 +74,27 @@ export const siteConfig = {
     { src: "https://picsum.photos/id/119/1200/800", alt: "Pareja compartiendo una risa", dataAiHint: "couple laughing" },
     { src: "https://picsum.photos/id/129/800/1200", alt: "Pareja mirando una vista", dataAiHint: "couple view" },
   ],
-  collaborativeAlbum: {
-    enabled: true,
+  qrAlbum: {
     url: "https://photos.app.goo.gl/example",
   },
+
+  // Hospedaje
+  hotels: [
+    { name: "Hotel Cercano", distance: "5 min del lugar", tel: "81-1234-5678", mapsUrl: "https://goo.gl/maps/example1" },
+    { name: "Hotel Opción B", distance: "10 min del lugar", tel: "81-8765-4321", mapsUrl: "https://goo.gl/maps/example2" },
+    { name: "Airbnb's Sugeridos", distance: "Varía", tel: "N/A", mapsUrl: "https://www.airbnb.mx/" },
+  ]
 };
 
 // Filtrar dinámicamente los enlaces de navegación según la configuración
 siteConfig.navLinks = siteConfig.navLinks.filter(link => {
-    if (link.href === '#our-story') return siteConfig.showOurStory;
-    if (link.href === '#timeline') return siteConfig.showTimeline;
-    if (link.href === '#venues') return siteConfig.showVenues;
-    if (link.href === '#gallery') return siteConfig.showGallery;
-    if (link.href === '#gifts') return siteConfig.showGifts;
+    if (link.href === '#our-story') return siteConfig.sections.story;
+    if (link.href === '#timeline') return siteConfig.sections.timeline;
+    if (link.href === '#dress-code') return siteConfig.sections.dressCode;
+    if (link.href === '#venues') return siteConfig.sections.venues;
+    if (link.href === '#gallery') return siteConfig.sections.gallery;
+    if (link.href === '#gifts') return siteConfig.sections.gifts;
+    if (link.href === '#hotels') return siteConfig.sections.hotels;
     return true;
 });
 

@@ -3,13 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
-import { CopyButton } from "./CopyButton";
+import { CopyToClipboard } from "./CopyToClipboard";
 
 export function Gifts() {
-  const { giftRegistry, bankDetails } = siteConfig;
-  const showSection = giftRegistry.enabled || bankDetails.enabled;
-
-  if (!showSection) return null;
+  const { gifts } = siteConfig;
+  const showBank = gifts.mode === 'bank';
+  const showList = gifts.mode === 'list';
 
   return (
     <SectionWrapper id="gifts">
@@ -18,7 +17,7 @@ export function Gifts() {
         description="Su presencia en nuestra boda es el mejor regalo de todos. Sin embargo, si desean hacernos un obsequio, estaremos encantados."
       />
       <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
-        {giftRegistry.enabled && (
+        {showList && (
           <Card>
             <CardHeader>
               <Gift className="mb-4 h-10 w-10 text-accent-foreground" />
@@ -29,14 +28,14 @@ export function Gifts() {
             </CardHeader>
             <CardContent>
               <Button asChild>
-                <a href={giftRegistry.url} target="_blank" rel="noopener noreferrer">
+                <a href={gifts.giftListUrl} target="_blank" rel="noopener noreferrer">
                   Ver Mesa de Regalos
                 </a>
               </Button>
             </CardContent>
           </Card>
         )}
-        {bankDetails.enabled && (
+        {showBank && (
           <Card>
             <CardHeader>
               <University className="mb-4 h-10 w-10 text-accent-foreground" />
@@ -47,16 +46,12 @@ export function Gifts() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium">Titular de la cuenta</p>
-                <p className="text-foreground/70">{bankDetails.accountHolder}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">IBAN</p>
+                <p className="text-sm font-medium">{gifts.bankLabel}</p>
                 <div className="flex items-center gap-2">
                   <p className="font-mono text-sm text-foreground/70 tracking-wider">
-                    {bankDetails.iban.slice(0, 4)} **** **** **** {bankDetails.iban.slice(-4)}
+                    {gifts.bankValueMasked}
                   </p>
-                  <CopyButton textToCopy={bankDetails.iban} />
+                  <CopyToClipboard textToCopy={gifts.bankValueFull} />
                 </div>
               </div>
             </CardContent>

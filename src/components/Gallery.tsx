@@ -9,11 +9,10 @@ import {
 } from "@/components/ui/carousel";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
-import QrCode from "./QrCode";
 
 export function Gallery() {
   return (
-    <SectionWrapper id="gallery" className="bg-card">
+    <SectionWrapper id="gallery">
       <SectionHeader
         title="Nuestros Momentos"
         description="Un vistazo a nuestro viaje juntos. Esperamos crear nuevos recuerdos con ustedes."
@@ -49,18 +48,6 @@ export function Gallery() {
           <CarouselPrevious className="ml-12" />
           <CarouselNext className="mr-12" />
         </Carousel>
-
-        {siteConfig.collaborativeAlbum.enabled && (
-            <div className="mt-16 flex flex-col items-center justify-center gap-6 rounded-lg border-2 border-dashed border-border bg-background p-8 text-center">
-                <h3 className="font-headline text-2xl font-semibold">¡Comparte Tus Fotos!</h3>
-                <p className="max-w-md text-foreground/70">
-                ¡Ayúdanos a capturar la alegría! Escanea el código QR para subir tus fotos y videos de nuestro día especial a nuestro álbum compartido.
-                </p>
-                <a href={siteConfig.collaborativeAlbum.url} target="_blank" rel="noopener noreferrer">
-                    <QrCode value={siteConfig.collaborativeAlbum.url} />
-                </a>
-            </div>
-        )}
       </div>
     </SectionWrapper>
   );

@@ -8,19 +8,27 @@ import { Rsvp } from "@/components/Rsvp";
 import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/config/site";
 import { Header } from "@/components/Header";
+import { DressCode } from "@/components/DressCode";
+import { Hotels } from "@/components/Hotels";
+import { MusicToggle } from "@/components/MusicToggle";
+import { QrAlbum } from "@/components/QrAlbum";
 
 export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col">
       <main className="flex-1">
+        {siteConfig.sections.music && <MusicToggle />}
         <Hero />
         <Header />
-        {siteConfig.showOurStory && <OurStory />}
-        {siteConfig.showTimeline && <Timeline />}
-        {siteConfig.showVenues && <Venues />}
-        {siteConfig.showGallery && <Gallery />}
-        {siteConfig.showGifts && <Gifts />}
-        {siteConfig.showRsvp && <Rsvp />}
+        {siteConfig.sections.story && <OurStory />}
+        {siteConfig.sections.timeline && <Timeline />}
+        {siteConfig.sections.dressCode && <DressCode />}
+        {siteConfig.sections.venues && <Venues />}
+        {siteConfig.sections.gallery && <Gallery />}
+        {siteConfig.sections.qrAlbum && <QrAlbum />}
+        {siteConfig.sections.gifts && <Gifts />}
+        {siteConfig.sections.hotels && <Hotels />}
+        {siteConfig.sections.rsvp && <Rsvp />}
       </main>
       <Footer />
     </div>
