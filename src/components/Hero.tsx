@@ -41,11 +41,15 @@ export function Hero() {
         <div className="animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
           <Countdown />
         </div>
-        
-        <a href="#our-story" aria-label="Desplázate hacia abajo" className="absolute bottom-10 z-20 animate-bounce rounded-full border-2 border-white/50 p-2 transition-colors hover:bg-white/10">
-            <ArrowDown className="h-6 w-6 text-white/80"/>
-        </a>
       </div>
+      
+      <a 
+        href="#our-story" 
+        aria-label="Desplázate hacia abajo" 
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce rounded-full border-2 border-white/50 p-2 transition-colors hover:bg-white/10"
+      >
+        <ArrowDown className="h-6 w-6 text-white/80"/>
+      </a>
     </section>
   );
 }
