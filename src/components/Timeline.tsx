@@ -1,8 +1,8 @@
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
-import { Cake, Camera, GlassWater, Music, Rings } from "lucide-react";
+import { Cake, Camera, GlassWater, Music, HeartHandshake } from "lucide-react";
 
 const timelineEvents = [
-  { time: "4:00 PM", event: "Ceremony", description: "Witness our vows and the start of our forever.", icon: Rings },
+  { time: "4:00 PM", event: "Ceremony", description: "Witness our vows and the start of our forever.", icon: HeartHandshake },
   { time: "5:00 PM", event: "Cocktail Hour", description: "Enjoy drinks and light bites while we take photos.", icon: GlassWater },
   { time: "6:30 PM", event: "Reception", description: "Join us for dinner and toasts.", icon: Camera },
   { time: "8:00 PM", event: "First Dance & Party", description: "Let's hit the dance floor!", icon: Music },
