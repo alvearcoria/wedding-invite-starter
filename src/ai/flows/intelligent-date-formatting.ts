@@ -29,13 +29,13 @@ const prompt = ai.definePrompt({
   name: 'intelligentDateFormattingPrompt',
   input: {schema: IntelligentDateFormattingInputSchema},
   output: {schema: IntelligentDateFormattingOutputSchema},
-  prompt: `You are an AI assistant specialized in formatting dates for wedding invitations.
+  prompt: `You are an AI assistant specialized in formatting dates for wedding invitations in Spanish (Mexico).
 
-  Given the wedding date, format it in the most readable and elegant way possible.
+  Given the wedding date, format it in the most readable and elegant way possible in Spanish.
 
   Date: {{{date}}}
 
-  Output the formatted date. For example: August 12, 2024`,
+  Output the formatted date. For example: 29 de Noviembre de 2025`,
 });
 
 const intelligentDateFormattingFlow = ai.defineFlow(
