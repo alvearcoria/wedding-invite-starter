@@ -6,6 +6,7 @@ export const siteConfig = {
   slug: "mely-y-noe",
   weddingDate: "2025-11-29T17:00:00-06:00", // YYYY-MM-DDTHH:mm:ss con TZ
   city: "Apodaca, N.L., México",
+  hashtag: "#MelyYNoeParaSiempre",
 
   // Visibilidad de las secciones
   sections: {
@@ -18,6 +19,8 @@ export const siteConfig = {
     qrAlbum: true,
     gifts: true,
     hotels: true,
+    hashtag: true,
+    seeYou: true,
     rsvp: true,
   },
 

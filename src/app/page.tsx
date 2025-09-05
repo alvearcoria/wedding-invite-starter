@@ -12,6 +12,8 @@ import { Hotels } from "@/components/Hotels";
 import { MusicToggle } from "@/components/MusicToggle";
 import { QrAlbum } from "@/components/QrAlbum";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { Hashtag } from "@/components/Hashtag";
+import { SeeYou } from "@/components/SeeYou";
 
 export default function Home() {
   return (
@@ -27,7 +29,9 @@ export default function Home() {
         {siteConfig.sections.qrAlbum && <AnimatedSection><QrAlbum /></AnimatedSection>}
         {siteConfig.sections.gifts && <AnimatedSection direction="left"><Gifts /></AnimatedSection>}
         {siteConfig.sections.hotels && <AnimatedSection direction="right"><Hotels /></AnimatedSection>}
+        {siteConfig.sections.hashtag && <AnimatedSection><Hashtag /></AnimatedSection>}
         {siteConfig.sections.rsvp && <AnimatedSection><Rsvp /></AnimatedSection>}
+        {siteConfig.sections.seeYou && <AnimatedSection><SeeYou /></AnimatedSection>}
       </main>
       <Footer />
     </div>
