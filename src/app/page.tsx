@@ -8,7 +8,6 @@ import { Rsvp } from "@/components/Rsvp";
 import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/config/site";
 import { DressCode } from "@/components/DressCode";
-import { Hotels } from "@/components/Hotels";
 import { MusicToggle } from "@/components/MusicToggle";
 import { QrAlbum } from "@/components/QrAlbum";
 import { AnimatedSection } from "@/components/AnimatedSection";
@@ -26,10 +25,9 @@ export default function Home() {
         {siteConfig.sections.dressCode && <AnimatedSection><DressCode /></AnimatedSection>}
         {siteConfig.sections.venues && <AnimatedSection direction="right"><Venues /></AnimatedSection>}
         {siteConfig.sections.gallery && <AnimatedSection><Gallery /></AnimatedSection>}
-        {siteConfig.sections.qrAlbum && <AnimatedSection><QrAlbum /></AnimatedSection>}
+        {siteConfig.sections.qrAlbum && <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>}
         {siteConfig.sections.gifts && <AnimatedSection direction="left"><Gifts /></AnimatedSection>}
-        {siteConfig.sections.hotels && <AnimatedSection direction="right"><Hotels /></AnimatedSection>}
-        {siteConfig.sections.hashtag && <AnimatedSection><Hashtag /></AnimatedSection>}
+        {siteConfig.sections.hashtag && <AnimatedSection direction="up"><Hashtag /></AnimatedSection>}
         {siteConfig.sections.rsvp && <AnimatedSection><Rsvp /></AnimatedSection>}
         {siteConfig.sections.seeYou && <AnimatedSection><SeeYou /></AnimatedSection>}
       </main>

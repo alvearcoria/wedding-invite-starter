@@ -18,7 +18,7 @@ export const siteConfig = {
     gallery: true,
     qrAlbum: true,
     gifts: true,
-    hotels: true,
+    hotels: false,
     hashtag: true,
     seeYou: true,
     rsvp: true,
