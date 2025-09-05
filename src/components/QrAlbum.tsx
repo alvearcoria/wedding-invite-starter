@@ -1,3 +1,4 @@
+
 import { siteConfig } from "@/config/site";
 import QrCode from "./QrCode";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";

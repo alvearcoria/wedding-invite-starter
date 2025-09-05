@@ -1,3 +1,4 @@
+
 import { Suspense } from "react";
 import Image from "next/image";
 import { siteConfig } from "@/config/site";
