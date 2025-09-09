@@ -52,13 +52,13 @@ Abre este archivo y modifica los valores según tus necesidades. A continuación
 ```typescript
 export const siteConfig = {
   couple: {
-    her: "Mely", // Nombre de ella
-    him: "Noe",   // Nombre de él
+    her: "Nombre de Ella",
+    him: "Nombre de Él",
   },
-  slug: "mely-y-noe", // Un identificador único para el formulario
-  weddingDate: "2025-11-29T17:00:00-06:00", // Formato: AAAA-MM-DDTHH:mm:ss con zona horaria
-  city: "Apodaca, N.L., México",
-  hashtag: "#MelyYNoeParaSiempre",
+  slug: "nombre-ella-y-el", // Un identificador único para el formulario
+  weddingDate: "2025-12-05T17:00:00-06:00", // Formato: AAAA-MM-DDTHH:mm:ss con zona horaria
+  city: "Ciudad, Estado, País",
+  hashtag: "#LosNoviosParaSiempre",
   musicUrl: "URL_DE_TU_CANCION.mp3", // Enlace a un archivo .mp3
   ...
 };
@@ -91,10 +91,10 @@ Actualiza los detalles de los lugares. Para obtener las coordenadas `lat` y `lng
 ```typescript
   venues: {
     ceremony: {
-      name: "Iglesia de Santa María",
-      address: "Calle de la Iglesia 123, Villa Votos, VV 45678",
+      name: "Nombre de la Iglesia",
+      address: "Dirección completa de la ceremonia",
       mapsUrl: "https://www.google.com/maps/search/?api=1&query=...",
-      location: { lat: 40.712776, lng: -74.005974 },
+      location: { lat: 25.72, lng: -100.31 }, // Latitud y Longitud
     },
     ...
   },
