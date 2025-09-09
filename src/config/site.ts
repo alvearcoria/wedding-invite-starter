@@ -25,7 +25,7 @@ export const siteConfig = {
     rsvp: true,
   },
 
-  musicUrl: "https://cdn.pixabay.com/download/audio/2022/02/14/audio_2047376092.mp3", // Enlace directo a un archivo MP3
+  musicUrl: "/audio/wedding-song.mp3", // Enlace directo a un archivo MP3
 
   // Enlaces de navegación (se filtran automáticamente abajo)
   navLinks: [
