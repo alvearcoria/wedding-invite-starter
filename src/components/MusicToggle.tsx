@@ -11,26 +11,36 @@ export function MusicToggle() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // We need to create the audio element on the client side
+    // Crear el elemento de audio en el lado del cliente
     const audio = new Audio(siteConfig.musicUrl);
     audio.loop = true;
     audioRef.current = audio;
 
-    // Autoplay can be tricky, we start muted and let user interact
-    const playPromise = audioRef.current.play();
-    if (playPromise !== undefined) {
-      playPromise.then(_ => {
-        // Autoplay started!
-        setIsPlaying(true);
-      }).catch(error => {
-        // Autoplay was prevented.
-        console.log("Autoplay prevented");
-        setIsPlaying(false);
-      });
-    }
+    // Los navegadores modernos bloquean el autoplay hasta que el usuario interactúa.
+    // Esta función intentará reproducir el audio después de la primera interacción del usuario.
+    const handleFirstInteraction = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(error => {
+          // El autoplay todavía fue bloqueado, el usuario deberá hacer clic en el botón.
+          console.log("Autoplay fue prevenido por el navegador.");
+          setIsPlaying(false);
+        });
+      }
+      // Remover el listener después del primer uso
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
 
+    // Agregar listeners para la primera interacción
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+    
     return () => {
       audioRef.current?.pause();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
     };
   }, []);
 
@@ -38,7 +48,7 @@ export function MusicToggle() {
     if (isPlaying) {
       audioRef.current?.pause();
     } else {
-      audioRef.current?.play();
+      audioRef.current?.play().catch(error => console.error("Error al reproducir audio:", error));
     }
     setIsPlaying(!isPlaying);
   };
