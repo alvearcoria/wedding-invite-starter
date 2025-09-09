@@ -12,32 +12,33 @@ export function MusicToggle() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Crear el elemento de audio en el lado del cliente
+    // We create the audio element only on the client side.
     const audio = new Audio(siteConfig.musicUrl);
     audio.loop = true;
     audioRef.current = audio;
 
-    // Los navegadores modernos bloquean el autoplay hasta que el usuario interactúa.
-    // Esta función intentará reproducir el audio después de la primera interacción del usuario.
+    // Modern browsers block autoplay until the user interacts.
+    // This function will attempt to play the audio after the first user interaction.
     const handleFirstInteraction = () => {
       if (audioRef.current && audioRef.current.paused) {
         audioRef.current.play().then(() => {
           setIsPlaying(true);
         }).catch(error => {
-          // El autoplay todavía fue bloqueado, el usuario deberá hacer clic en el botón.
-          console.log("Autoplay fue prevenido por el navegador.");
+          // Autoplay was still blocked, user will need to click the button.
+          console.log("Autoplay was prevented by the browser.");
           setIsPlaying(false);
         });
       }
-      // Remover el listener después del primer uso
+      // Remove the listener after the first use to avoid multiple triggers.
       window.removeEventListener('click', handleFirstInteraction);
       window.removeEventListener('touchstart', handleFirstInteraction);
     };
 
-    // Agregar listeners para la primera interacción
+    // Add listeners for the first interaction
     window.addEventListener('click', handleFirstInteraction);
     window.addEventListener('touchstart', handleFirstInteraction);
     
+    // Cleanup function to pause audio and remove listeners when component unmounts.
     return () => {
       audioRef.current?.pause();
       window.removeEventListener('click', handleFirstInteraction);
@@ -46,12 +47,14 @@ export function MusicToggle() {
   }, []);
 
   const toggleMusic = () => {
-    if (isPlaying) {
-      audioRef.current?.pause();
-    } else {
-      audioRef.current?.play().catch(error => console.error("Error al reproducir audio:", error));
+    if (audioRef.current) {
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play().catch(error => console.error("Error playing audio:", error));
+        }
+        setIsPlaying(!isPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (
