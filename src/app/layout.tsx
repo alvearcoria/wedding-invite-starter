@@ -1,12 +1,11 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
-import { siteConfig } from '@/config/site';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: `${siteConfig.couple.her} & ${siteConfig.couple.him}: Wedding Celebration`,
-  description: `Join us for the wedding celebration of ${siteConfig.couple.her} and ${siteConfig.couple.him}.`,
+  title: "Mely & Noe: Por siempre",
+  description: `Únete a nosotros para la celebración de la boda de Mely y Noe.`,
 };
 
 export default function RootLayout({
