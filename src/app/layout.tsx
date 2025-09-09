@@ -2,10 +2,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
+import { siteConfig } from '@/config/site';
 
 export const metadata: Metadata = {
-  title: "Mely & Noe: Por siempre",
-  description: `Únete a nosotros para la celebración de la boda de Mely y Noe.`,
+  title: siteConfig.title,
+  description: siteConfig.description,
 };
 
 export default function RootLayout({

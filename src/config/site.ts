@@ -1,5 +1,8 @@
 
 export const siteConfig = {
+  title: "Mely & Noe: Por siempre",
+  description: `Únete a nosotros para la celebración de la boda de Mely y Noe.`,
+
   couple: {
     her: "Mely",
     him: "Noe",
@@ -25,7 +28,7 @@ export const siteConfig = {
     rsvp: true,
   },
 
-  musicUrl: "/audio/wedding-song.mp3", // Enlace directo a un archivo MP3
+  musicUrl: "/audio/wedding-song.mp3",
 
   // Enlaces de navegación (se filtran automáticamente abajo)
   navLinks: [
