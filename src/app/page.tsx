@@ -9,17 +9,19 @@ import { Rsvp } from "@/components/Rsvp";
 import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/config/site";
 import { DressCode } from "@/components/DressCode";
-import { MusicToggle } from "@/components/MusicToggle";
+import { MusicControl } from "@/components/MusicControl";
 import { QrAlbum } from "@/components/QrAlbum";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { Hashtag } from "@/components/Hashtag";
 import { SeeYou } from "@/components/SeeYou";
+import { WelcomeModal } from "@/components/WelcomeModal";
 
 export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col">
       <main className="flex-1">
-        {siteConfig.sections.music && <MusicToggle />}
+        <MusicControl />
+        <WelcomeModal />
         <Hero />
         {siteConfig.sections.story && <AnimatedSection direction="left"><OurStory /></AnimatedSection>}
         {siteConfig.sections.timeline && <Timeline />}
