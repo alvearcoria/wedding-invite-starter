@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Music, Music2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 
 export function MusicToggle() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -59,7 +60,10 @@ export function MusicToggle() {
         variant="outline"
         size="icon"
         onClick={toggleMusic}
-        className="rounded-full shadow-lg"
+        className={cn(
+            "rounded-full shadow-lg",
+            isPlaying && "animate-pulse"
+        )}
         aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
       >
         {isPlaying ? <Music className="h-5 w-5" /> : <Music2 className="h-5 w-5" />}
