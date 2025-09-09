@@ -25,7 +25,7 @@ export const siteConfig = {
     rsvp: true,
   },
 
-  musicUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Placeholder
+  musicUrl: "https://cdn.pixabay.com/audio/2023/10/11/audio_a11de541f5.mp3", // Enlace directo a un archivo MP3
 
   // Enlaces de navegación (se filtran automáticamente abajo)
   navLinks: [
@@ -41,16 +41,16 @@ export const siteConfig = {
   // Detalles del lugar
   venues: {
     ceremony: {
-      name: "Iglesia de Santa María",
-      address: "Calle de la Iglesia 123, Villa Votos, VV 45678",
-      mapsUrl: "https://www.google.com/maps/search/?api=1&query=St.+Mary%27s+Church",
-      location: { lat: 40.712776, lng: -74.005974 }, // Ejemplo: Ayuntamiento de Nueva York
+      name: "Parroquia San Juan de los Lagos",
+      address: "Mimas 230, Cosmópolis, 66614 Cdad. Apodaca, N.L.",
+      mapsUrl: "https://www.google.com/maps/search/?api=1&query=Parroquia+San+Juan+de+los+Lagos+Apodaca",
+      location: { lat: 25.7755, lng: -100.1873 },
     },
     reception: {
-      name: "El Gran Salón",
-      address: "Avenida Celebración 456, Pueblo Fiesta, PT 87654",
-      mapsUrl: "https://www.google.com/maps/search/?api=1&query=The+Grand+Hall",
-      location: { lat: 40.7580, lng: -73.9855 }, // Ejemplo: Times Square
+      name: "Salón de eventos Esméralda",
+      address: "Av. Andrómeda 102, Cosmópolis, 66614 Cdad. Apodaca, N.L.",
+      mapsUrl: "https://maps.app.goo.gl/Fra7CXPxJt6aSV2a6",
+      location: { lat: 25.7760, lng: -100.1895 },
     },
   },
   
