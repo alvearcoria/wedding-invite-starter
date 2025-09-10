@@ -1,5 +1,7 @@
+
 import Image from "next/image";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
+import { siteConfig } from "@/config/site";
 
 export function OurStory() {
   return (
@@ -23,9 +25,9 @@ export function OurStory() {
           </div>
           <div className="order-first md:order-last">
             <Image
-              src="https://picsum.photos/800/600"
-              data-ai-hint="couple portrait"
-              alt="Mely & Noe"
+              src={siteConfig.storyImage.src}
+              data-ai-hint={siteConfig.storyImage.dataAiHint}
+              alt={siteConfig.storyImage.alt}
               width={800}
               height={600}
               className="aspect-4/3 w-full rounded-lg object-cover shadow-lg"

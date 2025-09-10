@@ -8,9 +8,9 @@ export function SeeYou() {
     <section className="relative w-full py-24 md:py-32 lg:py-40">
        <div className="absolute inset-0 bg-primary/80 z-10" />
       <Image
-        src="https://picsum.photos/1201/800"
-        alt="Pareja despidiéndose"
-        data-ai-hint="romantic couple"
+        src={siteConfig.seeYouImage.src}
+        alt={siteConfig.seeYouImage.alt}
+        data-ai-hint={siteConfig.seeYouImage.dataAiHint}
         fill
         className="object-cover"
       />

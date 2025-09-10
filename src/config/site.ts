@@ -40,6 +40,10 @@ export const siteConfig = {
     { name: "Regalos", href: "#gifts" },
     { name: "Hospedaje", href: "#hotels"},
   ],
+  
+  heroImage: { src: "/images/hero.jpg", alt: "Mely y Noe", dataAiHint: "romantic couple" },
+  storyImage: { src: "/images/story.jpg", alt: "Mely & Noe", dataAiHint: "couple portrait" },
+  seeYouImage: { src: "/images/see-you.jpg", alt: "Pareja despidiéndose", dataAiHint: "romantic couple" },
 
   // Detalles del lugar
   venues: {
@@ -74,12 +78,12 @@ export const siteConfig = {
 
   // Galería de fotos
   galleryImages: [
-    { src: "https://picsum.photos/id/1015/1200/800", alt: "Una pareja de enamorados abrazándose", dataAiHint: "wedding couple" },
-    { src: "https://picsum.photos/id/1027/800/1200", alt: "Primer plano de la pareja sonriendo", dataAiHint: "happy couple" },
-    { src: "https://picsum.photos/id/1040/1200/800", alt: "Pareja caminando en la playa", dataAiHint: "couple beach" },
-    { src: "https://picsum.photos/id/106/800/1200", alt: "Una hermosa foto de paisaje de la pareja", dataAiHint: "couple landscape" },
-    { src: "https://picsum.photos/id/119/1200/800", alt: "Pareja compartiendo una risa", dataAiHint: "couple laughing" },
-    { src: "https://picsum.photos/id/129/800/1200", alt: "Pareja mirando una vista", dataAiHint: "couple view" },
+    { src: "/images/gallery-1.jpg", alt: "Una pareja de enamorados abrazándose", dataAiHint: "wedding couple" },
+    { src: "/images/gallery-2.jpg", alt: "Primer plano de la pareja sonriendo", dataAiHint: "happy couple" },
+    { src: "/images/gallery-3.jpg", alt: "Pareja caminando en la playa", dataAiHint: "couple beach" },
+    { src: "/images/gallery-4.jpg", alt: "Una hermosa foto de paisaje de la pareja", dataAiHint: "couple landscape" },
+    { src: "/images/gallery-5.jpg", alt: "Pareja compartiendo una risa", dataAiHint: "couple laughing" },
+    { src: "/images/gallery-6.jpg", alt: "Pareja mirando una vista", dataAiHint: "couple view" },
   ],
   qrAlbum: {
     url: "https://photos.app.goo.gl/example",

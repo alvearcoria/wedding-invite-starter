@@ -12,9 +12,9 @@ export function Hero() {
     <section className="relative flex h-[100svh] min-h-[600px] w-full flex-col items-center justify-center overflow-hidden text-white">
       <div className="absolute inset-0 bg-primary/80 z-10" />
       <Image
-        src="https://picsum.photos/1200/800"
-        alt="Mely y Noe"
-        data-ai-hint="romantic couple"
+        src={siteConfig.heroImage.src}
+        alt={siteConfig.heroImage.alt}
+        data-ai-hint={siteConfig.heroImage.dataAiHint}
         fill
         className="object-cover animate-zoom-in"
         priority
