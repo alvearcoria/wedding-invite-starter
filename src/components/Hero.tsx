@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 import { Countdown } from "./Countdown";
 import { FormattedDate } from "./FormattedDate";
 import { ArrowDown } from "lucide-react";
-import { Heart } from "./icons/Heart";
+import { Icon } from "@/components/icons/index";
 
 export function Hero() {
   return (
@@ -22,7 +22,7 @@ export function Hero() {
 
       <div className="container relative z-20 mx-auto flex flex-col items-center justify-center px-4 text-center">
         <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <Heart className="mx-auto mb-4 h-8 w-8 text-white/90" />
+          <Icon name={siteConfig.heroIcon} className="mx-auto mb-4 h-8 w-8 text-white/90" />
           <p className="text-lg tracking-widest uppercase">
             ¡Nos vamos a casar!
           </p>

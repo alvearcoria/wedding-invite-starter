@@ -1,7 +1,9 @@
 
+import type { IconName } from "@/components/icons";
+
 export const siteConfig = {
   title: "Mely & Noe: Por siempre",
-  description: `Únete a nosotros para la celebración de la boda de Mely y Noe.`,
+  description: "Únete a nosotros para la celebración de la boda de Mely y Noe.",
 
   couple: {
     her: "Mely",
@@ -11,6 +13,10 @@ export const siteConfig = {
   weddingDate: "2025-11-29T17:00:00-06:00", // YYYY-MM-DDTHH:mm:ss con TZ
   city: "Apodaca, N.L., México",
   hashtag: "#MelyYNoeParaSiempre",
+
+  // Icono principal de la invitación (se usa en la sección Hero)
+  // Opciones disponibles: 'heart', 'flower'
+  heroIcon: 'heart' as IconName,
 
   // Visibilidad de las secciones
   sections: {
