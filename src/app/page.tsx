@@ -15,6 +15,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { Hashtag } from "@/components/Hashtag";
 import { SeeYou } from "@/components/SeeYou";
 import { WelcomeModal } from "@/components/WelcomeModal";
+import { ShareInvitation } from "@/components/ShareInvitation";
 
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
         {siteConfig.sections.gallery && <AnimatedSection><Gallery /></AnimatedSection>}
         {siteConfig.sections.qrAlbum && <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>}
         {siteConfig.sections.gifts && <AnimatedSection direction="left"><Gifts /></AnimatedSection>}
+        {siteConfig.sections.share && <AnimatedSection><ShareInvitation /></AnimatedSection>}
         {siteConfig.sections.hashtag && <AnimatedSection direction="up"><Hashtag /></AnimatedSection>}
         {siteConfig.sections.rsvp && <AnimatedSection><Rsvp /></AnimatedSection>}
         {siteConfig.sections.seeYou && <AnimatedSection><SeeYou /></AnimatedSection>}

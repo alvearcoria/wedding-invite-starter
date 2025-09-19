@@ -4,6 +4,7 @@ import type { IconName } from "@/components/icons";
 export const siteConfig = {
   title: "Mely & Noe: Por siempre",
   description: "Únete a nosotros para la celebración de la boda de Mely y Noe.",
+  siteUrl: "https://example.com", // Reemplazar con la URL final del sitio
 
   couple: {
     her: "Mely",
@@ -29,6 +30,7 @@ export const siteConfig = {
     qrAlbum: true,
     gifts: true,
     hotels: false,
+    share: true,
     hashtag: true,
     seeYou: true,
     rsvp: true,
@@ -47,9 +49,26 @@ export const siteConfig = {
     { name: "Hospedaje", href: "#hotels"},
   ],
   
-  heroImage: { src: "https://picsum.photos/1200/800", alt: "Mely y Noe", dataAiHint: "romantic couple" },
-  storyImage: { src: "https://picsum.photos/800/600", alt: "Mely & Noe", dataAiHint: "couple portrait" },
-  seeYouImage: { src: "https://picsum.photos/1200/800", alt: "Pareja despidiéndose", dataAiHint: "romantic couple" },
+  // Contenido de la sección "Nuestra Historia"
+  story: {
+    title: "Nuestra Historia",
+    poem: "Cuando nos conocimos, entendimos que nos uniría algo más fuerte que el tiempo y la distancia. Hoy damos gracias a Dios por habernos hecho coincidir en el camino y empezar una vida juntos.",
+    parents: {
+      her: {
+        title: "Papás de la novia:",
+        father: "Raul Sánchez Torres",
+        mother: "Francisca Alvear Acosta",
+      },
+      him: {
+        title: "Mamá del novio:",
+        mother: "Lourdes Aracely Fernández Galindo",
+      }
+    }
+  },
+
+  heroImage: { src: "/images/hero.jpg", alt: "Mely y Noe", dataAiHint: "romantic couple" },
+  storyImage: { src: "/images/story.jpg", alt: "Mely & Noe", dataAiHint: "couple portrait" },
+  seeYouImage: { src: "/images/see-you.jpg", alt: "Pareja despidiéndose", dataAiHint: "romantic couple" },
 
   // Detalles del lugar
   venues: {
@@ -75,7 +94,7 @@ export const siteConfig = {
 
   // Mesa de regalos y datos bancarios
   gifts: {
-    mode: "bank", // 'bank' or 'list'
+    mode: "bank", // 'bank' o 'list'
     bankLabel: "CLABE Interbancaria",
     bankValueMasked: "1234 **** **** 5678",
     bankValueFull: "123456789012345678",
@@ -84,12 +103,12 @@ export const siteConfig = {
 
   // Galería de fotos
   galleryImages: [
-    { src: "https://picsum.photos/800/1200", alt: "Una pareja de enamorados abrazándose", dataAiHint: "wedding couple" },
-    { src: "https://picsum.photos/800/1201", alt: "Primer plano de la pareja sonriendo", dataAiHint: "happy couple" },
-    { src: "https://picsum.photos/800/1202", alt: "Pareja caminando en la playa", dataAiHint: "couple beach" },
-    { src: "https://picsum.photos/800/1203", alt: "Una hermosa foto de paisaje de la pareja", dataAiHint: "couple landscape" },
-    { src: "https://picsum.photos/800/1204", alt: "Pareja compartiendo una risa", dataAiHint: "couple laughing" },
-    { src: "https://picsum.photos/800/1205", alt: "Pareja mirando una vista", dataAiHint: "couple view" },
+    { src: "/images/gallery-1.jpg", alt: "Una pareja de enamorados abrazándose", dataAiHint: "wedding couple" },
+    { src: "/images/gallery-2.jpg", alt: "Primer plano de la pareja sonriendo", dataAiHint: "happy couple" },
+    { src: "/images/gallery-3.jpg", alt: "Pareja caminando en la playa", dataAiHint: "couple beach" },
+    { src: "/images/gallery-4.jpg", alt: "Una hermosa foto de paisaje de la pareja", dataAiHint: "couple landscape" },
+    { src: "/images/gallery-5.jpg", alt: "Pareja compartiendo una risa", dataAiHint: "couple laughing" },
+    { src: "/images/gallery-6.jpg", alt: "Pareja mirando una vista", dataAiHint: "couple view" },
   ],
   qrAlbum: {
     url: "https://photos.app.goo.gl/example",
