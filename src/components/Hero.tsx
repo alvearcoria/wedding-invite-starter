@@ -11,14 +11,16 @@ export function Hero() {
   return (
     <section className="relative flex h-[100svh] min-h-[600px] w-full flex-col items-center justify-center overflow-hidden text-white">
       <div className="absolute inset-0 bg-primary/80 z-10" />
-      <Image
-        src={siteConfig.heroImage.src}
-        alt={siteConfig.heroImage.alt}
-        data-ai-hint={siteConfig.heroImage.dataAiHint}
-        fill
-        className="object-cover animate-zoom-in"
-        priority
-      />
+      <div className="absolute inset-0 animate-zoom-in">
+        <Image
+          src={siteConfig.heroImage.src}
+          alt={siteConfig.heroImage.alt}
+          data-ai-hint={siteConfig.heroImage.dataAiHint}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
       <div className="container relative z-20 mx-auto flex flex-col items-center justify-center px-4 text-center">
         <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
