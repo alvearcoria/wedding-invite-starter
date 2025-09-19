@@ -1,66 +1,59 @@
 
-import Image from "next/image";
-import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
-import { Flower } from "./icons/Flower";
-import { Separator } from "./ui/separator";
+import { SectionWrapper } from "./SectionWrapper";
 
 export function OurStory() {
-  const { story } = siteConfig;
+  const { story, couple } = siteConfig;
 
   return (
     <SectionWrapper id="our-story">
-      <SectionHeader 
-        title={story.title}
-      />
-      <div className="mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-5">
-        
-        {/* Contenido de la historia y padres */}
-        <div className="space-y-8 lg:col-span-3">
-          {story.poem && (
-            <blockquote className="border-l-4 border-primary pl-6 italic text-foreground/80">
-              <p className="text-lg leading-relaxed">{story.poem}</p>
-            </blockquote>
-          )}
-
-          <Separator />
-          
-          <div className="grid grid-cols-1 gap-8 text-center sm:grid-cols-2 sm:text-left">
-            {story.parents.her && (
-              <div className="space-y-2">
-                <h3 className="font-headline text-lg font-semibold">{story.parents.her.title}</h3>
-                <div className="text-foreground/70">
-                  <p>{story.parents.her.father}</p>
-                  <p>{story.parents.her.mother}</p>
-                </div>
-              </div>
-            )}
-            {story.parents.him && (
-              <div className="space-y-2">
-                <h3 className="font-headline text-lg font-semibold">{story.parents.him.title}</h3>
-                <div className="text-foreground/70">
-                  <p>{story.parents.him.mother}</p>
-                </div>
-              </div>
-            )}
-          </div>
+      <div className="mx-auto max-w-3xl text-center">
+        <div className="mb-12">
+          <p className="mb-2 uppercase tracking-[0.2em] text-foreground/60">{story.intro_title}</p>
+          <h2 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl">
+            {couple.her}
+            <span className="mx-2 font-serif text-4xl text-amber-500">&amp;</span>
+            {couple.him}
+          </h2>
         </div>
 
-        {/* Imagen */}
-        <div className="order-first lg:order-last lg:col-span-2">
-          <div className="relative aspect-4/3">
-            <Image
-              src={siteConfig.storyImage.src}
-              data-ai-hint={siteConfig.storyImage.dataAiHint}
-              alt={siteConfig.storyImage.alt}
-              fill
-              className="rounded-lg object-cover shadow-lg"
-            />
-             <div className="absolute -bottom-4 -left-4 z-10 rounded-full bg-card p-4 shadow-md">
-              <Flower className="h-8 w-8 text-primary" />
+        <p className="mb-12 text-lg uppercase tracking-wider text-foreground/70 leading-relaxed">
+          {story.intro_line1}
+          <br />
+          {story.intro_line2}
+        </p>
+
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+          {story.parents.her && (
+            <div className="space-y-2">
+              <h3 className="font-headline text-3xl font-bold uppercase tracking-widest">{story.parents.her.title_main}</h3>
+              <p className="font-cursive text-4xl text-foreground/80">{story.parents.her.title_secondary}</p>
+              <div className="pt-2 text-foreground/70 uppercase tracking-wider">
+                <p>{story.parents.her.mother}</p>
+                <p>{story.parents.her.father}</p>
+              </div>
             </div>
-          </div>
+          )}
+          {story.parents.him && (
+            <div className="space-y-2">
+               <h3 className="font-headline text-3xl font-bold uppercase tracking-widest">{story.parents.him.title_main}</h3>
+              <p className="font-cursive text-4xl text-foreground/80">{story.parents.him.title_secondary}</p>
+              <div className="pt-2 text-foreground/70 uppercase tracking-wider">
+                 <p>{story.parents.him.mother}</p>
+                {story.parents.him.father && <p>{story.parents.him.father}</p>}
+              </div>
+            </div>
+          )}
         </div>
+
+        <div className="mt-16">
+          <p className="text-lg uppercase tracking-wider text-foreground/70 leading-relaxed">
+            {story.outro_line1}
+            <br/>
+            {story.outro_line2}
+          </p>
+        </div>
+
       </div>
     </SectionWrapper>
   );

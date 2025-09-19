@@ -46,21 +46,27 @@ export const siteConfig = {
     { name: "Lugar", href: "#venues" },
     { name: "Galería", href: "#gallery" },
     { name: "Regalos", href: "#gifts" },
-    { name: "Hospedaje", href: "#hotels"},
+    { name: "Hospaje", href: "#hotels"},
   ],
   
   // Contenido de la sección "Nuestra Historia"
   story: {
-    title: "Nuestra Historia",
-    poem: "Cuando nos conocimos, entendimos que nos uniría algo más fuerte que el tiempo y la distancia. Hoy damos gracias a Dios por habernos hecho coincidir en el camino y empezar una vida juntos.",
+    title: "Nuestra Historia", // Usado para el SectionHeader, aunque el nuevo diseño no lo usa
+    intro_title: "Nosotros",
+    intro_line1: "Movidos por el amor que nos profesamos,",
+    intro_line2: "con la alegría y la bendición de nuestros padres:",
+    outro_line1: "Uniremos nuestras vidas en matrimonio",
+    outro_line2: "y tenemos el honor de invitarte a ser parte de esta celebración.",
     parents: {
       her: {
-        title: "Papás de la novia:",
+        title_main: "Padres",
+        title_secondary: "de la novia",
         father: "Raul Sánchez Torres",
         mother: "Francisca Alvear Acosta",
       },
       him: {
-        title: "Mamá del novio:",
+        title_main: "Padres",
+        title_secondary: "del novio",
         mother: "Lourdes Aracely Fernández Galindo",
       }
     }
