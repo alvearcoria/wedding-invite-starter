@@ -12,32 +12,32 @@
   },
   "galleryImages": [
     {
-      "src": "/images/gallery-1.jpg",
+      "src": "https://picsum.photos/seed/g1/600/800",
       "alt": "Una pareja de enamorados abrazándose",
       "dataAiHint": "wedding couple"
     },
     {
-      "src": "/images/gallery-2.jpg",
+      "src": "https://picsum.photos/seed/g2/600/800",
       "alt": "Primer plano de la pareja sonriendo",
       "dataAiHint": "happy couple"
     },
     {
-      "src": "/images/gallery-3.jpg",
+      "src": "https://picsum.photos/seed/g3/600/800",
       "alt": "Pareja caminando en la playa",
       "dataAiHint": "couple beach"
     },
     {
-      "src": "/images/gallery-4.jpg",
+      "src": "https://picsum.photos/seed/g4/600/800",
       "alt": "Una hermosa foto de paisaje de la pareja",
       "dataAiHint": "couple landscape"
     },
     {
-      "src": "/images/gallery-5.jpg",
+      "src": "https://picsum.photos/seed/g5/600/800",
       "alt": "Pareja compartiendo una risa",
       "dataAiHint": "couple laughing"
     },
     {
-      "src": "/images/gallery-6.jpg",
+      "src": "https://picsum.photos/seed/g6/600/800",
       "alt": "Pareja mirando una vista",
       "dataAiHint": "couple view"
     }
