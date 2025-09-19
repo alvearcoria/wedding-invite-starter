@@ -17,7 +17,7 @@ export function Hero() {
           alt={siteConfig.heroImage.alt}
           data-ai-hint={siteConfig.heroImage.dataAiHint}
           fill
-          className="object-cover"
+          className="object-cover lg:object-top"
           priority
         />
       </div>

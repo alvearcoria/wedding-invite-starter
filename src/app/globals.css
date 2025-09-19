@@ -120,8 +120,7 @@ body {
       transform: scale(1.05);
     }
   }
-
-  .animate-zoom-in {
-    animation: zoom-in 15s ease-out forwards;
+  .object-top {
+    object-position: top;
   }
 }
