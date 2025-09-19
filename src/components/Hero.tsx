@@ -11,7 +11,7 @@ export function Hero() {
   return (
     <section className="relative flex h-[100svh] min-h-[600px] w-full flex-col items-center justify-center overflow-hidden text-white">
       <div className="absolute inset-0 bg-primary/80 z-10" />
-      <div className="absolute inset-0 animate-zoom-in">
+      <div className="absolute inset-0">
         <Image
           src={siteConfig.heroImage.src}
           alt={siteConfig.heroImage.alt}
