@@ -75,14 +75,14 @@ export const siteConfig = {
     ceremony: {
       name: "Parroquia San Juan de los Lagos",
       address: "Mimas 230, Cosmópolis, 66614 Cdad. Apodaca, N.L.",
-      mapsUrl: "https://www.google.com/maps/search/?api=1&query=Parroquia+San+Juan+de+los+Lagos+Apodaca",
-      location: { lat: 25.7755, lng: -100.1873 },
+      mapsUrl: "https://maps.app.goo.gl/qauGCHY6QL5kMeHGA",
+      location: { lat: 25.81718855435814, lng: -100.24636189477839 },
     },
     reception: {
-      name: "Salón de eventos Esméralda",
-      address: "Av. Andrómeda 102, Cosmópolis, 66614 Cdad. Apodaca, N.L.",
-      mapsUrl: "https://maps.app.goo.gl/Fra7CXPxJt6aSV2a6",
-      location: { lat: 25.7760, lng: -100.1895 },
+      name: "Hacienda Paraiso Eventos",
+      address: "Robles 510, 65556 Villas Campestres, N.L.",
+      mapsUrl: "https://maps.app.goo.gl/XyZt56fVLM47wu5a9",
+      location: { lat: 25.917908636423558, lng: -100.22116388503963 },
     },
   },
   

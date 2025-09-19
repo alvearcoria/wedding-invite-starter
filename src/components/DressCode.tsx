@@ -19,7 +19,7 @@ export function DressCode() {
           </div>
           <div className="font-headline mt-2">
             <h3 className="text-xl font-semibold">Mujeres</h3>
-            <p className="text-foreground/70">Vestido Largo</p>
+            <p className="text-foreground/70">Vestido de noche/formales (midi a maxi)</p>
           </div>
         </div>
         <div className="flex flex-col items-center gap-4">
@@ -28,7 +28,7 @@ export function DressCode() {
           </div>
           <div className="font-headline mt-2">
             <h3 className="text-xl font-semibold">Hombres</h3>
-            <p className="text-foreground/70">Traje</p>
+            <p className="text-foreground/70">Casual, Formal y Vaquero Formal</p>
           </div>
         </div>
       </div>
