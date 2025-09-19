@@ -1,0 +1,45 @@
+
+{
+  "heroImage": {
+    "src": "/images/hero.jpg",
+    "alt": "Mely y Noe",
+    "dataAiHint": "romantic couple"
+  },
+  "seeYouImage": {
+    "src": "/images/see-you.jpg",
+    "alt": "Pareja despidiéndose",
+    "dataAiHint": "romantic couple"
+  },
+  "galleryImages": [
+    {
+      "src": "/images/gallery-1.jpg",
+      "alt": "Una pareja de enamorados abrazándose",
+      "dataAiHint": "wedding couple"
+    },
+    {
+      "src": "/images/gallery-2.jpg",
+      "alt": "Primer plano de la pareja sonriendo",
+      "dataAiHint": "happy couple"
+    },
+    {
+      "src": "/images/gallery-3.jpg",
+      "alt": "Pareja caminando en la playa",
+      "dataAiHint": "couple beach"
+    },
+    {
+      "src": "/images/gallery-4.jpg",
+      "alt": "Una hermosa foto de paisaje de la pareja",
+      "dataAiHint": "couple landscape"
+    },
+    {
+      "src": "/images/gallery-5.jpg",
+      "alt": "Pareja compartiendo una risa",
+      "dataAiHint": "couple laughing"
+    },
+    {
+      "src": "/images/gallery-6.jpg",
+      "alt": "Pareja mirando una vista",
+      "dataAiHint": "couple view"
+    }
+  ]
+}
