@@ -31,9 +31,9 @@ export default function Home() {
         {siteConfig.sections.gallery && <AnimatedSection><Gallery /></AnimatedSection>}
         {siteConfig.sections.qrAlbum && <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>}
         {siteConfig.sections.gifts && <AnimatedSection direction="left"><Gifts /></AnimatedSection>}
-        {siteConfig.sections.share && <AnimatedSection><ShareInvitation /></AnimatedSection>}
         {siteConfig.sections.hashtag && <AnimatedSection direction="up"><Hashtag /></AnimatedSection>}
         {siteConfig.sections.rsvp && <AnimatedSection><Rsvp /></AnimatedSection>}
+        {siteConfig.sections.share && <AnimatedSection><ShareInvitation /></AnimatedSection>}
         {siteConfig.sections.seeYou && <AnimatedSection><SeeYou /></AnimatedSection>}
       </main>
       <Footer />
