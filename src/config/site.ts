@@ -51,29 +51,22 @@ export const siteConfig = {
   
   // Contenido de la sección "Nuestra Historia"
   story: {
-    title: "Nuestra Historia", // Usado para el SectionHeader, aunque el nuevo diseño no lo usa
-    intro_title: "Nosotros",
-    intro_line1: "Movidos por el amor que nos profesamos,",
-    intro_line2: "con la alegría y la bendición de nuestros padres:",
-    outro_line1: "Uniremos nuestras vidas en matrimonio",
-    outro_line2: "y tenemos el honor de invitarte a ser parte de esta celebración.",
+    intro_line1: "Cuando nos conocimos, entendimos que nos uniría algo más fuerte que el tiempo y la distancia.",
+    intro_line2: "Hoy damos gracias a Dios por habernos hecho coincidir en el camino y empezar una vida juntos.",
     parents: {
       her: {
-        title_main: "Padres",
-        title_secondary: "de la novia",
+        title: "Padres de la novia:",
         father: "Raul Sánchez Torres",
         mother: "Francisca Alvear Acosta",
       },
       him: {
-        title_main: "Padres",
-        title_secondary: "del novio",
+        title: "Mamá del novio:",
         mother: "Lourdes Aracely Fernández Galindo",
       }
     }
   },
 
   heroImage: { src: "/images/hero.jpg", alt: "Mely y Noe", dataAiHint: "romantic couple" },
-  storyImage: { src: "/images/story.jpg", alt: "Mely & Noe", dataAiHint: "couple portrait" },
   seeYouImage: { src: "/images/see-you.jpg", alt: "Pareja despidiéndose", dataAiHint: "romantic couple" },
 
   // Detalles del lugar
@@ -100,10 +93,18 @@ export const siteConfig = {
 
   // Mesa de regalos y datos bancarios
   gifts: {
-    mode: "bank", // 'bank' o 'list'
-    bankLabel: "CLABE Interbancaria",
-    bankValueMasked: "1234 **** **** 5678",
-    bankValueFull: "123456789012345678",
+    title: "Regalos",
+    intro: "Agradecemos mucho todo su amor y apoyo al iniciar esta etapa de formar nuestro hogar.",
+    modes: ["envelope", "bank"], // Opciones: 'bank', 'list', 'envelope'. Puedes combinar las que quieras.
+    envelope: {
+      title: "¡Lluvia de Sobres!",
+      description: "La lluvia de sobres, es la tradición de regalar dinero en efectivo a los novios en un sobre el día del evento.",
+    },
+    bank: {
+      label: "CLABE Interbancaria",
+      valueMasked: "1234 **** **** 5678",
+      valueFull: "123456789012345678",
+    },
     giftListUrl: "https://www.example.com/gift-registry",
   },
 

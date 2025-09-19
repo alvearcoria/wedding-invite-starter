@@ -5,19 +5,50 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
 import { CopyToClipboard } from "./CopyToClipboard";
+import { Envelope } from "./icons/Envelope";
+import { Money } from "./icons/Money";
+import { Chest } from "./icons/Chest";
+import { Plus, ArrowRight } from "lucide-react";
 
 export function Gifts() {
   const { gifts } = siteConfig;
-  const showBank = gifts.mode === 'bank';
-  const showList = gifts.mode === 'list';
+  const showBank = gifts.modes.includes('bank');
+  const showList = gifts.modes.includes('list');
+  const showEnvelope = gifts.modes.includes('envelope');
+
+  // If no gift modes are enabled, don't render the section
+  if (!showBank && !showList && !showEnvelope) {
+    return null;
+  }
 
   return (
     <SectionWrapper id="gifts">
       <SectionHeader
-        title="Regalos"
-        description="Su presencia en nuestra boda es el mejor regalo de todos. Sin embargo, si desean hacernos un obsequio, estaremos encantados."
+        title={gifts.title}
+        description={gifts.intro}
       />
-      <div className="mx-auto grid max-w-3xl gap-8 md:grid-cols-2">
+      <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-1 lg:grid-cols-2">
+        {showEnvelope && (
+           <Card className="flex flex-col items-center justify-center p-6 text-center">
+            <CardHeader>
+              <Envelope className="mx-auto mb-4 h-16 w-16 text-primary/80" />
+              <CardTitle className="font-headline text-2xl">{gifts.envelope.title}</CardTitle>
+              <CardDescription>
+                {gifts.envelope.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center gap-4">
+               <div className="flex items-center justify-center gap-2 text-foreground/70">
+                  <Envelope className="h-8 w-8" />
+                  <Plus className="h-5 w-5" />
+                  <Money className="h-8 w-8" />
+                  <ArrowRight className="h-5 w-5" />
+                  <Chest className="h-8 w-8" />
+               </div>
+               <p className="font-cursive text-2xl text-foreground/80">Thank you :)</p>
+            </CardContent>
+          </Card>
+        )}
         {showList && (
           <Card>
             <CardHeader>
@@ -47,12 +78,12 @@ export function Gifts() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium">{gifts.bankLabel}</p>
+                <p className="text-sm font-medium">{gifts.bank.label}</p>
                 <div className="flex items-center gap-2">
                   <p className="font-mono text-sm text-foreground/70 tracking-wider">
-                    {gifts.bankValueMasked}
+                    {gifts.bank.valueMasked}
                   </p>
-                  <CopyToClipboard textToCopy={gifts.bankValueFull} />
+                  <CopyToClipboard textToCopy={gifts.bank.valueFull} />
                 </div>
               </div>
             </CardContent>
