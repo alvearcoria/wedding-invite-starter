@@ -2,12 +2,10 @@ import type { SVGProps } from 'react';
 
 export function ManSuit(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg 
+    <svg
         viewBox="0 0 64 64" 
         xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        stroke="currentColor"
-        strokeWidth="2"
+        fill="currentColor"
         {...props}
     >
         <path d="M22 13L13 22 22 26 25 13z"/>

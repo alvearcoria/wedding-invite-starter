@@ -5,9 +5,7 @@ export function WomanDress(props: SVGProps<SVGSVGElement>) {
     <svg
       viewBox="0 0 64 64"
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
+      fill="currentColor"
       {...props}
     >
       <path d="M22 6l-6 10h32l-6-10z" />
