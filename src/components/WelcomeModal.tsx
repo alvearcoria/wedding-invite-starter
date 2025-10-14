@@ -12,9 +12,10 @@ export function WelcomeModal() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    // Show the modal only if music is enabled and it hasn't been shown before
-    if (siteConfig.sections.music && sessionStorage.getItem("welcomeModalShown") !== "true") {
-      setIsVisible(true);
+    const isModalAlreadyShown = sessionStorage.getItem("welcomeModalShown") === "true";
+    if (siteConfig.sections.music && !isModalAlreadyShown) {
+      // Forzar la entrada automáticamente para desarrollo
+      handleEnter();
     }
   }, []);
 
@@ -29,7 +30,7 @@ export function WelcomeModal() {
     }, 500); // Match fade-out duration
   };
 
-  if (!isVisible) {
+  if (!isVisible || isFadingOut) { // Mantenerlo nulo mientras se desvanece
     return null;
   }
 
