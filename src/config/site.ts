@@ -1,4 +1,3 @@
-
 import type { IconName } from "@/components/icons";
 import imageData from "@/lib/placeholder-images.json";
 
@@ -132,14 +131,7 @@ export const siteConfig = {
     whatsappMessage: "¡Estás invitado a nuestra boda! Acompáñanos a celebrar el día más importante de nuestras vidas. Encuentra todos los detalles aquí:",
   },
 
-  galleryImages: [
-    { "src": "https://picsum.photos/seed/g1/800/1200", "alt": "Una pareja de enamorados abrazándose", "dataAiHint": "wedding couple" },
-    { "src": "https://picsum.photos/seed/g2/800/1200", "alt": "Primer plano de la pareja sonriendo", "dataAiHint": "happy couple" },
-    { "src": "https://picsum.photos/seed/g3/800/1200", "alt": "Pareja caminando en la playa", "dataAiHint": "couple beach" },
-    { "src": "https://picsum.photos/seed/g4/800/1200", "alt": "Una hermosa foto de paisaje de la pareja", "dataAiHint": "couple landscape" },
-    { "src": "https://picsum.photos/seed/g5/800/1200", "alt": "Pareja compartiendo una risa", "dataAiHint": "couple laughing" },
-    { "src": "https://picsum.photos/seed/g6/800/1200", "alt": "Pareja mirando una vista", "dataAiHint": "couple view" }
-  ],
+  galleryImages: imageData.galleryImages,
   qrAlbum: {
     url: "https://photos.app.goo.gl/example",
   },
