@@ -1,7 +1,6 @@
 
 import type { IconName } from "@/components/icons";
 import imageData from "@/lib/placeholder-images.json";
-import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee } from "lucide-react";
 
 export const siteConfig = {
   title: "Mely & Noe: Por siempre",
@@ -96,19 +95,17 @@ export const siteConfig = {
 
   timelineEvents: [
     { time: "4:30 PM", event: "Ceremonia", description: "Sean testigos de nuestros votos y el comienzo de nuestro para siempre.", icon: "Church" },
-    { time: "6:00 PM", event: "Recepción", description: "Disfruten de la bienvenida.", icon: "Bell" },
-    { time: "6:00 PM", event: "Cocktail", description: "Disfruten de bebidas y bocadillos.", icon: "GlassWater" },
-    { time: "6:15 PM", event: "Boda Civil", description: "El momento legal de nuestra unión.", icon: "PenSquare" },
-    { time: "8:00 PM", event: "Cena", description: "Acompáñennos para una deliciosa cena.", icon: "Utensils" },
-    { time: "9:30 PM", event: "Primer Baile", description: "Nuestro primer baile como esposos.", icon: "HeartHandshake" },
-    { time: "9:50 PM", event: "¡Fiesta!", description: "¡Vamos a la pista de baile!", icon: "Music" },
+    { time: "8:00 PM", event: "Recepción", description: "Disfruten de la bienvenida.", icon: "Bell" },
+    { time: "8:30 PM", event: "Primer Baile", description: "Nuestro primer baile como esposos.", icon: "HeartHandshake" },
+    { time: "9:00 PM", event: "Cena", description: "Acompáñennos para una deliciosa cena.", icon: "Utensils" },    
+    { time: "10:00 PM", event: "¡Fiesta!", description: "¡Vamos a la pista de baile!", icon: "Music" },
     { time: "12:30 AM", event: "Tornaboda", description: "Continuemos la celebración.", icon: "Coffee" },
   ],
 
   gifts: {
     title: "Regalos",
     intro: "Agradecemos mucho todo su amor y apoyo al iniciar esta etapa de formar nuestro hogar.",
-    modes: ["envelope", "bank"],
+    modes: ["envelope"],
     envelope: {
       title: "¡Lluvia de Sobres!",
       description: "La lluvia de sobres, es la tradición de regalar dinero en efectivo a los novios en un sobre el día del evento.",
