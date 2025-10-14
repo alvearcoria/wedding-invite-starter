@@ -12,6 +12,7 @@ export function WelcomeModal() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
+    // Always show the modal if music is enabled in the site config.
     if (siteConfig.sections.music) {
       setIsVisible(true);
     }
@@ -40,7 +41,7 @@ export function WelcomeModal() {
     >
       <div className={cn(
           "flex flex-col items-center gap-6 text-center text-foreground transition-all duration-500 ease-out",
-          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          isVisible && !isFadingOut ? "opacity-100 scale-100" : "opacity-0 scale-95"
         )}
       >
         <h2 className="font-headline text-4xl">
