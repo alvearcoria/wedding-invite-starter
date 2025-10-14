@@ -3,6 +3,8 @@ import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
 import { WomanDress } from "./icons/WomanDress";
 import { ManSuit } from "./icons/ManSuit";
+import { Button } from "./ui/button";
+import { ExternalLink } from "lucide-react";
 
 export function DressCode() {
   const { dressCode } = siteConfig;
@@ -32,7 +34,17 @@ export function DressCode() {
           </div>
         </div>
       </div>
-      <p className="mt-12 text-center text-lg text-foreground/80">{dressCode.note}</p>
+      <div className="mt-12 text-center">
+        <p className="text-lg text-foreground/80">{dressCode.note}</p>
+        {dressCode.imageUrl && (
+          <Button asChild variant="outline" className="mt-6">
+            <a href={dressCode.imageUrl} target="_blank" rel="noopener noreferrer">
+              {dressCode.imageButtonLabel}
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+        )}
+      </div>
     </SectionWrapper>
   );
 }

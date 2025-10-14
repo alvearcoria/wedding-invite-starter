@@ -89,8 +89,10 @@ export const siteConfig = {
   
   dressCode: {
     title: "Código de Vestimenta",
-    description: "Para que te sientas cómodo y te veas increíble, aquí te dejamos una guía.",
-    note: "Formal. Evitar blanco. Gracias 💛"
+    description: "Formal. Estaremos en otoño, por ello te dejamos algunas ideas de colores que van con la época del año.",
+    note: "Evitar el blanco y todos sus tonos similares (beige, marfil, hueso, crema, etc.), reservados para la novia.",
+    imageUrl: "https://picsum.photos/seed/colors/800/600",
+    imageButtonLabel: "Ver paleta de colores"
   },
 
   timelineEvents: [
