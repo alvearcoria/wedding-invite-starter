@@ -92,7 +92,7 @@ export const siteConfig = {
     description: "Formal. Estaremos en otoño, por ello te dejamos algunas ideas de colores que van con la época del año.",
     note: "Evitar el blanco y todos sus tonos similares (beige, marfil, hueso, crema, etc.), reservados para la novia.",
     imageUrl: "https://pin.it/6CpwooEjD",
-    imageButtonLabel: "Ver paleta de colores",
+    imageButtonLabel: "Clic para mas ideas",
     womanImage: {
       src: "https://ik.imagekit.io/alvearcoria92/VestimentaMujer.png?updatedAt=1760480501865",
       alt: "Vestimenta sugerida para mujeres"
