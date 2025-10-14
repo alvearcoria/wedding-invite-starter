@@ -29,109 +29,107 @@ export default function Home() {
         <Hero />
         <ScrollToTopOnMount />
         
-        {siteConfig.sections.story && (
-          <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-transparent" />
-            <AnimatedSection>
-              <OurStory />
-            </AnimatedSection>
-          </>
-        )}
-        
-        {siteConfig.sections.timeline && (
-           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-              <Timeline />
-            </AnimatedSection>
-           </>
-        )}
-        
-        {siteConfig.sections.dressCode && (
-          <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection>
-              <DressCode />
-            </AnimatedSection>
-          </>
-        )}
-        
-        {siteConfig.sections.venues && (
-           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-              <Venues />
-            </AnimatedSection>
-           </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.story && (
+                <>
+                    <SectionSeparator waveColor="fill-background" bgColor="bg-transparent" />
+                    <OurStory />
+                </>
+            )}
+        </AnimatedSection>
 
-        {siteConfig.sections.gallery && (
-          <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection>
-              <Gallery />
-            </AnimatedSection>
-          </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.timeline && (
+            <>
+                <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+                <Timeline />
+            </>
+            )}
+        </AnimatedSection>
         
-        {siteConfig.sections.hotels && (
-          <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-              <Hotels />
-            </AnimatedSection>
-          </>
-        )}
-
-        {siteConfig.sections.gifts && (
-          <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection>
-              <Gifts />
-            </AnimatedSection>
-          </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.dressCode && (
+            <>
+                <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+                <DressCode />
+            </>
+            )}
+        </AnimatedSection>
         
-        {siteConfig.sections.shareAndConnect && (
-           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-              <ShareAndConnect />
-            </AnimatedSection>
-           </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.venues && (
+            <>
+                <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+                <Venues />
+            </>
+            )}
+        </AnimatedSection>
 
-        {siteConfig.sections.rsvp && (
-          <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection>
-              <Rsvp />
-            </AnimatedSection>
-          </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.gallery && (
+            <>
+                <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+                <Gallery />
+            </>
+            )}
+        </AnimatedSection>
+        
+        <AnimatedSection>
+            {siteConfig.sections.hotels && (
+            <>
+                <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+                <Hotels />
+            </>
+            )}
+        </AnimatedSection>
 
-        {siteConfig.sections.share && (
-          <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-              <ShareInvitation />
-            </AnimatedSection>
-          </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.gifts && (
+            <>
+                <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+                <Gifts />
+            </>
+            )}
+        </AnimatedSection>
+        
+        <AnimatedSection>
+            {siteConfig.sections.shareAndConnect && (
+            <>
+                <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+                <ShareAndConnect />
+            </>
+            )}
+        </AnimatedSection>
 
-        {siteConfig.sections.seeYou && (
-          <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection>
-              <SeeYou />
-            </AnimatedSection>
-          </>
-        )}
+        <AnimatedSection>
+            {siteConfig.sections.rsvp && (
+            <>
+                <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+                <Rsvp />
+            </>
+            )}
+        </AnimatedSection>
+
+        <AnimatedSection>
+            {siteConfig.sections.share && (
+            <>
+                <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+                <ShareInvitation />
+            </>
+            )}
+        </AnimatedSection>
+
+        <AnimatedSection>
+            {siteConfig.sections.seeYou && (
+            <>
+                <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+                <SeeYou />
+            </>
+            )}
+        </AnimatedSection>
 
       </main>
       <Footer />
     </div>
   );
 }
-
-    

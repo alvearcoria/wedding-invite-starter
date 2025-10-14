@@ -134,6 +134,7 @@ export const siteConfig = {
   },
 
   galleryImages: imageData.galleryImages,
+  
   qrAlbum: {
     url: "https://photos.app.goo.gl/example",
   },
@@ -146,5 +147,3 @@ export const siteConfig = {
 };
 
 export type SiteConfig = typeof siteConfig;
-
-    
