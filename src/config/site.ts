@@ -69,7 +69,10 @@ export const siteConfig = {
   },
 
   heroImage: imageData.heroImage,
-  seeYouImage: imageData.seeYouImage,
+  seeYouImage: {
+    ...imageData.seeYouImage,
+    src: "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%2011.JPG?updatedAt=1760477015159",
+  },
 
   venues: {
     ceremony: {
@@ -93,7 +96,7 @@ export const siteConfig = {
     imageUrl: "https://pin.it/6CpwooEjD",
     imageButtonLabel: "Clic para mas ideas",
     womanImage: {
-      src: "https://ik.imagekit.io/alvearcoria92/VestimentaMujer.png?updatedAt=1760480501865",
+      src: "https://ik.imagekit.io/alvearcoria92/VestimentaMujer.png?updatedAt=1760485105414",
       alt: "Vestimenta sugerida para mujeres"
     },
     manImage: {
