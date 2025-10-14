@@ -51,7 +51,6 @@ export const siteConfig = {
     intro_line1: "Cuando nos conocimos, entendimos que nos uniría algo más fuerte que el tiempo y la distancia.",
     intro_line2: "Hoy damos gracias a Dios por habernos hecho coincidir en el camino y empezar una vida juntos.",
     parents: {
-      title: "Nombres de los papás de ambos",
       her: {
         title_main: "Padres de la novia",
         title_secondary: "de la novia:",
