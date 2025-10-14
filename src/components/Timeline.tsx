@@ -1,25 +1,31 @@
+
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, FC, ComponentType } from 'react';
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
-import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee } from "lucide-react";
+import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee, LucideProps } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { siteConfig } from '@/config/site';
 
-const timelineEvents = [
-  { time: "4:30 PM", event: "Ceremonia", description: "Sean testigos de nuestros votos y el comienzo de nuestro para siempre.", icon: Church },
-  { time: "6:00 PM", event: "Recepción", description: "Disfruten de la bienvenida.", icon: Bell },
-  { time: "6:00 PM", event: "Cocktail", description: "Disfruten de bebidas y bocadillos.", icon: GlassWater },
-  { time: "6:15 PM", event: "Boda Civil", description: "El momento legal de nuestra unión.", icon: PenSquare },
-  { time: "8:00 PM", event: "Cena", description: "Acompáñennos para una deliciosa cena.", icon: Utensils },
-  { time: "9:30 PM", event: "Primer Baile", description: "Nuestro primer baile como esposos.", icon: HeartHandshake },
-  { time: "9:50 PM", event: "¡Fiesta!", description: "¡Vamos a la pista de baile!", icon: Music },
-  { time: "12:30 AM", event: "Tornaboda", description: "Continuemos la celebración.", icon: Coffee },
-];
+const iconMap: { [key: string]: ComponentType<LucideProps> } = {
+  Church,
+  Bell,
+  GlassWater,
+  PenSquare,
+  Utensils,
+  HeartHandshake,
+  Music,
+  Coffee,
+};
 
-const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: number }) => {
+type TimelineEvent = (typeof siteConfig.timelineEvents)[0];
+
+const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const isEven = index % 2 === 0;
+
+  const IconComponent = iconMap[item.icon];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -67,7 +73,7 @@ const TimelineItem = ({ item, index }: { item: typeof timelineEvents[0], index: 
           "flex h-12 w-12 items-center justify-center rounded-full bg-accent transition-all duration-500",
           isVisible && "bg-primary text-primary-foreground scale-110"
           )}>
-          <item.icon className="h-6 w-6" />
+          {IconComponent && <IconComponent className="h-6 w-6" />}
         </div>
       </div>
       <div className={cn("w-1/2", isEven ? "pl-8" : "pr-8")} />
@@ -89,7 +95,7 @@ export function Timeline() {
           aria-hidden="true"
         />
         <div className="space-y-12">
-          {timelineEvents.map((item, index) => (
+          {siteConfig.timelineEvents.map((item, index) => (
              <TimelineItem key={index} item={item} index={index} />
           ))}
         </div>
