@@ -37,7 +37,7 @@ export default function Home() {
         {siteConfig.sections.timeline && (
            <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <Timeline />
+            <AnimatedSection><Timeline /></AnimatedSection>
            </>
         )}
         

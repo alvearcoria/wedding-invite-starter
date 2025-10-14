@@ -15,8 +15,8 @@ export function SectionSeparator({
     flip = false,
 }: SectionSeparatorProps) {
   return (
-    <div className={cn("relative -mb-px w-full h-8 md:h-10 z-10", bgColor, className)}>
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+    <div className={cn("relative w-full h-8 md:h-10", bgColor, className)}>
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10">
         <svg
           viewBox="0 0 1440 100"
           preserveAspectRatio="none"
