@@ -12,8 +12,7 @@ export function WelcomeModal() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    const isModalAlreadyShown = sessionStorage.getItem("welcomeModalShown") === "true";
-    if (siteConfig.sections.music && !isModalAlreadyShown) {
+    if (siteConfig.sections.music) {
       setIsVisible(true);
     }
   }, []);
@@ -22,7 +21,6 @@ export function WelcomeModal() {
     // Dispatch a custom event to tell the MusicControl component to play
     window.dispatchEvent(new CustomEvent("playAudio"));
     
-    sessionStorage.setItem("welcomeModalShown", "true");
     setIsFadingOut(true);
     setTimeout(() => {
       setIsVisible(false);
