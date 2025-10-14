@@ -14,8 +14,7 @@ export function WelcomeModal() {
   useEffect(() => {
     const isModalAlreadyShown = sessionStorage.getItem("welcomeModalShown") === "true";
     if (siteConfig.sections.music && !isModalAlreadyShown) {
-      // Forzar la entrada automáticamente para desarrollo
-      handleEnter();
+      setIsVisible(true);
     }
   }, []);
 
@@ -30,7 +29,7 @@ export function WelcomeModal() {
     }, 500); // Match fade-out duration
   };
 
-  if (!isVisible || isFadingOut) { // Mantenerlo nulo mientras se desvanece
+  if (!isVisible) {
     return null;
   }
 
@@ -41,7 +40,11 @@ export function WelcomeModal() {
         isFadingOut ? "opacity-0" : "opacity-100"
       )}
     >
-      <div className="flex flex-col items-center gap-6 text-center text-foreground animate-fade-in-up">
+      <div className={cn(
+          "flex flex-col items-center gap-6 text-center text-foreground transition-all duration-500 ease-out",
+          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        )}
+      >
         <h2 className="font-headline text-4xl">
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h2>
