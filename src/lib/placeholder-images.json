@@ -1,43 +1,67 @@
-
 {
   "heroImage": {
-    "src": "https://ik.imagekit.io/alvearcoria92/Test%20File/IMG_20250809_193747~2.jpg?tr=fo-auto",
+    "src": "https://ik.imagekit.io/alvearcoria92/Portada.JPG?updatedAt=1760476438432",
     "alt": "Mely y Noe",
     "dataAiHint": "romantic couple"
   },
   "seeYouImage": {
-    "src": "https://ik.imagekit.io/alvearcoria92/ParejaPie.jpg?updatedAt=1758304554516",
+    "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%2011.JPG?updatedAt=1760477015159",
     "alt": "Pareja despidiéndose",
     "dataAiHint": "romantic couple"
   },
   "galleryImages": [
     {
-      "src": "https://picsum.photos/seed/g1/600/800",
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%201.jpg?updatedAt=1760477008408",
       "alt": "Una pareja de enamorados abrazándose",
       "dataAiHint": "wedding couple"
     },
     {
-      "src": "https://picsum.photos/seed/g2/600/800",
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%202.jpg?updatedAt=1760477008651",
       "alt": "Primer plano de la pareja sonriendo",
       "dataAiHint": "happy couple"
     },
     {
-      "src": "https://picsum.photos/seed/g3/600/800",
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%203.jpg?updatedAt=1760477008658",
       "alt": "Pareja caminando en la playa",
       "dataAiHint": "couple beach"
     },
     {
-      "src": "https://picsum.photos/seed/g4/600/800",
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%204.jpg?updatedAt=1760477016019",
       "alt": "Una hermosa foto de paisaje de la pareja",
       "dataAiHint": "couple landscape"
     },
     {
-      "src": "https://picsum.photos/seed/g5/600/800",
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%205.jpg?updatedAt=1760477014949",
       "alt": "Pareja compartiendo una risa",
       "dataAiHint": "couple laughing"
     },
     {
-      "src": "https://picsum.photos/seed/g6/600/800",
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%206.JPG?updatedAt=1760477011310",
+      "alt": "Pareja mirando una vista",
+      "dataAiHint": "couple view"
+    },
+    {
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%207.jpg?updatedAt=1760477008292",
+      "alt": "Pareja mirando una vista",
+      "dataAiHint": "couple view"
+    },
+    {
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%208.JPG?updatedAt=1760477010294",
+      "alt": "Pareja mirando una vista",
+      "dataAiHint": "couple view"
+    },
+    {
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%209.JPG?updatedAt=1760477013915",
+      "alt": "Pareja mirando una vista",
+      "dataAiHint": "couple view"
+    },
+    {
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%2010.jpg?updatedAt=1760477011445",
+      "alt": "Pareja mirando una vista",
+      "dataAiHint": "couple view"
+    },
+    {
+      "src": "https://ik.imagekit.io/alvearcoria92/Album/Fotografia%2011.JPG?updatedAt=1760477015159",
       "alt": "Pareja mirando una vista",
       "dataAiHint": "couple view"
     }

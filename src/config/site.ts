@@ -74,7 +74,7 @@ export const siteConfig = {
 
   venues: {
     ceremony: {
-      name: "Parroquia San Juan de los Lagos",
+      name: "Parroquia San Judas Tadeo",
       address: "Mimas 230, Cosmópolis, 66614 Cdad. Apodaca, N.L.",
       mapsUrl: "https://maps.app.goo.gl/qauGCHY6QL5kMeHGA",
       location: { lat: 25.81718855435814, lng: -100.24636189477839 },
@@ -96,7 +96,7 @@ export const siteConfig = {
   gifts: {
     title: "Regalos",
     intro: "Agradecemos mucho todo su amor y apoyo al iniciar esta etapa de formar nuestro hogar.",
-    modes: ["envelope", "bank"],
+    modes: ["envelope"],
     envelope: {
       title: "¡Lluvia de Sobres!",
       description: "La lluvia de sobres, es la tradición de regalar dinero en efectivo a los novios en un sobre el día del evento.",
