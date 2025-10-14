@@ -1,3 +1,4 @@
+
 import type { IconName } from "@/components/icons";
 import imageData from "@/lib/placeholder-images.json";
 
@@ -15,7 +16,7 @@ export const siteConfig = {
   city: "Apodaca, N.L., México",
   hashtag: "#MelyYNoeParaSiempre",
 
-  heroIcon: 'heart' as IconName,
+  heroIcon: 'flower' as IconName,
 
   sections: {
     music: true,

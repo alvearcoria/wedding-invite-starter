@@ -1,6 +1,7 @@
 
 import { siteConfig } from "@/config/site";
 import { SectionWrapper } from "./SectionWrapper";
+import { Heart } from "./icons/Heart";
 
 export function OurStory() {
   const { story, couple } = siteConfig;
@@ -10,9 +11,9 @@ export function OurStory() {
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-12">
           <p className="mb-2 uppercase tracking-[0.2em] text-foreground/60">{story.intro_title}</p>
-          <h2 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl">
+          <h2 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl flex items-center justify-center gap-4">
             {couple.her}
-            <span className="mx-2 font-serif text-4xl text-amber-500">&amp;</span>
+            <Heart className="h-8 w-8 text-accent" />
             {couple.him}
           </h2>
         </div>

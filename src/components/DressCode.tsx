@@ -8,14 +8,14 @@ import { ExternalLink } from "lucide-react";
 export function DressCode() {
   const { dressCode } = siteConfig;
   return (
-    <SectionWrapper id="dress-code" className="bg-card">
+    <SectionWrapper id="dress-code" className="bg-background">
       <SectionHeader
         title={dressCode.title}
         description={dressCode.description}
       />
       <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 text-center md:grid-cols-2">
         <div className="flex flex-col items-center gap-4">
-          <div className="relative h-48 w-48 overflow-hidden rounded-full bg-background shadow-inner">
+          <div className="relative h-48 w-48 overflow-hidden rounded-full bg-card shadow-inner">
             <Image
               src={dressCode.womanImage.src}
               alt={dressCode.womanImage.alt}
@@ -29,7 +29,7 @@ export function DressCode() {
           </div>
         </div>
         <div className="flex flex-col items-center gap-4">
-           <div className="relative h-48 w-48 overflow-hidden rounded-full bg-background shadow-inner">
+           <div className="relative h-48 w-48 overflow-hidden rounded-full bg-card shadow-inner">
             <Image
               src={dressCode.manImage.src}
               alt={dressCode.manImage.alt}
