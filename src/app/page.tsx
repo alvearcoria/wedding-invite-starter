@@ -18,6 +18,7 @@ import { WelcomeModal } from "@/components/WelcomeModal";
 import { ShareInvitation } from "@/components/ShareInvitation";
 import { SectionSeparator } from "@/components/SectionSeparator";
 import { Hotels } from "@/components/Hotels";
+import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 
 export default function Home() {
   return (
@@ -30,89 +31,114 @@ export default function Home() {
         {siteConfig.sections.story && (
           <>
             <SectionSeparator waveColor="fill-background" />
-            <AnimatedSection direction="left"><OurStory /></AnimatedSection>
+            <AnimatedSection>
+              <OurStory />
+            </AnimatedSection>
           </>
         )}
         
         {siteConfig.sections.timeline && (
            <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection><Timeline /></AnimatedSection>
+            <AnimatedSection>
+              <Timeline />
+            </AnimatedSection>
            </>
         )}
         
         {siteConfig.sections.dressCode && (
           <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection><DressCode /></AnimatedSection>
+            <AnimatedSection>
+              <DressCode />
+            </AnimatedSection>
           </>
         )}
         
         {siteConfig.sections.venues && (
            <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection direction="right"><Venues /></AnimatedSection>
+            <AnimatedSection>
+              <Venues />
+            </AnimatedSection>
            </>
         )}
 
         {siteConfig.sections.gallery && (
           <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection><Gallery /></AnimatedSection>
+            <AnimatedSection>
+              <Gallery />
+            </AnimatedSection>
           </>
         )}
         
         {siteConfig.sections.hotels && (
           <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection direction="up"><Hotels /></AnimatedSection>
+            <AnimatedSection>
+              <Hotels />
+            </AnimatedSection>
           </>
         )}
 
         {siteConfig.sections.qrAlbum && (
            <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>
+            <AnimatedSection>
+              <QrAlbum />
+            </AnimatedSection>
            </>
         )}
 
         {siteConfig.sections.gifts && (
           <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection direction="left"><Gifts /></AnimatedSection>
+            <AnimatedSection>
+              <Gifts />
+            </AnimatedSection>
           </>
         )}
         
         {siteConfig.sections.hashtag && (
            <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection direction="up"><Hashtag /></AnimatedSection>
+            <AnimatedSection>
+              <Hashtag />
+            </AnimatedSection>
            </>
         )}
 
         {siteConfig.sections.rsvp && (
           <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection><Rsvp /></AnimatedSection>
+            <AnimatedSection>
+              <Rsvp />
+            </AnimatedSection>
           </>
         )}
 
         {siteConfig.sections.share && (
           <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection><ShareInvitation /></AnimatedSection>
+            <AnimatedSection>
+              <ShareInvitation />
+            </AnimatedSection>
           </>
         )}
 
         {siteConfig.sections.seeYou && (
           <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
-            <AnimatedSection><SeeYou /></AnimatedSection>
+            <AnimatedSection>
+              <SeeYou />
+            </AnimatedSection>
           </>
         )}
 
       </main>
       <Footer />
+      <ScrollToTopOnMount />
     </div>
   );
 }
