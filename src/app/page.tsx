@@ -16,25 +16,93 @@ import { Hashtag } from "@/components/Hashtag";
 import { SeeYou } from "@/components/SeeYou";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { ShareInvitation } from "@/components/ShareInvitation";
+import { SectionSeparator } from "@/components/SectionSeparator";
 
 export default function Home() {
   return (
-    <div className="flex min-h-[100dvh] flex-col">
+    <div className="flex min-h-[100dvh] flex-col overflow-x-hidden">
       <main className="flex-1">
         <MusicControl />
         <WelcomeModal />
         <Hero />
-        {siteConfig.sections.story && <AnimatedSection direction="left"><OurStory /></AnimatedSection>}
-        {siteConfig.sections.timeline && <Timeline />}
-        {siteConfig.sections.dressCode && <AnimatedSection><DressCode /></AnimatedSection>}
-        {siteConfig.sections.venues && <AnimatedSection direction="right"><Venues /></AnimatedSection>}
-        {siteConfig.sections.gallery && <AnimatedSection><Gallery /></AnimatedSection>}
-        {siteConfig.sections.qrAlbum && <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>}
-        {siteConfig.sections.gifts && <AnimatedSection direction="left"><Gifts /></AnimatedSection>}
-        {siteConfig.sections.hashtag && <AnimatedSection direction="up"><Hashtag /></AnimatedSection>}
-        {siteConfig.sections.rsvp && <AnimatedSection><Rsvp /></AnimatedSection>}
-        {siteConfig.sections.share && <AnimatedSection><ShareInvitation /></AnimatedSection>}
-        {siteConfig.sections.seeYou && <AnimatedSection><SeeYou /></AnimatedSection>}
+        
+        {siteConfig.sections.story && (
+          <>
+            <SectionSeparator waveColor="fill-background" />
+            <AnimatedSection direction="left"><OurStory /></AnimatedSection>
+          </>
+        )}
+        
+        {siteConfig.sections.timeline && (
+           <>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <Timeline />
+           </>
+        )}
+        
+        {siteConfig.sections.dressCode && (
+          <>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <AnimatedSection><DressCode /></AnimatedSection>
+          </>
+        )}
+        
+        {siteConfig.sections.venues && (
+           <>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <AnimatedSection direction="right"><Venues /></AnimatedSection>
+           </>
+        )}
+
+        {siteConfig.sections.gallery && (
+          <>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <AnimatedSection><Gallery /></AnimatedSection>
+          </>
+        )}
+
+        {siteConfig.sections.qrAlbum && (
+           <>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>
+           </>
+        )}
+
+        {siteConfig.sections.gifts && (
+          <>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <AnimatedSection direction="left"><Gifts /></AnimatedSection>
+          </>
+        )}
+        
+        {siteConfig.sections.hashtag && (
+           <>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <AnimatedSection direction="up"><Hashtag /></AnimatedSection>
+           </>
+        )}
+
+        {siteConfig.sections.rsvp && (
+          <>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <AnimatedSection><Rsvp /></AnimatedSection>
+          </>
+        )}
+
+        {siteConfig.sections.share && (
+          <>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <AnimatedSection><ShareInvitation /></AnimatedSection>
+          </>
+        )}
+
+        {siteConfig.sections.seeYou && (
+          <>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <AnimatedSection><SeeYou /></AnimatedSection>
+          </>
+        )}
+
       </main>
       <Footer />
     </div>

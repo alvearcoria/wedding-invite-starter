@@ -10,7 +10,7 @@ import MapWrapper from "./Map";
 export function Venues() {
   const { ceremony, reception } = siteConfig.venues;
   return (
-    <SectionWrapper id="venues">
+    <SectionWrapper id="venues" className="bg-card py-16 md:py-24 lg:py-32">
       <SectionHeader
         title="Ceremonia y Recepción"
         description="Encuentra el camino a nuestra celebración. ¡Estamos ansiosos por verte allí!"

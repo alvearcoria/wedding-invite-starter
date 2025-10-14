@@ -7,7 +7,7 @@ export function QrAlbum() {
   if (!siteConfig.qrAlbum.url) return null;
 
   return (
-    <SectionWrapper id="qr-album" className="bg-card">
+    <SectionWrapper id="qr-album" className="bg-card py-16 md:py-24 lg:py-32">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mt-16 flex flex-col items-center justify-center gap-6 rounded-lg border-2 border-dashed border-border bg-background p-8 text-center">
           <h3 className="font-headline text-2xl font-semibold">¡Comparte Tus Fotos!</h3>

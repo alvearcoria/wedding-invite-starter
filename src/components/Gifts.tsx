@@ -25,7 +25,7 @@ export function Gifts() {
   const gridClasses = enabledModesCount > 1 ? "lg:grid-cols-2" : "lg:grid-cols-1";
 
   return (
-    <SectionWrapper id="gifts">
+    <SectionWrapper id="gifts" className="py-16 md:py-24 lg:py-32">
       <SectionHeader
         title={gifts.title}
         description={gifts.intro}
@@ -33,7 +33,7 @@ export function Gifts() {
       <div className={`mx-auto grid max-w-4xl gap-8 md:grid-cols-1 ${gridClasses}`}>
         {showEnvelope && (
            <div className={enabledModesCount === 1 ? "max-w-md mx-auto" : ""}>
-             <Card className="flex flex-col items-center justify-center p-6 text-center h-full">
+             <Card className="flex flex-col items-center justify-center p-6 text-center h-full bg-card/70 backdrop-blur-sm">
               <CardHeader>
                 <Envelope className="mx-auto mb-4 h-16 w-16 text-primary/80" />
                 <CardTitle className="font-headline text-2xl">{gifts.envelope.title}</CardTitle>

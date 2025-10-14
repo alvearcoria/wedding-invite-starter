@@ -9,12 +9,8 @@ interface SectionWrapperProps {
 }
 
 export function SectionWrapper({ id, children, className }: SectionWrapperProps) {
-  const isColored = className?.includes('bg-card');
   return (
-    <section id={id} className={cn("border-t border-b border-border/50", 
-      isColored && "md:rounded-t-3xl md:rounded-b-3xl md:border-x", 
-      className
-    )}>
+    <section id={id} className={cn("", className)}>
       <div className="container mx-auto px-4 md:px-6">
         {children}
       </div>

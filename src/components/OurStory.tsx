@@ -7,7 +7,7 @@ export function OurStory() {
   const { story, couple } = siteConfig;
 
   return (
-    <SectionWrapper id="our-story">
+    <SectionWrapper id="our-story" className="py-16 md:py-24 lg:py-32">
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-12">
           <p className="mb-2 uppercase tracking-[0.2em] text-foreground/60">{story.intro_title}</p>

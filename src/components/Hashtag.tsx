@@ -9,8 +9,8 @@ export function Hashtag() {
   const { hashtag } = siteConfig;
 
   return (
-    <SectionWrapper id="hashtag">
-      <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-card p-8 text-center shadow-lg">
+    <SectionWrapper id="hashtag" className="py-16 md:py-24 lg:py-32 bg-card">
+      <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-background p-8 text-center shadow-lg">
         <Flower className="h-10 w-10 text-primary" />
         <h3 className="font-headline text-3xl font-semibold">Nuestro Hashtag</h3>
         <p className="max-w-md text-foreground/70">

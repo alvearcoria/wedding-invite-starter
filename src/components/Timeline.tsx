@@ -70,7 +70,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
       </div>
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
         <div className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-full bg-accent transition-all duration-500",
+          "flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground transition-all duration-500",
           isVisible && "bg-primary text-primary-foreground scale-110"
           )}>
           {IconComponent && <IconComponent className="h-6 w-6" />}
@@ -84,7 +84,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
 
 export function Timeline() {
   return (
-    <SectionWrapper id="timeline" className="bg-card">
+    <SectionWrapper id="timeline" className="bg-card py-16 md:py-24 lg:py-32">
       <SectionHeader
         title="El Gran Día"
         description="Esto es lo que pueden esperar durante la celebración de nuestra boda."

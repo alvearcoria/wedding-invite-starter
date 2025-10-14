@@ -13,8 +13,8 @@ export function ShareInvitation() {
   const whatsappUrl = `https://wa.me/?text=${whatsappMessage}`;
 
   return (
-    <SectionWrapper id="share">
-      <div className="mx-auto flex max-w-lg flex-col items-center gap-6 rounded-lg bg-card p-8 text-center shadow-md">
+    <SectionWrapper id="share" className="bg-card py-16 md:py-24 lg:py-32">
+      <div className="mx-auto flex max-w-lg flex-col items-center gap-6 rounded-lg bg-background p-8 text-center shadow-md">
         <Share2 className="h-8 w-8 text-primary" />
         <h3 className="font-headline text-2xl font-semibold">Comparte Nuestra Alegría</h3>
         <p className="text-sm text-foreground/70">
