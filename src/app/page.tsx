@@ -17,6 +17,7 @@ import { SeeYou } from "@/components/SeeYou";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { ShareInvitation } from "@/components/ShareInvitation";
 import { SectionSeparator } from "@/components/SectionSeparator";
+import { Hotels } from "@/components/Hotels";
 
 export default function Home() {
   return (
@@ -60,45 +61,52 @@ export default function Home() {
             <AnimatedSection><Gallery /></AnimatedSection>
           </>
         )}
+        
+        {siteConfig.sections.hotels && (
+          <>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <AnimatedSection direction="up"><Hotels /></AnimatedSection>
+          </>
+        )}
 
         {siteConfig.sections.qrAlbum && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection direction="up"><QrAlbum /></AnimatedSection>
            </>
         )}
 
         {siteConfig.sections.gifts && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection direction="left"><Gifts /></AnimatedSection>
           </>
         )}
         
         {siteConfig.sections.hashtag && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection direction="up"><Hashtag /></AnimatedSection>
            </>
         )}
 
         {siteConfig.sections.rsvp && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection><Rsvp /></AnimatedSection>
           </>
         )}
 
         {siteConfig.sections.share && (
           <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection><ShareInvitation /></AnimatedSection>
           </>
         )}
 
         {siteConfig.sections.seeYou && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection><SeeYou /></AnimatedSection>
           </>
         )}

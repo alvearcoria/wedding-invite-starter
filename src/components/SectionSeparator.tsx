@@ -4,19 +4,28 @@ import { cn } from "@/lib/utils";
 interface SectionSeparatorProps {
   waveColor?: string;
   bgColor?: string;
+  className?: string;
+  flip?: boolean;
 }
 
-export function SectionSeparator({ waveColor = 'fill-background', bgColor = 'bg-transparent' }: SectionSeparatorProps) {
+export function SectionSeparator({ 
+    waveColor = 'fill-background', 
+    bgColor = 'bg-transparent',
+    className,
+    flip = false,
+}: SectionSeparatorProps) {
   return (
-    <div className={cn("relative -mb-1 w-full", bgColor)}>
-      <svg
-        className={cn("w-full h-auto", waveColor)}
-        viewBox="0 0 1440 100"
-        preserveAspectRatio="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M1440,100C1200,100,960,0,720,0S240,100,0,100V100H1440Z" />
-      </svg>
+    <div className={cn("relative -mb-px w-full h-16 md:h-24", bgColor, className)}>
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+        <svg
+          viewBox="0 0 1440 100"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={cn("relative block h-[75px] w-[calc(100%+1.3px)] md:h-[100px]", waveColor, flip && "transform -scale-x-100")}
+        >
+          <path d="M1200,50C1000,150,800,0,600,50C400,100,200,-50,0,50V100H1440V50H1200Z" />
+        </svg>
+      </div>
     </div>
   );
 }
