@@ -91,8 +91,16 @@ export const siteConfig = {
     title: "Código de Vestimenta",
     description: "Formal. Estaremos en otoño, por ello te dejamos algunas ideas de colores que van con la época del año.",
     note: "Evitar el blanco y todos sus tonos similares (beige, marfil, hueso, crema, etc.), reservados para la novia.",
-    imageUrl: "https://picsum.photos/seed/colors/800/600",
-    imageButtonLabel: "Ver paleta de colores"
+    imageUrl: "https://pin.it/6CpwooEjD",
+    imageButtonLabel: "Ver paleta de colores",
+    womanImage: {
+      src: "https://ik.imagekit.io/alvearcoria92/VestimentaMujer.png?updatedAt=1760480501865",
+      alt: "Vestimenta sugerida para mujeres"
+    },
+    manImage: {
+      src: "https://ik.imagekit.io/alvearcoria92/Vestimenta.png?updatedAt=1758303855176",
+      alt: "Vestimenta sugerida para hombres"
+    }
   },
 
   timelineEvents: [
@@ -124,7 +132,14 @@ export const siteConfig = {
     whatsappMessage: "¡Estás invitado a nuestra boda! Acompáñanos a celebrar el día más importante de nuestras vidas. Encuentra todos los detalles aquí:",
   },
 
-  galleryImages: imageData.galleryImages,
+  galleryImages: [
+    { "src": "https://picsum.photos/seed/g1/800/1200", "alt": "Una pareja de enamorados abrazándose", "dataAiHint": "wedding couple" },
+    { "src": "https://picsum.photos/seed/g2/800/1200", "alt": "Primer plano de la pareja sonriendo", "dataAiHint": "happy couple" },
+    { "src": "https://picsum.photos/seed/g3/800/1200", "alt": "Pareja caminando en la playa", "dataAiHint": "couple beach" },
+    { "src": "https://picsum.photos/seed/g4/800/1200", "alt": "Una hermosa foto de paisaje de la pareja", "dataAiHint": "couple landscape" },
+    { "src": "https://picsum.photos/seed/g5/800/1200", "alt": "Pareja compartiendo una risa", "dataAiHint": "couple laughing" },
+    { "src": "https://picsum.photos/seed/g6/800/1200", "alt": "Pareja mirando una vista", "dataAiHint": "couple view" }
+  ],
   qrAlbum: {
     url: "https://photos.app.goo.gl/example",
   },
