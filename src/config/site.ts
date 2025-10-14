@@ -25,11 +25,10 @@ export const siteConfig = {
     dressCode: true,
     venues: true,
     gallery: true,
-    qrAlbum: true,
+    shareAndConnect: true,
     gifts: true,
     hotels: false,
     share: true,
-    hashtag: true,
     seeYou: true,
     rsvp: true,
   },
@@ -47,7 +46,7 @@ export const siteConfig = {
   ],
   
   story: {
-    intro_title: "Pensamiento o poema",
+    intro_title: "Con la bendición de Dios y de nuestros padres",
     intro_line1: "Cuando nos conocimos, entendimos que nos uniría algo más fuerte que el tiempo y la distancia.",
     intro_line2: "Hoy damos gracias a Dios por habernos hecho coincidir en el camino y empezar una vida juntos.",
     parents: {
@@ -147,3 +146,5 @@ export const siteConfig = {
 };
 
 export type SiteConfig = typeof siteConfig;
+
+    

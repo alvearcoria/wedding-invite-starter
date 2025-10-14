@@ -10,27 +10,28 @@ import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/config/site";
 import { DressCode } from "@/components/DressCode";
 import { MusicControl } from "@/components/MusicControl";
-import { QrAlbum } from "@/components/QrAlbum";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { Hashtag } from "@/components/Hashtag";
 import { SeeYou } from "@/components/SeeYou";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { ShareInvitation } from "@/components/ShareInvitation";
 import { SectionSeparator } from "@/components/SectionSeparator";
 import { Hotels } from "@/components/Hotels";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
+import { ShareAndConnect } from "@/components/ShareAndConnect";
 
 export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-x-hidden">
       <main className="flex-1">
-        <MusicControl />
         <WelcomeModal />
+        <MusicControl />
+        
         <Hero />
+        <ScrollToTopOnMount />
         
         {siteConfig.sections.story && (
           <>
-            <SectionSeparator waveColor="fill-background" />
+            <SectionSeparator waveColor="fill-background" bgColor="bg-transparent" />
             <AnimatedSection>
               <OurStory />
             </AnimatedSection>
@@ -39,7 +40,7 @@ export default function Home() {
         
         {siteConfig.sections.timeline && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
               <Timeline />
             </AnimatedSection>
@@ -48,7 +49,7 @@ export default function Home() {
         
         {siteConfig.sections.dressCode && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection>
               <DressCode />
             </AnimatedSection>
@@ -57,7 +58,7 @@ export default function Home() {
         
         {siteConfig.sections.venues && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
               <Venues />
             </AnimatedSection>
@@ -66,7 +67,7 @@ export default function Home() {
 
         {siteConfig.sections.gallery && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection>
               <Gallery />
             </AnimatedSection>
@@ -75,20 +76,11 @@ export default function Home() {
         
         {siteConfig.sections.hotels && (
           <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
               <Hotels />
             </AnimatedSection>
           </>
-        )}
-
-        {siteConfig.sections.qrAlbum && (
-           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-              <QrAlbum />
-            </AnimatedSection>
-           </>
         )}
 
         {siteConfig.sections.gifts && (
@@ -100,11 +92,11 @@ export default function Home() {
           </>
         )}
         
-        {siteConfig.sections.hashtag && (
+        {siteConfig.sections.shareAndConnect && (
            <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
-              <Hashtag />
+              <ShareAndConnect />
             </AnimatedSection>
            </>
         )}
@@ -138,7 +130,8 @@ export default function Home() {
 
       </main>
       <Footer />
-      <ScrollToTopOnMount />
     </div>
   );
 }
+
+    
