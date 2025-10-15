@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { Heart } from "@/components/icons/Heart";
 import { cn } from "@/lib/utils";
+import { Icon } from "./icons";
 
 export function WelcomeModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,11 +50,11 @@ export function WelcomeModal() {
     >
       <div
         className={cn(
-          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card p-8 text-center shadow-2xl transition-all duration-300",
+          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card/95 p-8 text-center shadow-2xl backdrop-blur-md transition-all duration-300",
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
       >
-        <Heart className="mx-auto mb-4 h-10 w-10 text-primary" />
+        <Icon name={siteConfig.heroIcon} className="mx-auto mb-4 h-10 w-10 text-primary" />
         <h2 className="font-headline text-3xl text-foreground md:text-4xl">
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h2>
