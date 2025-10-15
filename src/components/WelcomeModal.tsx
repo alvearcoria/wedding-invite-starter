@@ -72,10 +72,19 @@ export function WelcomeModal() {
           ¿Deseas disfrutar de una experiencia musical mientras navegas?
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Button onClick={handleEnterWithMusic} size="lg" className="w-full bg-white/90 text-primary hover:bg-white">
+           <Button 
+            onClick={handleEnterWithMusic} 
+            size="lg" 
+            className="w-full border border-white/30 bg-white/20 text-white backdrop-blur-lg transition-colors hover:bg-white/30"
+          >
             Entrar con música
           </Button>
-          <Button onClick={handleEnterWithoutMusic} variant="outline" size="lg" className="w-full border-white/50 text-white/80 hover:bg-white/10 hover:text-white">
+          <Button 
+            onClick={handleEnterWithoutMusic} 
+            variant="ghost" 
+            size="lg" 
+            className="w-full border border-white/40 text-white transition-colors hover:bg-white/10 hover:text-white"
+          >
             Continuar sin música
           </Button>
         </div>
