@@ -44,7 +44,7 @@ export function OurStory() {
           )}
         </div>
 
-        <div className="mt-12">
+        <div className="mt-10">
           <p className="text-lg uppercase tracking-wider text-foreground/70 leading-relaxed">
             {story.outro_line1}
             <br/>

@@ -43,7 +43,7 @@ const TimelineItem = ({
       <div
         ref={ref}
         className={cn(
-          "w-1/2 will-change-transform transition-all duration-500 ease-out",
+          "w-1/2 will-change-transform transition-all duration-1000 ease-out",
           isEven ? "pr-8 text-right" : "pl-8 text-left order-last",
           // Aparición desde el lado correspondiente
           inView
@@ -113,7 +113,7 @@ export function Timeline() {
           className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border"
           aria-hidden="true"
         />
-        <div className="space-y-10">
+        <div className="space-y-8">
           {siteConfig.timelineEvents.map((item, index) => (
             <TimelineItem
               key={index}
