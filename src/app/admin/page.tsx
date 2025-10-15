@@ -30,7 +30,7 @@ function AdminStats({ guests }: { guests: RsvpInput[] | null }) {
     const declined = declinedList.length;
     const totalResponses = confirmed + declined;
     
-    const companions = confirmedList.reduce((acc, g) => acc + g.companions, 0);
+    const companions = confirmedList.reduce((acc, g) => acc + (g.companions ?? 0), 0);
     const totalAttendees = confirmed + companions;
     const messages = guests.filter(g => g.message).length;
 
@@ -94,7 +94,7 @@ function GuestsTable({ guests, onExport }: { guests: RsvpInput[] | null, onExpor
                 <CardTitle>Lista de Invitados ({guests.length})</CardTitle>
                 <CardDescription>Aquí están todas las respuestas recibidas hasta ahora.</CardDescription>
             </div>
-            <Button onClick={onExport} size="sm" variant="outline">
+            <Button onClick={onExport} size="sm">
               <Download className="mr-2 h-4 w-4" />
               Exportar a CSV
             </Button>
@@ -116,9 +116,9 @@ function GuestsTable({ guests, onExport }: { guests: RsvpInput[] | null, onExpor
                     <TableRow key={index} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{guest.name}</TableCell>
                         <TableCell>
-                        <Badge variant={guest.attending ? "default" : "destructive"} className="bg-opacity-80">
-                            {guest.attending ? 'Sí, asistirá' : 'No asistirá'}
-                        </Badge>
+                            <Badge variant={guest.attending ? "default" : "destructive"} className={guest.attending ? "bg-green-600/80" : "bg-red-500/80"}>
+                                {guest.attending ? 'Sí, asistirá' : 'No asistirá'}
+                            </Badge>
                         </TableCell>
                         <TableCell className="text-center font-mono">{guest.attending ? guest.companions : '—'}</TableCell>
                         <TableCell className="max-w-[200px] truncate italic text-muted-foreground">
@@ -144,7 +144,7 @@ export default function AdminPage() {
     return query(collection(firestore, 'invitations', siteConfig.slug, 'guests'));
   }, [firestore]);
 
-  const { data: guests, isLoading, error } = useCollection<RsvpInput>(guestsQuery as any);
+  const { data: guests, isLoading, error } = useCollection<RsvpInput>(guestsQuery);
 
   const handleExport = () => {
     if (!guests) return;
@@ -158,7 +158,7 @@ export default function AdminPage() {
     }));
 
     const csv = Papa.unparse(dataToExport);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
