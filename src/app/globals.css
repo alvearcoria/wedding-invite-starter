@@ -88,8 +88,23 @@ body {
     @apply border-border;
   }
   
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  
   section {
     @apply w-full;
+  }
+
+  .bg-background {
+    background-color: hsl(var(--background) / 0.98);
+    @apply backdrop-blur-sm;
+  }
+  
+  .bg-card {
+     background-color: hsl(var(--card) / 0.95);
+     @apply backdrop-blur-sm;
   }
 }
 
@@ -111,7 +126,6 @@ body {
 
   .animate-fade-in-up {
     animation: fade-in-up 0.8s ease-out forwards;
-    opacity: 0; /* Start hidden */
   }
 
   @keyframes zoom-in {

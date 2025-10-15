@@ -23,7 +23,7 @@ export function Hero() {
       </div>
 
       <div className="container relative z-20 mx-auto flex flex-col items-center justify-center px-4 text-center">
-        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+        <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           <Icon name={siteConfig.heroIcon} className="mx-auto mb-4 h-8 w-8 text-white/90" />
           <p className="text-lg tracking-widest uppercase">
             ¡Nos vamos a casar!
@@ -35,13 +35,13 @@ export function Hero() {
           </h1>
         </div>
 
-        <div className="my-10 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <div className="my-10 animate-fade-in-up opacity-0" style={{ animationDelay: '400ms' }}>
             <Suspense fallback={<div className="h-8 w-48 animate-pulse rounded-md bg-white/20" />}>
               <FormattedDate />
             </Suspense>
         </div>
 
-        <div className="animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+        <div className="animate-fade-in-up opacity-0" style={{ animationDelay: '600ms' }}>
           <Countdown />
         </div>
       </div>

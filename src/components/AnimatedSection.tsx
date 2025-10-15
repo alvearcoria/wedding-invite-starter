@@ -19,21 +19,22 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Disparar la animación solo una vez cuando el elemento entra en la vista
         if (entry.isIntersecting) {
           setIsVisible(true);
           observer.unobserve(element);
         }
       },
       {
-        threshold: 0.1, // La animación se dispara cuando el 10% del elemento es visible
+        threshold: 0.1, // Animate when 10% of the element is visible
       }
     );
 
     observer.observe(element);
 
     return () => {
-      observer.unobserve(element);
+      if (element) {
+        observer.unobserve(element);
+      }
     };
   }, []);
 
@@ -41,8 +42,8 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
     <div
       ref={ref}
       className={cn(
-        "transition-opacity duration-1000 ease-out",
-        isVisible ? "opacity-100" : "opacity-0",
+        "transition-all duration-1000 ease-out",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
         className
       )}
       style={{ transitionDelay: `${delay}ms` }}

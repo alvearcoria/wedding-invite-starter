@@ -55,15 +55,15 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
     <div
       ref={ref}
       className={cn(
-        "timeline-item relative flex items-center transition-all duration-700 ease-[cubic-bezier(.22,.61,.36,1)]",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        "relative flex items-center",
       )}
-      style={{ transitionDelay: `${index * 100}ms` }}
     >
       <div
         className={cn(
-          "w-1/2",
-          isEven ? "pr-8 text-right" : "pl-8 text-left order-last"
+          "w-1/2 transition-all duration-700 ease-in-out",
+          isEven ? "pr-8 text-right" : "pl-8 text-left order-last",
+          isVisible ? "opacity-100 translate-x-0" : "opacity-0",
+          isEven ? (isVisible ? "translate-x-0" : "-translate-x-4") : (isVisible ? "translate-x-0" : "translate-x-4")
         )}
       >
         <p className="font-semibold">{item.time}</p>
@@ -73,11 +73,12 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
         <div className={cn(
           "flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground transition-all duration-500",
-          isVisible && "bg-primary text-primary-foreground scale-110"
+          isVisible ? "bg-primary text-primary-foreground scale-110" : "scale-90"
           )}>
           {IconComponent && <IconComponent className="h-6 w-6" />}
         </div>
       </div>
+      {/* This empty div is just for spacing */}
       <div className={cn("w-1/2", isEven ? "pl-8" : "pr-8")} />
     </div>
   );
