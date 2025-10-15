@@ -1,80 +1,101 @@
 /**
- * @fileoverview Firestore Security Rules for the wedding celebration application.
+ * @fileoverview Firestore Security Rules for the Wedding Celebration Application.
  *
  * Core Philosophy:
  * This ruleset prioritizes security and restricts data access to authenticated users.
- * It employs path-based ownership for user-specific data and restricts access to site configuration and guest data.
- * The photo gallery allows public read access but restricts write access to authorized users.
+ * It employs path-based ownership for guest data and restricts access to site configuration and photo management.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores information about wedding guests.
+ * - /guests/{guestId}: Stores individual guest information.
  * - /photos/{photoId}: Stores photos for the wedding gallery.
- * - /site_configuration/{configId}: Stores site configuration settings.
+ * - /site_configuration/{configId}: Stores site-wide configuration settings. Only one document expected.
  *
  * Key Security Decisions:
- * - All write operations are restricted to authenticated users.
- * - Guest data is not user-specific and has no owner, so it's completely locked down.
- * - Photos are publicly readable, but only authorized users can create, update, or delete them.
- * - Site configuration is only accessible to authorized users.
+ * - All data access requires authentication.
+ * - Guests are secured via an ownership model, with the `guestId` in the path acting as the owner.
+ * - Site configuration is restricted to authenticated users.
+ * - Photos are publicly readable but only modifiable by authenticated users.
+ * - Listing guests is disallowed as it is not part of the specified application requirements.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secures the guest collection by denying all access.
+     * @description Manages access to guest data.
      * @path /guests/{guestId}
-     * @allow (none) Guests are not accessible by any user or role.
-     * @deny (all)
-     * @principle Guest data is not user-specific and is therefore locked down.
+     * @allow (create) - Authenticated user creates a guest with matching guestId.
+     * @allow (update, delete) - Authenticated user updates/deletes a guest with matching guestId, only if the document exists.
+     * @deny (create) - Authenticated user attempts to create a guest with a mismatched guestId.
+     * @deny (update, delete) - Authenticated user attempts to update/delete a guest with a mismatched guestId or a non-existent document.
+     * @principle Enforces document ownership for writes and requires document existence for updates and deletes.
      */
     match /guests/{guestId} {
-      allow get: if false;
+      // isSignedIn() enforces authentication.
+      allow get: if isSignedIn();
       allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create: if isSignedIn() && request.resource.data.id == guestId;
+      allow update: if isExistingOwner(guestId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(guestId);
     }
 
     /**
-     * @description Allows public read access to photos, but restricts write access to authenticated users.
+     * @description Manages access to photos in the gallery.
      * @path /photos/{photoId}
-     * @allow (get, list) Any user can read photos.
-     * @allow (create, update, delete) Authenticated users can modify photos.
-     * @deny (create, update, delete) Unauthenticated users cannot modify photos.
-     * @principle Allows public read access while restricting write access to authorized users.
+     * @allow (get, list) - Any user can read photo data.
+     * @allow (create, update, delete) - Authenticated users can manage photos.
+     * @deny (create, update, delete) - Unauthenticated users cannot manage photos.
+     * @principle Allows public read access but restricts write access to authenticated users.
      */
     match /photos/{photoId} {
-      allow get: if true;
-      allow list: if true;
+      allow get, list: if true;
       allow create: if isSignedIn();
       allow update: if isSignedIn() && resource != null;
       allow delete: if isSignedIn() && resource != null;
     }
 
     /**
-     * @description Secures the site configuration collection by restricting access to authenticated users.
+     * @description Manages access to site configuration settings.
      * @path /site_configuration/{configId}
-     * @allow (get, list, create, update, delete) Authenticated users can manage site configuration.
-     * @deny (get, list, create, update, delete) Unauthenticated users cannot manage site configuration.
-     * @principle Restricts access to site configuration to authorized users.
+     * @allow (get) - Authenticated users can read the configuration.
+     * @allow (create, update, delete) - Authenticated users can modify the configuration.
+     * @deny (create, update, delete) - Unauthenticated users cannot modify the configuration.
+     * @principle Restricts site configuration access to authenticated users.
      */
     match /site_configuration/{configId} {
       allow get: if isSignedIn();
-      allow list: if isSignedIn();
+      allow list: if false;
       allow create: if isSignedIn();
       allow update: if isSignedIn() && resource != null;
       allow delete: if isSignedIn() && resource != null;
     }
 
-    // --- Helper functions ---
+    // Helper functions
 
     /**
      * @description Checks if the user is signed in.
-     * @return {boolean} True if the user is signed in, false otherwise.
+     * @return {bool} True if the user is authenticated, false otherwise.
      */
     function isSignedIn() {
       return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the user is the owner of the document based on the ID in the path.
+     * @param {string} userId The user ID from the path.
+     * @return {bool} True if the user is the owner, false otherwise.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the user is the owner of the document AND the document exists.
+     * @param {string} userId The user ID from the path.
+     * @return {bool} True if the user is the owner and the document exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
     }
   }
 }
