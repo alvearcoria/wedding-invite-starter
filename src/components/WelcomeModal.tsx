@@ -48,13 +48,13 @@ export function WelcomeModal() {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-500",
+        "fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-md transition-opacity duration-500",
         isClosing ? "opacity-0" : "opacity-100"
       )}
     >
       <div
         className={cn(
-          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card/80 p-8 text-center shadow-2xl transition-all duration-300",
+          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card/95 p-8 text-center shadow-2xl transition-all duration-300",
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
       >
