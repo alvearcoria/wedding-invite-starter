@@ -77,7 +77,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
 
 export function Timeline() {
   return (
-    <SectionWrapper id="timeline" bgClass="bg-card">
+    <>
       <SectionHeader
         title="El Gran Día"
         description="Esto es lo que pueden esperar durante la celebración de nuestra boda."
@@ -87,12 +87,12 @@ export function Timeline() {
           className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border"
           aria-hidden="true"
         />
-        <div className="space-y-12">
+        <div className="space-y-10">
           {siteConfig.timelineEvents.map((item, index) => (
              <TimelineItem key={index} item={item} index={index} />
           ))}
         </div>
       </div>
-    </SectionWrapper>
+    </>
   );
 }

@@ -10,7 +10,6 @@ import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/config/site";
 import { DressCode } from "@/components/DressCode";
 import { MusicControl } from "@/components/MusicControl";
-import { AnimatedSection } from "@/components/AnimatedSection";
 import { SeeYou } from "@/components/SeeYou";
 import { ShareInvitation } from "@/components/ShareInvitation";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
@@ -35,9 +34,9 @@ export default function Home() {
         )}
 
         {siteConfig.sections.timeline && (
-          <AnimatedSection bgClass="bg-card">
+          <SectionWrapper id="timeline" bgClass="bg-card">
             <Timeline />
-          </AnimatedSection>
+          </SectionWrapper>
         )}
         
         {siteConfig.sections.dressCode && (
@@ -81,11 +80,12 @@ export default function Home() {
             <ShareInvitation />
           </SectionWrapper>
         )}
-
-        {siteConfig.sections.seeYou && (
-            <SeeYou />
-        )}
+        
       </main>
+      
+      {siteConfig.sections.seeYou && (
+          <SeeYou />
+      )}
       <Footer />
     </div>
   );

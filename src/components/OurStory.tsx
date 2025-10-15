@@ -8,14 +8,14 @@ export function OurStory() {
   return (
     <SectionWrapper id="our-story" bgClass="bg-background-transparent">
       <div className="mx-auto max-w-3xl text-center">
-        <div className="mb-12">
+        <div className="mb-10">
           <p className="mb-2 uppercase tracking-[0.2em] text-foreground/60">{story.intro_title}</p>
           <h2 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl">
             {couple.her} <span className="text-accent">&amp;</span> {couple.him}
           </h2>
         </div>
 
-        <p className="mb-12 text-lg uppercase tracking-wider text-foreground/70 leading-relaxed">
+        <p className="mb-10 text-lg uppercase tracking-wider text-foreground/70 leading-relaxed">
           {story.intro_line1}
           <br />
           {story.intro_line2}
@@ -44,7 +44,7 @@ export function OurStory() {
           )}
         </div>
 
-        <div className="mt-16">
+        <div className="mt-12">
           <p className="text-lg uppercase tracking-wider text-foreground/70 leading-relaxed">
             {story.outro_line1}
             <br/>
