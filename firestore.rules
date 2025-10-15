@@ -1,36 +1,34 @@
 /**
- * @file Firestore Security Rules
- * @description This ruleset enforces a security model that prioritizes authenticated access and ownership.
+ * @fileoverview Firestore Security Rules for the wedding celebration application.
+ *
+ * Core Philosophy:
+ * This ruleset prioritizes security and ease of understanding. It focuses on
+ * access control for Guests, Photos, and SiteConfiguration.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores guest information.
- * - /photos/{photoId}: Stores photos for the wedding gallery.
- * - /site_configuration/{configId}: Stores site configuration settings (single document).
+ * - /guests/{guestId}: Information about wedding guests. Generally restricted to
+ *   the application itself.
+ * - /photos/{photoId}: Photos for the wedding gallery. Public read, restricted
+ *   create/update/delete.
+ * - /site_configuration/{configId}: Site configuration settings. Restricted access.
+ * - /invitations/{invitationId}/guests/{guestId}: Public read for guest lists.
  *
  * Key Security Decisions:
- * - Authenticated access is required for all data. Anonymous users will not have access.
- * - `create`, `update`, and `delete` operations on all collections are disallowed by default.
- * - The rules do NOT currently enforce complex schema validation beyond authorization checks.
- * - List operations on /guests are not allowed.
+ * - All writes to /guests, /photos and /site_configuration are initially restricted to authenticated users.
+ * - Public read access for the guest list to allow for listing without login.
+ *
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to guest data.
+     * Guests Collection Rules
+     * @description Controls access to wedding guest data. Guests can only be managed via backend.
      * @path /guests/{guestId}
-     * @allow (create) - Denied. Guests can only be added by the application itself, not directly by users.
-     * @deny (create) - Any attempt to create a guest document.
-     * @allow (get) - Denied. Guests data is not directly exposed to users.
-     * @deny (get) - Any attempt to read a guest document.
-     * @allow (list) - Denied. Guests should not be listable.
-     * @deny (list) - Any attempt to list guest documents.
-     * @allow (update) - Denied. Guests can only be updated by the application itself, not directly by users.
-     * @deny (update) - Any attempt to update a guest document.
-     * @allow (delete) - Denied. Guests can only be deleted by the application itself, not directly by users.
-     * @deny (delete) - Any attempt to delete a guest document.
-     * @principle No data will be exposed to users, including the wedding's owners.
+     * @allow (none) No direct client access is permitted.
+     * @deny (create) All client creates are denied.
+     * @principle Only the application backend can manage guest data.
      */
     match /guests/{guestId} {
       allow get: if false;
@@ -41,61 +39,73 @@ service cloud.firestore {
     }
 
     /**
-     * @description Controls access to photos in the wedding gallery.
+     * Photos Collection Rules
+     * @description Controls access to wedding photos. Public read, restricted write to authenticated users.
      * @path /photos/{photoId}
-     * @allow (get) Authenticated users can read photo data.
-     * @deny (get) Unauthenticated users cannot read photo data.
-     * @allow (list) Authenticated users can list photos.
-     * @deny (list) Unauthenticated users cannot list photos.
-     * @allow (create) Authenticated users can create photos. Requires a valid 'authorId' field in the data matching the user's UID.
-     * @deny (create) If the 'authorId' field is missing or does not match the user's UID.
-     * @allow (update) Authenticated users can update existing photos they own.
-     * @deny (update) Users cannot update photos they don't own or non-existent photos.
-     * @allow (delete) Authenticated users can delete existing photos they own.
-     * @deny (delete) Users cannot delete photos they don't own or non-existent photos.
-     * @principle Enforces authenticated access for reads and owner-only access for writes.
+     * @allow (get, list) Any user can read the photos.
+     * @deny (create, update, delete) Only authenticated users can create, update, or delete photos.
+     * @principle Public read, authenticated-user-only writes.
      */
     match /photos/{photoId} {
-      allow get, list: if isSignedIn();
-      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
-      allow update: if isSignedIn() && request.resource.data.authorId == resource.data.authorId && resource.data.authorId == request.auth.uid;
-      allow delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
+      allow get, list: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
     }
 
     /**
-     * @description Controls access to the site configuration settings.
+     * Site Configuration Rules
+     * @description Controls access to site configuration settings. Restricted to authenticated users.
      * @path /site_configuration/{configId}
-     * @allow (get) Authenticated users can read the site configuration.
-     * @deny (get) Unauthenticated users cannot read the site configuration.
-     * @allow (list) Denied. Listing site configurations is not permitted.
-     * @deny (list) Any attempt to list site configuration documents.
-     * @allow (create) Denied. Creating site configurations is not permitted through the client.
-     * @deny (create) Any attempt to create a site configuration document.
-     * @allow (update) Denied. Site configuration should be modified by backend functions only.
-     * @deny (update) Any attempt to update the site configuration document.
-     * @allow (delete) Denied. Deleting site configurations is not permitted.
-     * @deny (delete) Any attempt to delete the site configuration document.
-     * @principle Enforces authenticated access for reads, but prevents all write access.
+     * @allow (none) No public access.
+     * @deny (create, update, delete) Only authenticated users can manage the configuration.
+     * @principle Authenticated-user-only access for configuration.
      */
     match /site_configuration/{configId} {
       allow get: if isSignedIn();
-      allow list: if false;
-      allow create: if false;
+      allow list: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
+    }
+
+    /**
+     * Invitados del evento "mely-y-noe"
+     * Ruta: /invitations/mely-y-noe/guests/{guestId}
+     * - create: abierto (sin login) con validaciones estrictas
+     * - get, list: lectura pública
+     * - update, delete: bloqueado
+     */
+    match /invitations/{invitationId}/guests/{guestId} {
+      function isGuestCreateValid() {
+        return request.resource.data.keys().hasOnly(
+          ['name','phone','attending','companions','message']
+        )
+        && request.resource.data.name is string
+           && request.resource.data.name.size() > 0
+           && request.resource.data.name.size() <= 100
+        && request.resource.data.phone is string
+           && request.resource.data.phone.size() >= 8
+           && request.resource.data.phone.size() <= 20
+        && request.resource.data.attending is bool
+        && request.resource.data.companions is int
+           && request.resource.data.companions >= 0
+           && request.resource.data.companions <= 10
+        && (!('message' in request.resource.data) || (
+             request.resource.data.message is string
+             && request.resource.data.message.size() <= 300
+           ));
+      }
+
+      allow create: if isGuestCreateValid();
+      allow get, list: if true;
       allow update: if false;
       allow delete: if false;
     }
-  }
 
-  // Helper Functions
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-  function isExistingOwner(userId) {
-    return isSignedIn() && isOwner(userId) && resource != null;
+    // Helper function to determine if the user is signed in.
+    function isSignedIn() {
+      return request.auth != null;
+    }
   }
 }

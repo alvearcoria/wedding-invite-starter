@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -5,11 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { rsvpSchema, type RsvpInput } from "@/types/rsvp";
 import confetti from "canvas-confetti";
-import { useAuth, useFirestore } from "@/firebase/provider";
+import { useFirestore } from "@/firebase/provider";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
-import { signInAnonymously } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +35,6 @@ import { siteConfig } from "@/config/site";
 export function RsvpForm() {
   const { toast } = useToast();
   const firestore = useFirestore();
-  const auth = useAuth();
 
   const form = useForm<RsvpInput>({
     resolver: zodResolver(rsvpSchema),
@@ -61,7 +60,7 @@ export function RsvpForm() {
       return;
     }
     
-    if (!firestore || !auth) {
+    if (!firestore) {
        toast({
         variant: "destructive",
         title: "¡Oh no! Algo salió mal.",
@@ -71,21 +70,20 @@ export function RsvpForm() {
     }
 
     try {
-      // Ensure user is signed in anonymously
-      if (!auth.currentUser) {
-        await signInAnonymously(auth);
-      }
-
-      const { slug, _hp, ...guestData } = data;
-      const guestsCollection = collection(firestore, 'invitations', slug, 'guests');
-      
-      // The addDoc operation returns a promise. We'll let the catch block handle it.
-      // We don't await here to avoid blocking, but the catch will still work on the promise chain.
-      addDoc(guestsCollection, {
-        ...guestData,
+      // Prepara los datos para Firestore, excluyendo 'slug' y '_hp'
+      const guestData = {
+        name: data.name,
+        phone: data.phone || '', // Asegura que el teléfono sea siempre una cadena
+        attending: data.attending,
+        companions: data.companions,
+        message: data.message || '', // Asegura que el mensaje sea siempre una cadena
         createdAt: serverTimestamp(),
         source: 'website-client',
-      }).catch(serverError => {
+      };
+      
+      const guestsCollection = collection(firestore, 'invitations', data.slug, 'guests');
+      
+      addDoc(guestsCollection, guestData).catch(serverError => {
         // Create and emit a contextual error for security rule violations.
         const contextualError = new FirestorePermissionError({
           path: guestsCollection.path,
@@ -98,7 +96,7 @@ export function RsvpForm() {
         toast({
             variant: "destructive",
             title: "Error de Permiso",
-            description: "No se pudo guardar tu confirmación. Por favor, intenta de nuevo.",
+            description: "No se pudo guardar tu confirmación. Verifica que los datos sean válidos.",
         });
         console.error("Security rule error:", contextualError);
       });
