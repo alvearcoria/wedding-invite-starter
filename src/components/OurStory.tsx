@@ -6,7 +6,7 @@ export function OurStory() {
   const { story, couple } = siteConfig;
 
   return (
-    <SectionWrapper id="our-story" bgClass="bg-background">
+    <SectionWrapper id="our-story" bgClass="bg-background-transparent">
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-12">
           <p className="mb-2 uppercase tracking-[0.2em] text-foreground/60">{story.intro_title}</p>

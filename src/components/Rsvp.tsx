@@ -5,7 +5,7 @@ import { RsvpForm } from "./RsvpForm";
 
 export function Rsvp() {
   return (
-    <SectionWrapper id="rsvp" bgClass="bg-background">
+    <SectionWrapper id="rsvp" bgClass="bg-background-transparent">
       <SectionHeader
         title="Confirma Tu Asistencia"
         description="Por favor, haznos saber si podrás asistir antes del 29 de octubre de 2025. ¡Estamos ansiosos por celebrar contigo!"

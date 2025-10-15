@@ -8,7 +8,7 @@ import { Icon } from "./icons";
 export function DressCode() {
   const { dressCode } = siteConfig;
   return (
-    <SectionWrapper id="dress-code" bgClass="bg-background">
+    <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
       <SectionHeader
         title={dressCode.title}
         description={dressCode.description}
