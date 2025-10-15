@@ -12,10 +12,16 @@ export function WelcomeModal() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
+    // Show modal if music is enabled
     if (siteConfig.sections.music) {
       setIsOpen(true);
       document.body.classList.add("modal-open");
     }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove("modal-open");
+    };
   }, []);
 
   const closeModal = () => {
@@ -23,7 +29,7 @@ export function WelcomeModal() {
     document.body.classList.remove("modal-open");
     setTimeout(() => {
       setIsOpen(false);
-    }, 500); // Wait for fade-out animation
+    }, 500); // Wait for fade-out animation to complete
   };
 
   const handleEnterWithMusic = () => {
@@ -42,23 +48,28 @@ export function WelcomeModal() {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm transition-opacity duration-500",
+        "fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-500",
         isClosing ? "opacity-0" : "opacity-100"
       )}
     >
-      <div className="flex flex-col items-center text-center p-8">
-        <Heart className="h-12 w-12 text-primary mb-4" />
-        <h2 className="font-headline text-3xl md:text-4xl text-foreground">
+      <div
+        className={cn(
+          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card/80 p-8 text-center shadow-2xl transition-all duration-300",
+          isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
+        )}
+      >
+        <Heart className="mx-auto mb-4 h-10 w-10 text-primary" />
+        <h2 className="font-headline text-3xl text-foreground md:text-4xl">
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
           ¿Deseas disfrutar de una experiencia musical mientras navegas?
         </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <Button onClick={handleEnterWithMusic} size="lg">
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+          <Button onClick={handleEnterWithMusic} size="lg" className="w-full">
             Entrar con música
           </Button>
-          <Button onClick={handleEnterWithoutMusic} variant="ghost" size="lg">
+          <Button onClick={handleEnterWithoutMusic} variant="ghost" size="lg" className="w-full">
             Continuar sin música
           </Button>
         </div>
