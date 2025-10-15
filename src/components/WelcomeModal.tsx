@@ -12,17 +12,15 @@ export function WelcomeModal() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    // Only show the modal if music is enabled and it hasn't been shown in this session
-    if (siteConfig.sections.music && sessionStorage.getItem("welcomeModalShown") !== "true") {
+    if (siteConfig.sections.music) {
       setIsOpen(true);
-      document.body.style.overflow = "hidden"; // Block scroll
+      document.body.classList.add("modal-open");
     }
   }, []);
 
   const closeModal = () => {
     setIsClosing(true);
-    document.body.style.overflow = ""; // Unblock scroll
-    sessionStorage.setItem("welcomeModalShown", "true");
+    document.body.classList.remove("modal-open");
     setTimeout(() => {
       setIsOpen(false);
     }, 500); // Wait for fade-out animation
@@ -37,7 +35,7 @@ export function WelcomeModal() {
     closeModal();
   };
 
-  if (!isOpen || !siteConfig.sections.music) {
+  if (!isOpen) {
     return null;
   }
 

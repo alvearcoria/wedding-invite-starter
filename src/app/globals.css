@@ -92,6 +92,10 @@ body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  body.modal-open {
+    overflow: hidden;
+  }
   
   section {
     @apply w-full;
