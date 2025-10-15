@@ -79,6 +79,8 @@ export function RsvpForm() {
       const { slug, _hp, ...guestData } = data;
       const guestsCollection = collection(firestore, 'invitations', slug, 'guests');
       
+      // The addDoc operation returns a promise. We'll let the catch block handle it.
+      // We don't await here to avoid blocking, but the catch will still work on the promise chain.
       addDoc(guestsCollection, {
         ...guestData,
         createdAt: serverTimestamp(),
@@ -92,10 +94,16 @@ export function RsvpForm() {
         });
         errorEmitter.emit('permission-error', contextualError);
         
-        // Throw the error to be caught by the outer try/catch and displayed
-        throw contextualError;
+        // Also show a toast to the user
+        toast({
+            variant: "destructive",
+            title: "Error de Permiso",
+            description: "No se pudo guardar tu confirmación. Por favor, intenta de nuevo.",
+        });
+        console.error("Security rule error:", contextualError);
       });
 
+      // Optimistically show success toast
       toast({
         title: "¡Confirmación Recibida!",
         description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
@@ -111,7 +119,7 @@ export function RsvpForm() {
       form.reset();
 
     } catch (error) {
-       console.error("Error in RSVP form:", error);
+       console.error("Error in RSVP form submission:", error);
        toast({
         variant: "destructive",
         title: "¡Oh no! Algo salió mal.",
