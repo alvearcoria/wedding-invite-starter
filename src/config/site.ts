@@ -108,7 +108,6 @@ export const siteConfig = {
     { time: "8:30 PM", event: "Primer Baile", description: "Nuestro primer baile como esposos.", icon: "heart-handshake" },
     { time: "9:00 PM", event: "Cena", description: "Acompáñennos para una deliciosa cena.", icon: "utensils" },    
     { time: "10:00 PM", event: "¡Fiesta!", description: "¡Vamos a la pista de baile!", icon: "music" },
-    { time: "12:30 AM", event: "Tornaboda", description: "Continuemos la celebración.", icon: "coffee" },
   ],
 
   gifts: {
