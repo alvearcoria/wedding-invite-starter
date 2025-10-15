@@ -23,7 +23,7 @@ export function MusicControl() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !isReady) return;
 
     const playAudio = () => {
       if (audio.paused) {
@@ -49,6 +49,9 @@ export function MusicControl() {
     return () => {
       window.removeEventListener("playAudio", playAudio);
       window.removeEventListener("pauseAudio", pauseAudio);
+      if (audio) {
+        audio.pause();
+      }
     };
   }, [isReady]);
 
