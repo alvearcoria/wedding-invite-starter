@@ -17,11 +17,6 @@ export function WelcomeModal() {
       setIsOpen(true);
       document.body.classList.add("modal-open");
     }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove("modal-open");
-    };
   }, []);
 
   const closeModal = () => {
@@ -54,7 +49,7 @@ export function WelcomeModal() {
     >
       <div
         className={cn(
-          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card/95 p-8 text-center shadow-2xl transition-all duration-300",
+          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card p-8 text-center shadow-2xl transition-all duration-300",
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
       >
