@@ -29,17 +29,14 @@ export default function Home() {
         <ScrollToTopOnMount />
         
         {siteConfig.sections.story && (
-          <>
-            <SectionSeparator bgColor="bg-background" waveColor="fill-primary" flip={true} />
-            <SectionWrapper id="our-story" bgClass="bg-background-transparent">
-              <OurStory />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="our-story" bgClass="bg-background-transparent">
+            <OurStory />
+          </SectionWrapper>
         )}
 
         {siteConfig.sections.timeline && (
            <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card" />
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="fill-card" />
             <SectionWrapper id="timeline" bgClass="bg-card">
               <Timeline />
             </SectionWrapper>
@@ -48,7 +45,7 @@ export default function Home() {
         
         {siteConfig.sections.dressCode && (
            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent" />
+            <SectionSeparator bgColor="bg-card" waveColor="fill-background-transparent" />
             <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
               <DressCode />
             </SectionWrapper>
@@ -57,7 +54,7 @@ export default function Home() {
         
         {siteConfig.sections.venues && (
           <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card" />
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="fill-card" />
             <SectionWrapper id="venues" bgClass="bg-card">
               <Venues />
             </SectionWrapper>
@@ -66,7 +63,7 @@ export default function Home() {
 
         {siteConfig.sections.gallery && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent" />
+            <SectionSeparator bgColor="bg-card" waveColor="fill-background-transparent" />
             <SectionWrapper id="gallery" bgClass="bg-background-transparent">
               <Gallery />
             </SectionWrapper>
@@ -75,7 +72,7 @@ export default function Home() {
         
         {siteConfig.sections.gifts && (
           <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card" />
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="fill-card" />
             <SectionWrapper id="gifts" bgClass="bg-card">
               <Gifts />
             </SectionWrapper>
@@ -84,7 +81,7 @@ export default function Home() {
         
         {siteConfig.sections.shareAndConnect && (
           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent" />
+            <SectionSeparator bgColor="bg-card" waveColor="fill-background-transparent" />
             <SectionWrapper id="share-connect" bgClass="bg-background-transparent">
               <ShareAndConnect />
             </SectionWrapper>
@@ -93,7 +90,7 @@ export default function Home() {
 
         {siteConfig.sections.rsvp && (
           <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card" />
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="fill-card" />
             <SectionWrapper id="rsvp" bgClass="bg-card">
               <Rsvp />
             </SectionWrapper>
@@ -102,7 +99,7 @@ export default function Home() {
 
         {siteConfig.sections.share && (
            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent" />
+            <SectionSeparator bgColor="bg-card" waveColor="fill-background-transparent" />
             <SectionWrapper id="share" bgClass="bg-background-transparent">
               <ShareInvitation />
             </SectionWrapper>
@@ -118,4 +115,3 @@ export default function Home() {
     </div>
   );
 }
-
