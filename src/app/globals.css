@@ -99,12 +99,10 @@ body {
 
   .bg-background {
     background-color: hsl(var(--background) / 0.98);
-    @apply backdrop-blur-sm;
   }
   
   .bg-card {
      background-color: hsl(var(--card) / 0.95);
-     @apply backdrop-blur-sm;
   }
 }
 
