@@ -17,7 +17,6 @@ import { SectionSeparator } from "@/components/SectionSeparator";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 import { ShareAndConnect } from "@/components/ShareAndConnect";
 import { WelcomeModal } from "@/components/WelcomeModal";
-import { SectionWrapper } from "@/components/SectionWrapper";
 
 export default function Home() {
   return (
@@ -30,92 +29,91 @@ export default function Home() {
         <ScrollToTopOnMount />
         
         {siteConfig.sections.story && (
-            <AnimatedSection>
-                <OurStory />
-            </AnimatedSection>
+          <AnimatedSection bgClass="bg-background-transparent">
+            <OurStory />
+          </AnimatedSection>
         )}
 
         {siteConfig.sections.timeline && (
-           <>
+          <>
             <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <AnimatedSection>
-                <Timeline />
+            <AnimatedSection bgClass="bg-card">
+              <Timeline />
             </AnimatedSection>
-           </>
+          </>
         )}
         
         {siteConfig.sections.dressCode && (
-           <>
+          <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <AnimatedSection>
-                <DressCode />
+            <AnimatedSection bgClass="bg-background-transparent">
+              <DressCode />
             </AnimatedSection>
-           </>
+          </>
         )}
         
         {siteConfig.sections.venues && (
-            <>
+          <>
             <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <AnimatedSection>
-                <Venues />
+            <AnimatedSection bgClass="bg-card">
+              <Venues />
             </AnimatedSection>
-            </>
+          </>
         )}
 
         {siteConfig.sections.gallery && (
-           <>
+          <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <AnimatedSection>
-                <Gallery />
+            <AnimatedSection bgClass="bg-background-transparent">
+              <Gallery />
             </AnimatedSection>
-           </>
+          </>
         )}
         
         {siteConfig.sections.gifts && (
-           <>
+          <>
             <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <AnimatedSection>
-                <Gifts />
+            <AnimatedSection bgClass="bg-card">
+              <Gifts />
             </AnimatedSection>
-           </>
+          </>
         )}
         
         {siteConfig.sections.shareAndConnect && (
-            <>
+          <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <AnimatedSection>
-                <ShareAndConnect />
+            <AnimatedSection bgClass="bg-background-transparent">
+              <ShareAndConnect />
             </AnimatedSection>
-            </>
+          </>
         )}
 
         {siteConfig.sections.rsvp && (
-           <>
+          <>
             <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <AnimatedSection>
-                <Rsvp />
+            <AnimatedSection bgClass="bg-card">
+              <Rsvp />
             </AnimatedSection>
-           </>
+          </>
         )}
 
         {siteConfig.sections.share && (
-            <>
+          <>
             <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <AnimatedSection>
-                <ShareInvitation />
+            <AnimatedSection bgClass="bg-background-transparent">
+              <ShareInvitation />
             </AnimatedSection>
-            </>
+          </>
         )}
 
         {siteConfig.sections.seeYou && (
-           <>
+          <>
             <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <AnimatedSection>
-                <SeeYou />
+            <AnimatedSection bgClass="bg-card">
+              <SeeYou />
             </AnimatedSection>
-           </>
+          </>
         )}
-
       </main>
       <Footer />
     </div>

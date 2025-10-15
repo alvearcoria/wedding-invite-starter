@@ -8,9 +8,10 @@ interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
   delay?: number;
+  bgClass?: string;
 }
 
-export function AnimatedSection({ children, className, delay = 0 }: AnimatedSectionProps) {
+export function AnimatedSection({ children, className, delay = 0, bgClass }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -26,7 +27,7 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
         }
       },
       {
-        threshold: 0.1, // Animate when 10% of the element is visible
+        threshold: 0.1,
       }
     );
 
@@ -44,6 +45,7 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
       ref={ref}
       className={cn(
         "transition-transform duration-1000 ease-out",
+        bgClass,
         isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
         className
       )}
