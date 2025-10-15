@@ -26,7 +26,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
         setIsVisible(entry.isIntersecting);
       },
       {
-        threshold: 0.3, // Trigger when 30% of the item is visible
+        threshold: 0.4, // Trigger when 40% of the item is visible
       }
     );
 
@@ -48,7 +48,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
     >
       <div
         className={cn(
-          "w-1/2 transition-all duration-700 ease-in-out",
+          "w-1/2 transition-all duration-1000 ease-in-out",
           isEven ? "pr-8 text-right" : "pl-8 text-left order-last",
           isVisible ? "opacity-100 translate-x-0" : "opacity-0",
           isEven ? (isVisible ? "translate-x-0" : "-translate-x-4") : (isVisible ? "translate-x-0" : "translate-x-4")
@@ -94,4 +94,3 @@ export function Timeline() {
     </>
   );
 }
-
