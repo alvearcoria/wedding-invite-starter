@@ -35,11 +35,9 @@ export function RsvpForm() {
     resolver: zodResolver(rsvpSchema),
     defaultValues: {
       name: "",
-      email: "",
       phone: "",
       attending: undefined,
       companions: 0,
-      diet: "",
       message: "",
       slug: siteConfig.slug,
       _hp: "",
@@ -83,19 +81,6 @@ export function RsvpForm() {
               <FormLabel>Nombre Completo*</FormLabel>
               <FormControl>
                 <Input placeholder="Juan Pérez" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Correo Electrónico</FormLabel>
-              <FormControl>
-                <Input placeholder="juan.perez@email.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -167,19 +152,6 @@ export function RsvpForm() {
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="diet"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Restricciones Alimenticias</FormLabel>
-              <FormControl>
-                <Input placeholder="Ej: vegetariano, sin gluten" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}

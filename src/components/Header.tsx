@@ -47,11 +47,6 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <div className="hidden md:block">
-            <Button asChild>
-              <Link href="#rsvp">Confirmar Asistencia</Link>
-            </Button>
-          </div>
           <div className="md:hidden">
             <Button
               variant="ghost"
