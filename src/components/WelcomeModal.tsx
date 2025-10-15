@@ -12,6 +12,7 @@ export function WelcomeModal() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
+    // Show the modal if the music section is enabled
     if (siteConfig.sections.music) {
       setIsOpen(true);
       document.body.classList.add("modal-open");
@@ -48,22 +49,22 @@ export function WelcomeModal() {
     >
       <div
         className={cn(
-          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-gradient-to-br from-card/80 via-card/50 to-card/80 p-8 text-center text-foreground shadow-2xl backdrop-blur-md transition-all duration-300",
+          "mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-foreground shadow-2xl backdrop-blur-xl transition-all duration-300",
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
       >
         <Icon name={siteConfig.heroIcon} className="mx-auto mb-4 h-10 w-10 text-primary" />
-        <h2 className="font-headline text-3xl md:text-4xl">
+        <h2 className="font-headline text-3xl md:text-4xl text-white text-shadow-lg">
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h2>
-        <p className="mt-4 text-lg text-muted-foreground">
+        <p className="mt-4 text-lg text-white/80">
           ¿Deseas disfrutar de una experiencia musical mientras navegas?
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Button onClick={handleEnterWithMusic} size="lg" className="w-full">
             Entrar con música
           </Button>
-          <Button onClick={handleEnterWithoutMusic} variant="ghost" size="lg" className="w-full">
+          <Button onClick={handleEnterWithoutMusic} variant="ghost" size="lg" className="w-full text-white/70 hover:text-white hover:bg-white/10">
             Continuar sin música
           </Button>
         </div>
