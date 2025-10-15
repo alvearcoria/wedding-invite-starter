@@ -12,7 +12,6 @@ import { DressCode } from "@/components/DressCode";
 import { MusicControl } from "@/components/MusicControl";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SeeYou } from "@/components/SeeYou";
-import { WelcomeModal } from "@/components/WelcomeModal";
 import { ShareInvitation } from "@/components/ShareInvitation";
 import { SectionSeparator } from "@/components/SectionSeparator";
 import { Hotels } from "@/components/Hotels";
@@ -23,7 +22,6 @@ export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-x-hidden bg-background">
       <main className="flex-1">
-        <WelcomeModal />
         <MusicControl />
         
         <Hero />

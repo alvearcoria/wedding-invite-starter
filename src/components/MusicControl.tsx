@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -11,49 +12,52 @@ export function MusicControl() {
   const [isReady, setIsReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Initialize audio element
   useEffect(() => {
     if (siteConfig.sections.music && !audioRef.current) {
       const audio = new Audio(siteConfig.musicUrl);
       audio.loop = true;
-      audio.oncanplaythrough = () => {
-        setIsReady(true);
-      };
+      audio.oncanplaythrough = () => setIsReady(true);
       audioRef.current = audio;
+
+      return () => {
+        audio.pause();
+        audio.src = "";
+      };
     }
   }, []);
 
+  // Autoplay on first user interaction
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !isReady) return;
+    if (!isReady || !audioRef.current) return;
 
-    const playAudio = () => {
-      if (audio.paused) {
-        audio.play().then(() => setIsPlaying(true)).catch(console.error);
+    const handleFirstInteraction = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(console.error);
       }
+      // Remove listener after first interaction to avoid multiple plays
+      window.removeEventListener('click', handleFirstInteraction, { capture: true });
     };
 
-    const pauseAudio = () => {
-      if (!audio.paused) {
-        audio.pause();
-        setIsPlaying(false);
-      }
-    };
-
-    window.addEventListener("playAudio", playAudio);
-    window.addEventListener("pauseAudio", pauseAudio);
+    window.addEventListener('click', handleFirstInteraction, { capture: true, once: true });
 
     return () => {
-      window.removeEventListener("playAudio", playAudio);
-      window.removeEventListener("pauseAudio", pauseAudio);
+      window.removeEventListener('click', handleFirstInteraction, { capture: true });
     };
-  }, [isReady]); // Dependencia clave para asegurar que los listeners se añaden cuando el audio está listo.
+  }, [isReady]);
 
   const toggleMusic = () => {
-    if (!isReady) return;
+    if (!isReady || !audioRef.current) return;
+    
     if (isPlaying) {
-      window.dispatchEvent(new CustomEvent("pauseAudio"));
+      audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      window.dispatchEvent(new CustomEvent("playAudio"));
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(console.error);
     }
   };
 
