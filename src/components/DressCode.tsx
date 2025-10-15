@@ -8,7 +8,7 @@ import { Icon } from "./icons";
 export function DressCode() {
   const { dressCode } = siteConfig;
   return (
-    <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
+    <SectionWrapper id="dress-code" bgClass="bg-background/80 backdrop-blur-sm">
       <SectionHeader
         title={dressCode.title}
         description={dressCode.description}
@@ -25,7 +25,7 @@ export function DressCode() {
           </div>
           <div className="font-headline mt-2">
             <h3 className="text-xl font-semibold">Mujeres</h3>
-            <p className="text-foreground/70">Vestido de noche (midi a maxi)</p>
+            <p className="text-foreground/70">Vestido de noche</p>
           </div>
         </div>
         <div className="flex flex-col items-center gap-4">
