@@ -28,55 +28,55 @@ export default function Home() {
         <ScrollToTopOnMount />
         
         {siteConfig.sections.story && (
-          <SectionWrapper id="our-story" bgClass="bg-background-transparent">
+          <SectionWrapper id="our-story" bgClass="bg-background-transparent py-16 md:py-20">
             <OurStory />
           </SectionWrapper>
         )}
 
         {siteConfig.sections.timeline && (
-            <SectionWrapper id="timeline" bgClass="bg-card">
+            <SectionWrapper id="timeline" bgClass="bg-card py-16 md:py-20">
               <Timeline />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.dressCode && (
-            <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
+            <SectionWrapper id="dress-code" bgClass="bg-background-transparent py-16 md:py-20">
               <DressCode />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.venues && (
-            <SectionWrapper id="venues" bgClass="bg-card">
+            <SectionWrapper id="venues" bgClass="bg-card py-16 md:py-20">
               <Venues />
             </SectionWrapper>
         )}
 
         {siteConfig.sections.gallery && (
-            <SectionWrapper id="gallery" bgClass="bg-background-transparent">
+            <SectionWrapper id="gallery" bgClass="bg-background-transparent py-16 md:py-20">
               <Gallery />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.gifts && (
-            <SectionWrapper id="gifts" bgClass="bg-card">
+            <SectionWrapper id="gifts" bgClass="bg-card py-16 md:py-20">
               <Gifts />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.shareAndConnect && (
-            <SectionWrapper id="share-connect" bgClass="bg-background-transparent">
+            <SectionWrapper id="share-connect" bgClass="bg-background-transparent py-16 md:py-20">
               <ShareAndConnect />
             </SectionWrapper>
         )}
 
         {siteConfig.sections.rsvp && (
-            <SectionWrapper id="rsvp" bgClass="bg-card">
+            <SectionWrapper id="rsvp" bgClass="bg-card py-16 md:py-20">
               <Rsvp />
             </SectionWrapper>
         )}
 
         {siteConfig.sections.share && (
-            <SectionWrapper id="share" bgClass="bg-background-transparent">
+            <SectionWrapper id="share" bgClass="bg-background-transparent py-16 md:py-20">
               <ShareInvitation />
             </SectionWrapper>
         )}
