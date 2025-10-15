@@ -2,26 +2,24 @@
 import { cn } from "@/lib/utils";
 
 interface SectionSeparatorProps {
-  waveColor?: string;
+  bgColor: string;
+  waveColor: string;
   className?: string;
 }
 
-export function SectionSeparator({ 
-    waveColor = 'fill-background', 
-    className,
-}: SectionSeparatorProps) {
+export function SectionSeparator({ bgColor, waveColor, className }: SectionSeparatorProps) {
   return (
-    <div className={cn("relative h-16 md:h-24 w-full", className)}>
-        <div className={cn("absolute bottom-0 left-0 w-full h-full", waveColor)}>
-            <svg
-              className="absolute bottom-0 left-0 w-full h-full"
-              viewBox="0 0 1440 100"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M1440,0V100H0V0C240,60,480,100,720,100C960,100,1200,60,1440,0Z" className="fill-inherit" />
-            </svg>
-        </div>
+    <div className={cn("relative h-16 md:h-20 w-full", bgColor, waveColor, className)}>
+      <div className="absolute bottom-0 left-0 w-full h-full">
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M0,0 C40,70 60,70 100,0 V100 H0Z" fill="currentColor" />
+        </svg>
+      </div>
     </div>
   );
 }

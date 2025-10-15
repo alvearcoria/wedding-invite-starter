@@ -31,63 +31,79 @@ export default function Home() {
         {siteConfig.sections.story && (
           <SectionWrapper id="our-story" bgClass="bg-background-transparent">
             <OurStory />
-            <SectionSeparator waveColor="fill-card" />
           </SectionWrapper>
         )}
 
         {siteConfig.sections.timeline && (
+          <>
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="text-card" />
             <SectionWrapper id="timeline" bgClass="bg-card">
               <Timeline />
-              <SectionSeparator waveColor="fill-background-transparent" />
             </SectionWrapper>
+          </>
         )}
         
         {siteConfig.sections.dressCode && (
+          <>
+            <SectionSeparator bgColor="bg-card" waveColor="text-background-transparent"/>
             <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
               <DressCode />
-              <SectionSeparator waveColor="fill-card" />
             </SectionWrapper>
+          </>
         )}
         
         {siteConfig.sections.venues && (
+           <>
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="text-card" />
             <SectionWrapper id="venues" bgClass="bg-card">
               <Venues />
-              <SectionSeparator waveColor="fill-background-transparent" />
             </SectionWrapper>
+          </>
         )}
 
         {siteConfig.sections.gallery && (
+          <>
+            <SectionSeparator bgColor="bg-card" waveColor="text-background-transparent"/>
             <SectionWrapper id="gallery" bgClass="bg-background-transparent">
               <Gallery />
-              <SectionSeparator waveColor="fill-card" />
             </SectionWrapper>
+          </>
         )}
         
         {siteConfig.sections.gifts && (
+           <>
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="text-card" />
             <SectionWrapper id="gifts" bgClass="bg-card">
               <Gifts />
-              <SectionSeparator waveColor="fill-background-transparent" />
             </SectionWrapper>
+          </>
         )}
         
         {siteConfig.sections.shareAndConnect && (
+          <>
+            <SectionSeparator bgColor="bg-card" waveColor="text-background-transparent" />
             <SectionWrapper id="share-connect" bgClass="bg-background-transparent">
               <ShareAndConnect />
-              <SectionSeparator waveColor="fill-card" />
             </SectionWrapper>
+          </>
         )}
 
         {siteConfig.sections.rsvp && (
+           <>
+            <SectionSeparator bgColor="bg-background-transparent" waveColor="text-card" />
             <SectionWrapper id="rsvp" bgClass="bg-card">
               <Rsvp />
-              <SectionSeparator waveColor="fill-background-transparent" />
             </SectionWrapper>
+          </>
         )}
 
         {siteConfig.sections.share && (
+          <>
+            <SectionSeparator bgColor="bg-card" waveColor="text-background-transparent" />
             <SectionWrapper id="share" bgClass="bg-background-transparent">
               <ShareInvitation />
             </SectionWrapper>
+          </>
         )}
         
       </main>
