@@ -7,6 +7,8 @@ import { rsvpSchema, type RsvpInput } from "@/types/rsvp";
 import confetti from "canvas-confetti";
 import { useFirestore } from "@/firebase/provider";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { errorEmitter } from "@/firebase/error-emitter";
+import { FirestorePermissionError } from "@/firebase/errors";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -74,7 +76,23 @@ export function RsvpForm() {
         ...guestData,
         createdAt: serverTimestamp(),
         source: 'website-client',
+      }).catch(serverError => {
+        // Create and emit a contextual error for security rule violations.
+        const contextualError = new FirestorePermissionError({
+          path: guestsCollection.path,
+          operation: 'create',
+          requestResourceData: guestData,
+        });
+        errorEmitter.emit('permission-error', contextualError);
+
+        // Also show a generic error toast to the user.
+        toast({
+          variant: "destructive",
+          title: "¡Oh no! Algo salió mal.",
+          description: "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.",
+        });
       });
+
 
       toast({
         title: "¡Confirmación Recibida!",
@@ -91,11 +109,12 @@ export function RsvpForm() {
       form.reset();
 
     } catch (error) {
-       console.error("Error submitting RSVP:", error);
+       // This outer catch is for unexpected client-side errors, not for security rules.
+       console.error("Unexpected error in RSVP form:", error);
        toast({
         variant: "destructive",
-        title: "¡Oh no! Algo salió mal.",
-        description: "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.",
+        title: "¡Oh no! Un error inesperado ocurrió.",
+        description: "Por favor, refresca la página e inténtalo de nuevo.",
       });
     }
   };
