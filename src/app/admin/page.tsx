@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useMemo } from 'react';
+import { useMemoFirebase } from '@/firebase/provider';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { collection, query } from 'firebase/firestore';
 import { useFirestore } from '@/firebase/provider';
@@ -12,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, UserCheck, UserX, MessageSquare } from 'lucide-react';
 import type { RsvpInput } from '@/types/rsvp';
+import { useMemo } from 'react';
 
 function AdminStats({ guests }: { guests: RsvpInput[] | null }) {
   const stats = useMemo(() => {
@@ -126,7 +128,7 @@ function GuestsTable({ guests }: { guests: RsvpInput[] | null }) {
 export default function AdminPage() {
   const firestore = useFirestore();
   
-  const guestsQuery = useMemo(() => {
+  const guestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'invitations', siteConfig.slug, 'guests'));
   }, [firestore]);
