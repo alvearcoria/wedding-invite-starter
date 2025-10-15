@@ -1,4 +1,3 @@
-
 import { Hero } from "@/components/Hero";
 import { OurStory } from "@/components/OurStory";
 import { Timeline } from "@/components/Timeline";
@@ -28,49 +27,49 @@ export default function Home() {
         <ScrollToTopOnMount />
         
         {siteConfig.sections.story && (
-          <SectionWrapper id="our-story" bgClass="bg-background-transparent py-16 md:py-20">
+          <SectionWrapper id="our-story" bgClass="bg-background-transparent py-16 md:py-20" dividerColor="hsl(var(--card))">
             <OurStory />
           </SectionWrapper>
         )}
 
         {siteConfig.sections.timeline && (
-            <SectionWrapper id="timeline" bgClass="bg-card py-16 md:py-20">
+            <SectionWrapper id="timeline" bgClass="bg-card py-16 md:py-20" dividerColor="hsl(var(--background))">
               <Timeline />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.dressCode && (
-            <SectionWrapper id="dress-code" bgClass="bg-background-transparent py-16 md:py-20">
+            <SectionWrapper id="dress-code" bgClass="bg-background-transparent py-16 md:py-20" dividerColor="hsl(var(--card))">
               <DressCode />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.venues && (
-            <SectionWrapper id="venues" bgClass="bg-card py-16 md:py-20">
+           <SectionWrapper id="venues" bgClass="bg-card py-16 md:py-20" dividerColor="hsl(var(--background))">
               <Venues />
             </SectionWrapper>
         )}
 
         {siteConfig.sections.gallery && (
-            <SectionWrapper id="gallery" bgClass="bg-background-transparent py-16 md:py-20">
+            <SectionWrapper id="gallery" bgClass="bg-background-transparent py-16 md:py-20" dividerColor="hsl(var(--card))">
               <Gallery />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.gifts && (
-            <SectionWrapper id="gifts" bgClass="bg-card py-16 md:py-20">
+            <SectionWrapper id="gifts" bgClass="bg-card py-16 md:py-20" dividerColor="hsl(var(--background))">
               <Gifts />
             </SectionWrapper>
         )}
         
         {siteConfig.sections.shareAndConnect && (
-            <SectionWrapper id="share-connect" bgClass="bg-background-transparent py-16 md:py-20">
+            <SectionWrapper id="share-connect" bgClass="bg-background-transparent py-16 md:py-20" dividerColor="hsl(var(--card))">
               <ShareAndConnect />
             </SectionWrapper>
         )}
 
         {siteConfig.sections.rsvp && (
-            <SectionWrapper id="rsvp" bgClass="bg-card py-16 md:py-20">
+            <SectionWrapper id="rsvp" bgClass="bg-card py-16 md:py-20" dividerColor="hsl(var(--background))">
               <Rsvp />
             </SectionWrapper>
         )}

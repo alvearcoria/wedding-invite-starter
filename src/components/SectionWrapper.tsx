@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -7,14 +6,28 @@ interface SectionWrapperProps {
   children: ReactNode;
   className?: string;
   bgClass?: string;
+  dividerColor?: string;
 }
 
-export function SectionWrapper({ id, children, className, bgClass = 'bg-background' }: SectionWrapperProps) {
+export function SectionWrapper({ id, children, className, bgClass = 'bg-background', dividerColor }: SectionWrapperProps) {
   return (
     <section id={id} className={cn("relative", bgClass, className)}>
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 py-16 md:px-6 md:py-20">
         {children}
       </div>
+      {dividerColor && (
+         <svg
+          className="pointer-events-none absolute -bottom-px left-0 h-16 w-full md:h-20"
+          viewBox="0 0 1440 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0,20 C240,90 1200,0 1440,60 L1440,100 L0,100 Z"
+            style={{ fill: dividerColor }}
+          />
+        </svg>
+      )}
     </section>
   );
 }
@@ -26,7 +39,7 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, description }: SectionHeaderProps) {
     return (
-        <div className="mx-auto mb-12 max-w-2xl text-center">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
           <h2 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">{title}</h2>
           {description && <p className="mt-4 text-lg text-foreground/70">{description}</p>}
         </div>
