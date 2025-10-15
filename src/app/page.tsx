@@ -29,7 +29,7 @@ export default function Home() {
         <ScrollToTopOnMount />
         
         {siteConfig.sections.story && (
-          <SectionWrapper id="our-story" bgClass="bg-background-transparent">
+          <SectionWrapper id="our-story" bgClass="bg-background-transparent" className="py-20 md:py-28">
             <OurStory />
           </SectionWrapper>
         )}
@@ -37,7 +37,7 @@ export default function Home() {
         {siteConfig.sections.timeline && (
           <>
             <SectionSeparator waveColor="text-card" />
-            <SectionWrapper id="timeline" bgClass="bg-card">
+            <SectionWrapper id="timeline" bgClass="bg-card" className="py-20 md:py-28">
               <Timeline />
             </SectionWrapper>
           </>
@@ -46,7 +46,7 @@ export default function Home() {
         {siteConfig.sections.dressCode && (
           <>
             <SectionSeparator waveColor="text-background-transparent"/>
-            <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
+            <SectionWrapper id="dress-code" bgClass="bg-background-transparent" className="py-20 md:py-28">
               <DressCode />
             </SectionWrapper>
           </>
@@ -55,7 +55,7 @@ export default function Home() {
         {siteConfig.sections.venues && (
            <>
             <SectionSeparator waveColor="text-card" />
-            <SectionWrapper id="venues" bgClass="bg-card">
+            <SectionWrapper id="venues" bgClass="bg-card" className="py-20 md:py-28">
               <Venues />
             </SectionWrapper>
           </>
@@ -64,7 +64,7 @@ export default function Home() {
         {siteConfig.sections.gallery && (
           <>
             <SectionSeparator waveColor="text-background-transparent"/>
-            <SectionWrapper id="gallery" bgClass="bg-background-transparent">
+            <SectionWrapper id="gallery" bgClass="bg-background-transparent" className="py-20 md:py-28">
               <Gallery />
             </SectionWrapper>
           </>
@@ -73,7 +73,7 @@ export default function Home() {
         {siteConfig.sections.gifts && (
            <>
             <SectionSeparator waveColor="text-card" />
-            <SectionWrapper id="gifts" bgClass="bg-card">
+            <SectionWrapper id="gifts" bgClass="bg-card" className="py-20 md:py-28">
               <Gifts />
             </SectionWrapper>
           </>
@@ -82,7 +82,7 @@ export default function Home() {
         {siteConfig.sections.shareAndConnect && (
           <>
             <SectionSeparator waveColor="text-background-transparent" />
-            <SectionWrapper id="share-connect" bgClass="bg-background-transparent">
+            <SectionWrapper id="share-connect" bgClass="bg-background-transparent" className="py-20 md:py-28">
               <ShareAndConnect />
             </SectionWrapper>
           </>
@@ -91,7 +91,7 @@ export default function Home() {
         {siteConfig.sections.rsvp && (
            <>
             <SectionSeparator waveColor="text-card" />
-            <SectionWrapper id="rsvp" bgClass="bg-card">
+            <SectionWrapper id="rsvp" bgClass="bg-card" className="py-20 md:py-28">
               <Rsvp />
             </SectionWrapper>
           </>
@@ -100,7 +100,7 @@ export default function Home() {
         {siteConfig.sections.share && (
            <>
             <SectionSeparator waveColor="text-background-transparent" />
-            <SectionWrapper id="share" bgClass="bg-background-transparent">
+            <SectionWrapper id="share" bgClass="bg-background-transparent" className="py-20 md:py-28">
               <ShareInvitation />
             </SectionWrapper>
           </>
