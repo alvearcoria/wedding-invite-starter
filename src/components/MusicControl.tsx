@@ -13,16 +13,21 @@ export function MusicControl() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    if (siteConfig.sections.music) {
+    if (siteConfig.sections.music && !audioRef.current) {
       const audio = new Audio(siteConfig.musicUrl);
       audio.loop = true;
       audioRef.current = audio;
       setIsReady(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
     const playAudio = () => {
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current.play().then(() => {
+      if (audio.paused) {
+        audio.play().then(() => {
           setIsPlaying(true);
         }).catch(error => {
           console.error("Audio play failed:", error);
@@ -32,8 +37,8 @@ export function MusicControl() {
     };
 
     const pauseAudio = () => {
-       if (audioRef.current) {
-         audioRef.current.pause();
+       if (!audio.paused) {
+         audio.pause();
          setIsPlaying(false);
        }
     };
@@ -42,11 +47,10 @@ export function MusicControl() {
     window.addEventListener("pauseAudio", pauseAudio);
 
     return () => {
-      audioRef.current?.pause();
       window.removeEventListener("playAudio", playAudio);
       window.removeEventListener("pauseAudio", pauseAudio);
     };
-  }, []);
+  }, [isReady]);
 
   const toggleMusic = () => {
     if (!isReady || !audioRef.current) return;
