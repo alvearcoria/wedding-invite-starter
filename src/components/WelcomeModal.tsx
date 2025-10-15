@@ -13,15 +13,16 @@ export function WelcomeModal() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    // sessionStorage.setItem("welcomeModalSeen", "true"); // DEBUG: Uncomment to prevent modal from showing
-    const hasSeenModal = sessionStorage.getItem("welcomeModalSeen");
-    if (!hasSeenModal && siteConfig.sections.music) {
+    // This logic is simplified to always show the modal if music is enabled,
+    // ignoring sessionStorage for easier development and styling.
+    if (siteConfig.sections.music) {
       setIsOpen(true);
       document.body.classList.add("modal-open");
     }
   }, []);
 
   const closeModal = () => {
+    // We still set this so the behavior can be restored later if needed.
     sessionStorage.setItem("welcomeModalSeen", "true");
     setIsClosing(true);
     document.body.classList.remove("modal-open");
