@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -29,20 +28,15 @@ export function MusicControl() {
 
     const playAudio = () => {
       if (audio.paused) {
-        audio.play().then(() => {
-          setIsPlaying(true);
-        }).catch(error => {
-          console.error("Audio play failed:", error);
-          setIsPlaying(false);
-        });
+        audio.play().then(() => setIsPlaying(true)).catch(console.error);
       }
     };
 
     const pauseAudio = () => {
-       if (!audio.paused) {
-         audio.pause();
-         setIsPlaying(false);
-       }
+      if (!audio.paused) {
+        audio.pause();
+        setIsPlaying(false);
+      }
     };
 
     window.addEventListener("playAudio", playAudio);
@@ -51,15 +45,11 @@ export function MusicControl() {
     return () => {
       window.removeEventListener("playAudio", playAudio);
       window.removeEventListener("pauseAudio", pauseAudio);
-      if (audio) {
-        audio.pause();
-      }
     };
-  }, [isReady]);
+  }, [isReady]); // Dependencia clave para asegurar que los listeners se añaden cuando el audio está listo.
 
   const toggleMusic = () => {
-    if (!isReady || !audioRef.current) return;
-    
+    if (!isReady) return;
     if (isPlaying) {
       window.dispatchEvent(new CustomEvent("pauseAudio"));
     } else {
