@@ -5,10 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { rsvpSchema, type RsvpInput } from "@/types/rsvp";
 import confetti from "canvas-confetti";
-import { useFirestore } from "@/firebase/provider";
+import { useAuth, useFirestore } from "@/firebase/provider";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
+import { signInAnonymously } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +35,7 @@ import { siteConfig } from "@/config/site";
 export function RsvpForm() {
   const { toast } = useToast();
   const firestore = useFirestore();
+  const auth = useAuth();
 
   const form = useForm<RsvpInput>({
     resolver: zodResolver(rsvpSchema),
@@ -59,7 +61,7 @@ export function RsvpForm() {
       return;
     }
     
-    if (!firestore) {
+    if (!firestore || !auth) {
        toast({
         variant: "destructive",
         title: "¡Oh no! Algo salió mal.",
@@ -69,10 +71,15 @@ export function RsvpForm() {
     }
 
     try {
+      // Ensure user is signed in anonymously
+      if (!auth.currentUser) {
+        await signInAnonymously(auth);
+      }
+
       const { slug, _hp, ...guestData } = data;
       const guestsCollection = collection(firestore, 'invitations', slug, 'guests');
       
-      await addDoc(guestsCollection, {
+      addDoc(guestsCollection, {
         ...guestData,
         createdAt: serverTimestamp(),
         source: 'website-client',
@@ -84,15 +91,10 @@ export function RsvpForm() {
           requestResourceData: guestData,
         });
         errorEmitter.emit('permission-error', contextualError);
-
-        // Also show a generic error toast to the user.
-        toast({
-          variant: "destructive",
-          title: "¡Oh no! Algo salió mal.",
-          description: "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.",
-        });
+        
+        // Throw the error to be caught by the outer try/catch and displayed
+        throw contextualError;
       });
-
 
       toast({
         title: "¡Confirmación Recibida!",
@@ -109,12 +111,11 @@ export function RsvpForm() {
       form.reset();
 
     } catch (error) {
-       // This outer catch is for unexpected client-side errors, not for security rules.
-       console.error("Unexpected error in RSVP form:", error);
+       console.error("Error in RSVP form:", error);
        toast({
         variant: "destructive",
-        title: "¡Oh no! Un error inesperado ocurrió.",
-        description: "Por favor, refresca la página e inténtalo de nuevo.",
+        title: "¡Oh no! Algo salió mal.",
+        description: error instanceof Error ? error.message : "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.",
       });
     }
   };

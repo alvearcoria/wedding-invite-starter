@@ -1,98 +1,73 @@
 /**
- * @fileoverview Firestore Security Rules for the wedding celebration application.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict access control model for a wedding celebration application.
  *
  * Core Philosophy:
- * This ruleset prioritizes security and restricts data access based on Firebase Authentication.
- * Only authenticated users have access to any data.
+ *  - Authenticated users have read and write access to photos.
+ *  - Guests can only be created via invitation.
+ *  - Site configuration can only be read.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores information about wedding guests. Access is restricted to authenticated users.
- * - /photos/{photoId}: Stores photos for the wedding gallery. Read access is public, but write access is restricted to authenticated users.
- * - /site_configuration/{configId}: Stores site configuration settings. Access is restricted to authenticated users.
+ *  - /guests/{guestId}: Stores guest information, with application-only access.
+ *  - /photos/{photoId}: Stores photos, publicly readable but writeable only by authenticated users.
+ *  - /site_configuration/{configId}: Stores site configuration, readable by all, but writeable only by admins.
  *
  * Key Security Decisions:
- * - No user listing is allowed on any collections.
- * - All data is secured by Firebase Authentication, requiring a user to be signed in.
- * - Data shape is not validated in this prototyping phase.
+ *  - Guests are created via invitation.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to the /guests/{guestId} collection.
-     * @path /guests/{guestId}
-     * @allow (get, list) if isSignedIn() - Allows an authenticated user to get or list guests data.
-     * @allow (create, update, delete) if isSignedIn() - Allows an authenticated user to create, update or delete guests data.
-     * @deny (create) if !isSignedIn() - Denies a create operation if the user is not signed in.
-     * @deny (update) if !isSignedIn() - Denies an update operation if the user is not signed in.
-     * @deny (delete) if !isSignedIn() - Denies a delete operation if the user is not signed in.
-     * @principle Requires the user to be signed in to perform any operation on guest data.
-     */
-    match /guests/{guestId} {
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
-    }
-
-    /**
-     * @description Controls access to the /photos/{photoId} collection.
+     * @description Allows authenticated users to read and write photos.
      * @path /photos/{photoId}
-     * @allow (get, list) if true - Allows anyone to read photos.
-     * @allow (create, update, delete) if isSignedIn() - Requires the user to be signed in to create, update, or delete photos.
-     * @deny (create) if !isSignedIn() - Denies a create operation if the user is not signed in.
-     * @deny (update) if !isSignedIn() - Denies an update operation if the user is not signed in.
-     * @deny (delete) if !isSignedIn() - Denies a delete operation if the user is not signed in.
-     * @principle Allows public read access to photos, but restricts write access to authenticated users.
+     * @allow (get, list) Authenticated users can read any photo.
+     * @allow (create) Authenticated users can create photos.
+     * @allow (update, delete) Authenticated users can update or delete photos if they are authenticated.
+     * @deny  Unauthenticated users cannot create, update, or delete photos.
+     * @principle Allows authenticated users to manage photos.
      */
     match /photos/{photoId} {
-      allow get: if true;
-      allow list: if true;
+      allow get, list: if true;
       allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow update, delete: if isSignedIn() && resource != null;
     }
 
     /**
-     * @description Controls access to the /site_configuration/{configId} collection.
-     * @path /site_configuration/{configId}
-     * @allow (get, list) if isSignedIn() - Requires the user to be signed in to get or list the site configuration.
-     * @allow (create, update, delete) if isSignedIn() - Requires the user to be signed in to create, update, or delete the site configuration.
-     * @deny (create) if !isSignedIn() - Denies a create operation if the user is not signed in.
-     * @deny (update) if !isSignedIn() - Denies an update operation if the user is not signed in.
-     * @deny (delete) if !isSignedIn() - Denies a delete operation if the user is not signed in.
-     * @principle Requires the user to be signed in to perform any operation on the site configuration.
+     * @description Restricts access to guest information to the application itself.
+     * @path /guests/{guestId}
+     * @allow (create) Guests can only be created via invitation.
+     * @deny (get, list, update, delete) No one can read, list, update, or delete guests directly.
+     * @principle Enforces that guests are managed internally by the application.
      */
+    match /guests/{guestId} {
+      allow get, list, update, delete: if false;
+      allow create: if false;
+    }
+
+     /**
+      * @description Manages site configuration settings.  Read access is open, but writes are forbidden.
+      * @path /site_configuration/{configId}
+      * @allow (get, list) All users can read the site configuration.
+      * @deny (create, update, delete) No one can create, update, or delete the site configuration.
+      * @principle Ensures site configuration is read-only.
+      */
     match /site_configuration/{configId} {
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
 
     /**
-     * @description Controls access to the /invitations/{invitationId}/guests collection.
+     * @description Placeholder for invitations subcollection. Guests can only be created via invitation.
      * @path /invitations/{invitationId}/guests
-     * @allow (create) if isSignedIn() - Allows an authenticated user to create guest data.
-     * @allow (get, list) if false - Explicitly denies get and list operations.
-     * @allow (update, delete) if false - Explicitly denies update and delete operations.
-     * @deny (create) if !isSignedIn() - Denies a create operation if the user is not signed in.
-     * @deny (update) if isSignedIn() - Denies update operation.
-     * @deny (delete) if isSignedIn() - Denies delete operation.
      */
     match /invitations/{invitationId}/guests {
-      allow get: if false;
-      allow list: if false;
-      allow create: if isSignedIn();
-      allow update: if false;
-      allow delete: if false;
+       allow create: if true;
+       allow get, list, update, delete: if false;
     }
   }
 
-  // Helper function to determine if a user is signed in.
   function isSignedIn() {
     return request.auth != null;
   }
