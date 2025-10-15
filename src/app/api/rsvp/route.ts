@@ -30,10 +30,12 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('RSVP submission error:', error);
     
+    // Check for Zod validation error
     if (error instanceof Error && 'issues' in error) {
       return NextResponse.json({ success: false, error: 'Invalid data provided.', details: (error as any).issues }, { status: 400 });
     }
 
+    // Handle other errors
     return NextResponse.json({ success: false, error: 'An internal server error occurred.' }, { status: 500 });
   }
 }

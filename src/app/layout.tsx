@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { siteConfig } from '@/config/site';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -32,9 +33,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <BackgroundPattern />
-        {children}
-        <Toaster />
+        <FirebaseClientProvider>
+          <BackgroundPattern />
+          {children}
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );
