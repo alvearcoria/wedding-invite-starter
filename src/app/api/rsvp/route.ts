@@ -16,8 +16,9 @@ export async function POST(request: Request) {
     const validatedData = rsvpSchema.parse(body);
 
     const { slug, ...guestData } = validatedData;
-
-    const guestRef = adminDb.collection('invitations').doc(slug).collection('guests').doc();
+    
+    const db = adminDb();
+    const guestRef = db.collection('invitations').doc(slug).collection('guests').doc();
     
     await guestRef.set({
       ...guestData,

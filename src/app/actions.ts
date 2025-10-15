@@ -1,7 +1,6 @@
+
 "use server";
 
-import { addDocumentNonBlocking } from "@/firebase";
-import { collection, getFirestore } from "firebase/firestore";
 import { adminDb } from "@/lib/firebase-admin";
 import { RsvpInput, rsvpSchema } from "@/types/rsvp";
 import { FieldValue } from "firebase-admin/firestore";
@@ -23,8 +22,9 @@ export async function submitRsvp(formData: RsvpInput): Promise<{ success: string
 
   try {
     const { slug, ...guestData } = validatedFields.data;
+    const db = adminDb();
     
-    const guestRef = adminDb.collection('invitations').doc(slug).collection('guests').doc();
+    const guestRef = db.collection('invitations').doc(slug).collection('guests').doc();
     
     await guestRef.set({
       ...guestData,
