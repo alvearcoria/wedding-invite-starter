@@ -11,13 +11,13 @@ interface SectionWrapperProps {
 
 export function SectionWrapper({ id, children, className, bgClass = 'bg-background', dividerColor }: SectionWrapperProps) {
   return (
-    <section id={id} className={cn("relative", bgClass, className)}>
+    <section id={id} className={cn("relative", bgClass, "py-6", className)}>
       <div className="container mx-auto px-4 py-8 md:px-6">
         {children}
       </div>
       {dividerColor && (
          <svg
-          className="pointer-events-none absolute -bottom-px left-0 h-8 w-full"
+          className="pointer-events-none absolute -bottom-px left-0 h-6 w-full"
           viewBox="0 0 1440 100"
           preserveAspectRatio="none"
           aria-hidden="true"

@@ -113,7 +113,7 @@ export function Timeline() {
           className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border"
           aria-hidden="true"
         />
-        <div className="space-y-8">
+        <div className="space-y-6">
           {siteConfig.timelineEvents.map((item, index) => (
             <TimelineItem
               key={index}
