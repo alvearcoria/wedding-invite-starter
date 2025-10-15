@@ -16,8 +16,10 @@ export function MusicControl() {
     if (siteConfig.sections.music && !audioRef.current) {
       const audio = new Audio(siteConfig.musicUrl);
       audio.loop = true;
+      audio.oncanplaythrough = () => {
+        setIsReady(true);
+      };
       audioRef.current = audio;
-      setIsReady(true);
     }
   }, []);
 

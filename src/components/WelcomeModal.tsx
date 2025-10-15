@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,24 +12,26 @@ export function WelcomeModal() {
 
   useEffect(() => {
     // Si la música está habilitada, mostramos el modal.
+    // Damos un pequeño retraso para que la página cargue.
     if (siteConfig.sections.music) {
-      // Usamos un pequeño retraso para asegurar que la página se haya cargado
       const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 100); 
+        // Solo muestra el modal si no ha sido cerrado antes (p.ej. en desarrollo con hot-reload)
+        if (sessionStorage.getItem('welcomeModalClosed') !== 'true') {
+          setIsVisible(true);
+        }
+      }, 100);
       return () => clearTimeout(timer);
     }
   }, []);
 
   useEffect(() => {
-    // Efecto para bloquear el scroll del body cuando el modal está visible.
+    // Bloquea el scroll del body cuando el modal está visible.
     if (isVisible) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-
-    // Función de limpieza para restaurar el scroll si el componente se desmonta.
+    // Función de limpieza.
     return () => {
       document.body.style.overflow = 'auto';
     };
@@ -38,9 +39,10 @@ export function WelcomeModal() {
 
   const handleClose = () => {
     setIsFadingOut(true);
+    sessionStorage.setItem('welcomeModalClosed', 'true'); // Marca el modal como cerrado en la sesión
     setTimeout(() => {
       setIsVisible(false);
-    }, 500); // Coincide con la duración de la animación de salida.
+    }, 500); // Duración de la animación de salida.
   }
 
   const handleEnterWithMusic = () => {
@@ -53,7 +55,7 @@ export function WelcomeModal() {
     handleClose();
   }
 
-  if (!isVisible) {
+  if (!isVisible || !siteConfig.sections.music) {
     return null;
   }
 
