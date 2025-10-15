@@ -17,6 +17,7 @@ import { SectionSeparator } from "@/components/SectionSeparator";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 import { ShareAndConnect } from "@/components/ShareAndConnect";
 import { WelcomeModal } from "@/components/WelcomeModal";
+import { SectionWrapper } from "@/components/SectionWrapper";
 
 export default function Home() {
   return (
@@ -36,7 +37,7 @@ export default function Home() {
 
         {siteConfig.sections.timeline && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
             <AnimatedSection>
                 <Timeline />
             </AnimatedSection>
@@ -45,7 +46,7 @@ export default function Home() {
         
         {siteConfig.sections.dressCode && (
            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
             <AnimatedSection>
                 <DressCode />
             </AnimatedSection>
@@ -54,7 +55,7 @@ export default function Home() {
         
         {siteConfig.sections.venues && (
             <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
             <AnimatedSection>
                 <Venues />
             </AnimatedSection>
@@ -63,7 +64,7 @@ export default function Home() {
 
         {siteConfig.sections.gallery && (
            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
             <AnimatedSection>
                 <Gallery />
             </AnimatedSection>
@@ -72,7 +73,7 @@ export default function Home() {
         
         {siteConfig.sections.gifts && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
             <AnimatedSection>
                 <Gifts />
             </AnimatedSection>
@@ -81,7 +82,7 @@ export default function Home() {
         
         {siteConfig.sections.shareAndConnect && (
             <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
             <AnimatedSection>
                 <ShareAndConnect />
             </AnimatedSection>
@@ -90,7 +91,7 @@ export default function Home() {
 
         {siteConfig.sections.rsvp && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
             <AnimatedSection>
                 <Rsvp />
             </AnimatedSection>
@@ -98,14 +99,17 @@ export default function Home() {
         )}
 
         {siteConfig.sections.share && (
+            <>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
             <AnimatedSection>
                 <ShareInvitation />
             </AnimatedSection>
+            </>
         )}
 
         {siteConfig.sections.seeYou && (
            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
             <AnimatedSection>
                 <SeeYou />
             </AnimatedSection>
