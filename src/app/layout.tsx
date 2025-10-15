@@ -12,11 +12,13 @@ export const metadata: Metadata = {
 
 const BackgroundPattern = () => (
   <div
-    className="pointer-events-none fixed inset-0 z-[-1] opacity-[0.06] bg-[url('/assets/pattern.svg')] bg-repeat"
-    style={{
-      backgroundColor: 'transparent',
-    }}
-  />
+    className="pointer-events-none fixed inset-0 z-[-1] text-foreground/10"
+  >
+    <div 
+      className="absolute inset-0 bg-[url('/assets/pattern.svg')] bg-repeat"
+      style={{ backgroundSize: '80px 80px' }}
+    />
+  </div>
 );
 
 
