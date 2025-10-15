@@ -83,9 +83,7 @@ export default function Home() {
         )}
 
         {siteConfig.sections.seeYou && (
-          <SectionWrapper id="see-you" bgClass="bg-card">
             <SeeYou />
-          </SectionWrapper>
         )}
       </main>
       <Footer />
