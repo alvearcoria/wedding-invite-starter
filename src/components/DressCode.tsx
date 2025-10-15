@@ -8,7 +8,7 @@ import { ExternalLink } from "lucide-react";
 export function DressCode() {
   const { dressCode } = siteConfig;
   return (
-    <SectionWrapper id="dress-code" className="bg-background py-16 md:py-24 lg:py-32">
+    <SectionWrapper id="dress-code" className="bg-background py-16 md:py-24">
       <SectionHeader
         title={dressCode.title}
         description={dressCode.description}

@@ -2,7 +2,7 @@
 import { Hash, Camera } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
-import { CopyButton } from "./CopyButton";
+import { CopyToClipboard } from "./CopyToClipboard";
 import QrCode from "./QrCode";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
@@ -19,7 +19,7 @@ export function ShareAndConnect() {
   const gridCols = showHashtag && showQr ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
   return (
-    <SectionWrapper id="share-connect" className="py-16 md:py-24 lg:py-32">
+    <SectionWrapper id="share-connect" className="bg-background py-16 md:py-24">
       <SectionHeader
         title="Comparte y Conecta"
         description="Ayúdanos a capturar cada momento y a compartir la alegría en redes sociales."
@@ -39,7 +39,7 @@ export function ShareAndConnect() {
                 <span className="font-mono text-lg font-medium text-accent-foreground">
                   {hashtag}
                 </span>
-                <CopyButton textToCopy={hashtag} />
+                <CopyToClipboard textToCopy={hashtag} />
               </div>
             </CardContent>
           </Card>

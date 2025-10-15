@@ -25,7 +25,7 @@ export function Gifts() {
   const gridClasses = enabledModesCount > 1 ? "lg:grid-cols-2" : "lg:grid-cols-1";
 
   return (
-    <SectionWrapper id="gifts" className="py-16 md:py-24 lg:py-32">
+    <SectionWrapper id="gifts" className="bg-background py-16 md:py-24">
       <SectionHeader
         title={gifts.title}
         description={gifts.intro}
