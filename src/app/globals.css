@@ -107,6 +107,10 @@ body {
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 
+  .bg-background-transparent {
+    background-color: hsl(var(--background) / 0.88);
+  }
+
   @keyframes fade-in-up {
     from {
       opacity: 0;
