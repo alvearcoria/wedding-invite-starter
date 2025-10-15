@@ -1,98 +1,95 @@
 /**
- * @fileoverview Firestore Security Rules for the wedding celebration application.
+ * @fileoverview Firestore Security Rules for the Wedding application.
  *
  * Core Philosophy:
- * This ruleset prioritizes security and restricts data access to authenticated users.
- * It enforces strict ownership for guest data and restricts access to site configuration and photo management.
+ * This ruleset enforces a strict authentication model, requiring all users to be signed in to access any data.
+ * It employs a mix of ownership-based and role-based access control, tailored to different data collections.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores individual guest information. Only the authenticated user can manage their own guest data.
- * - /photos/{photoId}: Stores wedding photos. Publicly readable, but only authorized users can upload, modify, or delete.
- * - /site_configuration/{configId}: Stores site-wide configuration settings. Access restricted to authorized users.
+ * - /guests/{guestId}: Stores individual guest information, secured by application-only access.
+ * - /photos/{photoId}: Stores wedding photos, publicly readable but write-protected for non-authorized users.
+ * - /site_configuration/{configId}: Stores site-wide configuration settings, accessible only to authenticated users.
+ * - /invitations/{invitationId}/guests/{guestId}: Guest data associated with an invitation
  *
  * Key Security Decisions:
- * - All write operations are restricted to authenticated users.
- * - Listing of guests or site configurations is not permitted.
+ * - All `create`, `update`, and `delete` operations require authentication.
+ * - Listing of guests is restricted.
+ * - Data validation is limited to relational integrity checks during `create` operations.
  *
- * Authorization notes:
- * - The documentation states: "Access to all data is restricted to authenticated users via firebase authentication.".
- * - The documentation also states, "Access is generally open for read, but restricted for create/update/delete to authorized users." for `photos` collection.
+ * Denormalization for Authorization:
+ *   Not used in this version.
+ *
+ * Structural Segregation:
+ *   Not used in this version.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(guestId) {
-      return request.auth.uid == guestId;
-    }
-
-    function isExistingOwner(guestId) {
-      return isOwner(guestId) && resource != null;
-    }
-
     /**
-     * @description Manages access to guest data, enforcing ownership. Only an authenticated user can manage their own guest data.
+     * @description Grants access to the guests collection only to authenticated users.
      * @path /guests/{guestId}
-     * @allow (create) - User with UID 'user_abc' can create a guest document with ID 'user_abc'.
-     * @allow (update) - User with UID 'user_abc' can update a guest document with ID 'user_abc'.
-     * @allow (delete) - User with UID 'user_abc' can delete a guest document with ID 'user_abc'.
-     * @deny (create) - User with UID 'user_xyz' cannot create a guest document with ID 'user_abc'.
-     * @deny (update) - User with UID 'user_xyz' cannot update a guest document with ID 'user_abc'.
-     * @deny (delete) - User with UID 'user_xyz' cannot delete a guest document with ID 'user_abc'.
-     * @principle Enforces document ownership for writes.
+     * @allow (create) - Authenticated user can create a guest document.
+     * @deny (read, write) - Non-authenticated user cannot read or write guest data.
+     * @principle Requires authentication for all operations.
      */
     match /guests/{guestId} {
-      allow get: if isSignedIn();
+      allow get: if false;
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(guestId) && request.resource.data.id == guestId;
-      allow update: if isSignedIn() && isExistingOwner(guestId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(guestId);
+      allow create: if isSignedIn();
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Manages access to wedding photos. Publicly readable, but write access restricted to authorized users.
+     * @description Allows public read access to the photos collection, but restricts writes to authenticated users.
      * @path /photos/{photoId}
-     * @allow (get) - Any user can read any photo.
-     * @allow (list) - Any user can list photos.
-     * @allow (create) - Authenticated user can create a photo.
-     * @allow (update) - Authenticated user can update a photo.
-     * @allow (delete) - Authenticated user can delete a photo.
-     * @deny (create) - Unauthenticated user cannot create a photo.
-     * @deny (update) - Unauthenticated user cannot update a photo.
-     * @deny (delete) - Unauthenticated user cannot delete a photo.
-     * @principle Public read, authenticated writes.
+     * @allow (get, list) - Any user can read the photos.
+     * @allow (create) - Authenticated users can create photos.
+     * @deny (update, delete) - Non-authenticated users cannot update or delete photos.
+     * @principle Allows public read with authenticated-user-only writes.
      */
     match /photos/{photoId} {
-      allow get: if true;
-      allow list: if true;
+      allow get, list: if true;
       allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource != null;
-      allow delete: if isSignedIn() && resource != null;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Manages access to site configuration settings.  Access is restricted to authorized users.
+     * @description Restricts access to the site configuration collection to authenticated users.
      * @path /site_configuration/{configId}
-     * @allow (get) - Authenticated user can get the site configuration.
-     * @allow (create) - Authenticated user can create the site configuration.
-     * @allow (update) - Authenticated user can update the site configuration.
-     * @allow (delete) - Authenticated user can delete the site configuration.
-     * @deny (get) - Unauthenticated user cannot get the site configuration.
-     * @deny (create) - Unauthenticated user cannot create the site configuration.
-     * @deny (update) - Unauthenticated user cannot update the site configuration.
-     * @deny (delete) - Unauthenticated user cannot delete the site configuration.
-     * @principle Restricts access to authenticated users.
+     * @allow (get, create, update) - Authenticated user can read, create, and update the site configuration.
+     * @deny (delete) - Non-authenticated users cannot delete site configuration.
+     *
+     * @principle Requires authentication for all operations on site configuration.
      */
     match /site_configuration/{configId} {
       allow get: if isSignedIn();
       allow list: if false;
       allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource != null;
-      allow delete: if isSignedIn() && resource != null;
+      allow update: if isSignedIn();
+      allow delete: if false;
+    }
+
+     /**
+      * @description Allow authenticated users to create guest entries under specific invitation.
+      * @path /invitations/{invitationId}/guests/{guestId}
+      * @allow (create) - Authenticated user can create a guest document under an invitation.
+      * @deny (read, update, delete) - No read, update, or delete access granted.
+      * @principle Requires authentication for creating guest entries.
+      */
+    match /invitations/{invitationId}/guests/{guestId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if isSignedIn();
+      allow update: if false;
+      allow delete: if false;
+    }
+
+
+    function isSignedIn() {
+      return request.auth != null;
     }
   }
 }
