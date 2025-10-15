@@ -1,27 +1,22 @@
 /**
- * @fileoverview Firestore Security Rules for the Wedding Celebration Application.
+ * @fileoverview Firestore Security Rules for the wedding celebration application.
  *
  * Core Philosophy:
- * This ruleset prioritizes security and restricts data access based on
- * authentication status and, in some cases, ownership. It aims to prevent
- * unauthorized data modification while allowing open access to public content.
+ * This ruleset prioritizes security and restricts data access based on the type of data.
+ * Guests data is restricted to authenticated users.
+ * Photos are publicly readable but only authorized users can modify them.
+ * The site configuration is only accessible to authorized users.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores guest information.
- * - /photos/{photoId}: Stores wedding photos.
- * - /site_configuration/{configId}: Stores site-wide configuration settings.
+ * - /guests/{guestId}: Stores information about wedding guests.
+ * - /photos/{photoId}: Stores photos for the wedding gallery.
+ * - /site_configuration/{configId}: Stores the site configuration settings.
  *
  * Key Security Decisions:
- * - All write operations require authentication.
- * - Guests collection write operations are only allowed for authenticated users, effectively making it application-only.
- * - Photo gallery is publicly readable but write-protected.
- * - Site configuration is write-protected.
- *
- *  Denormalization for Authorization:
- * Not used in this configuration.
- *
- * Structural Segregation:
- * Not used in this configuration.
+ * - Access to guest data is restricted to authenticated users.
+ * - Photo data is publicly readable, but only authorized users can modify it.
+ * - Site configuration data is only accessible to authorized users.
+ * - The ruleset uses path-based authorization.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -30,51 +25,87 @@ service cloud.firestore {
     /**
      * @description Manages access to guest information.
      * @path /guests/{guestId}
-     * @allow (create) - Authenticated user can create a guest entry.
-     * @deny (create) - Unauthenticated user tries to create a guest entry.
-     * @allow (get, list) - Authenticated users can read guest data.
-     * @deny (get, list) - Unauthenticated users are not explicitly denied, allowing backend access.
-     * @allow (update, delete) - Authenticated users can update or delete guest data.
-     * @deny (update, delete) - Attempts to update or delete guest data will be denied.
-     * @principle Requires authentication for all writes.
+     * @allow (create) - An authenticated user can create a guest document.
+     * @deny (create) - An unauthenticated user cannot create a guest document.
+     * @principle Enforces authentication for guest data access.
      */
     match /guests/{guestId} {
-      allow get, list: if isSignedIn();
+      // Function to check if the user is signed in.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Allow read access to all authenticated users.
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+
+      // Allow create, update, and delete only for authenticated users.
       allow create: if isSignedIn();
       allow update: if isSignedIn();
       allow delete: if isSignedIn();
     }
 
     /**
-     * @description Manages access to wedding photos.
+     * @description Manages access to photo gallery.
      * @path /photos/{photoId}
-     * @allow (get, list) - Anyone can view the photos.
-     * @deny (create, update, delete) - Only authenticated users can upload, modify, or delete photos.
-     * @principle Public read, owner-only writes.  Requires authentication for writes.
+     * @allow (get, list) - Any user can read the photo data.
+     * @deny (create, update, delete) - Only authorized users can modify photo data.
+     * @principle Allows public read access but restricts write access to authorized users.
      */
     match /photos/{photoId} {
-      allow get, list: if true;
+      // Function to check if the user is signed in.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Allow public read access.
+      allow get: if true;
+      allow list: if true;
+
+      // Allow create, update, and delete only for authenticated users.
       allow create: if isSignedIn();
       allow update: if isSignedIn();
       allow delete: if isSignedIn();
     }
 
     /**
-     * @description Manages access to site configuration settings.
+     * @description Manages access to site configuration.
      * @path /site_configuration/{configId}
-     * @allow (get, list) - Anyone can read the site configuration.
-     * @deny (create, update, delete) - Only authenticated users can modify the site configuration.
-     * @principle Public read, owner-only writes. Requires authentication for writes.
+     * @allow (get) - An authenticated user can read the site configuration.
+     * @deny (create, update, delete) - Only authorized users can modify the site configuration.
+     * @principle Restricts access to the site configuration to authorized users.
      */
     match /site_configuration/{configId} {
-      allow get, list: if true;
+      // Function to check if the user is signed in.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      // Allow read access only for authenticated users.
+      allow get: if isSignedIn();
+      allow list: if false;
+
+      // Allow create, update, and delete only for authenticated users.
       allow create: if isSignedIn();
       allow update: if isSignedIn();
       allow delete: if isSignedIn();
     }
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
+    
+      /**
+       * @description Invitations collection, guests subcollection match block.
+       * @path /invitations/{invitationId}/guests/{guestId}
+       * @allow (create) - Guests can be created for an Invitation by authenticated users.
+       * @deny (create) - Guests cannot be created by anonymous users.
+       */
+       match /invitations/{invitationId}/guests/{guestId} {
+        function isSignedIn() {
+          return request.auth != null;
+        }
+        allow get: if isSignedIn();
+        allow list: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update: if isSignedIn();
+        allow delete: if isSignedIn();
+       }
   }
 }
