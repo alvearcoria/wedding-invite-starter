@@ -1,79 +1,106 @@
-
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType } from 'react';
-import { SectionWrapper, SectionHeader } from "./SectionWrapper";
+import { useState, useEffect } from "react";
+import { SectionHeader } from "./SectionWrapper";
 import { cn } from "@/lib/utils";
-import { siteConfig } from '@/config/site';
-import { IconName, Icon } from '@/components/icons';
+import { siteConfig } from "@/config/site";
+import { IconName, Icon } from "@/components/icons";
+import { useInViewHalf } from "@/hooks/useInViewHalf";
+import { useInCenterBand } from "@/hooks/useInCenterBand";
 
 type TimelineEvent = (typeof siteConfig.timelineEvents)[0];
 
-const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+const TimelineItem = ({
+  item,
+  index,
+  onActiveChange,
+  isGloballyActive,
+}: {
+  item: TimelineEvent;
+  index: number;
+  onActiveChange: (idx: number, active: boolean) => void;
+  isGloballyActive: boolean;
+}) => {
   const isEven = index % 2 === 0;
-
   const iconName = item.icon as IconName;
 
+  // Aparición suave (>=50% del elemento)
+  const { ref, inView } = useInViewHalf<HTMLDivElement>(false); // false => reversible al salir
+
+  // Banda central (50% de pantalla) para "activo"
+  const { centerRef, active } = useInCenterBand<HTMLDivElement>();
+  
   useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
+    onActiveChange(index, active);
+  }, [active, index, onActiveChange]);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Update isVisible state based on whether the element is intersecting
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.4, // Trigger when 40% of the item is visible
-      }
-    );
-
-    observer.observe(element);
-
-    return () => {
-      if (element) {
-        observer.unobserve(element);
-      }
-    };
-  }, []);
 
   return (
-    <div
-      ref={ref}
-      className={cn(
-        "relative flex items-center",
-      )}
-    >
+    <div className="relative flex items-center">
+      {/* Anclaje invisible para la banda central (alineado al bloque del contenido) */}
+      <div ref={centerRef} className="absolute left-1/2 top-1/2 h-0 w-0 -translate-x-1/2" />
+
       <div
+        ref={ref}
         className={cn(
-          "w-1/2 transition-all duration-1000 ease-in-out",
+          "w-1/2 will-change-transform transition-all duration-500 ease-out",
           isEven ? "pr-8 text-right" : "pl-8 text-left order-last",
-          isVisible ? "opacity-100 translate-x-0" : "opacity-0",
-          isEven ? (isVisible ? "translate-x-0" : "-translate-x-4") : (isVisible ? "translate-x-0" : "translate-x-4")
+          // Aparición desde el lado correspondiente
+          inView
+            ? "opacity-100 translate-x-0"
+            : isEven
+            ? "opacity-0 -translate-x-6"
+            : "opacity-0 translate-x-6"
         )}
+        // Pequeño "stagger" por índice
+        style={{ transitionDelay: `${index * 120}ms` }}
       >
         <p className="font-semibold">{item.time}</p>
-        <h3 className="font-headline text-xl font-bold">{item.event}</h3>
-        <p className="text-sm text-foreground/70">{item.description}</p>
+        <h3
+          className={cn(
+            "font-headline text-xl transition-colors",
+            isGloballyActive ? "text-primary font-semibold" : "font-bold"
+          )}
+        >
+          {item.event}
+        </h3>
+        <p className={cn("text-sm transition-colors", isGloballyActive ? "text-foreground" : "text-foreground/70")}>
+          {item.description}
+        </p>
       </div>
+
+      {/* Ícono */}
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
-        <div className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground transition-all duration-500",
-          isVisible ? "bg-primary text-primary-foreground scale-110" : "scale-90"
-          )}>
+        <div
+          className={cn(
+            "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300",
+            isGloballyActive
+              ? "bg-primary text-primary-foreground scale-110 shadow-lg ring-2 ring-primary/30"
+              : "bg-accent text-accent-foreground scale-100"
+          )}
+          style={{ transitionDelay: `${index * 120 + 40}ms` }}
+        >
           <Icon name={iconName} className="h-6 w-6" />
         </div>
       </div>
-      {/* This empty div is just for spacing */}
+
+      {/* Separador invisible para layout */}
       <div className={cn("w-1/2", isEven ? "pl-8" : "pr-8")} />
     </div>
   );
 };
 
-
 export function Timeline() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  // controla cuál item es "globalmente activo" (en la banda central)
+  const handleActiveChange = (idx: number, active: boolean) => {
+    setActiveIndex((prev) => {
+      if (active) return idx;
+      return prev === idx ? null : prev;
+    });
+  };
+
   return (
     <>
       <SectionHeader
@@ -81,13 +108,20 @@ export function Timeline() {
         description="Esto es lo que pueden esperar durante la celebración de nuestra boda."
       />
       <div className="relative mx-auto max-w-2xl">
-        <div 
+        {/* línea vertical */}
+        <div
           className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border"
           aria-hidden="true"
         />
         <div className="space-y-10">
           {siteConfig.timelineEvents.map((item, index) => (
-             <TimelineItem key={index} item={item} index={index} />
+            <TimelineItem
+              key={index}
+              item={item}
+              index={index}
+              onActiveChange={handleActiveChange}
+              isGloballyActive={activeIndex === index}
+            />
           ))}
         </div>
       </div>
