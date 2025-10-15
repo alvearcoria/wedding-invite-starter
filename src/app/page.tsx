@@ -13,7 +13,6 @@ import { MusicControl } from "@/components/MusicControl";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SeeYou } from "@/components/SeeYou";
 import { ShareInvitation } from "@/components/ShareInvitation";
-import { SectionSeparator } from "@/components/SectionSeparator";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 import { ShareAndConnect } from "@/components/ShareAndConnect";
 import { WelcomeModal } from "@/components/WelcomeModal";
@@ -36,84 +35,57 @@ export default function Home() {
         )}
 
         {siteConfig.sections.timeline && (
-          <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <AnimatedSection bgClass="bg-card">
-              <Timeline />
-            </AnimatedSection>
-          </>
+          <AnimatedSection bgClass="bg-card">
+            <Timeline />
+          </AnimatedSection>
         )}
         
         {siteConfig.sections.dressCode && (
-          <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
-              <DressCode />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="dress-code" bgClass="bg-background-transparent">
+            <DressCode />
+          </SectionWrapper>
         )}
         
         {siteConfig.sections.venues && (
-          <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <SectionWrapper id="venues" bgClass="bg-card">
-              <Venues />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="venues" bgClass="bg-card">
+            <Venues />
+          </SectionWrapper>
         )}
 
         {siteConfig.sections.gallery && (
-          <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <SectionWrapper id="gallery" bgClass="bg-background-transparent">
-              <Gallery />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="gallery" bgClass="bg-background-transparent">
+            <Gallery />
+          </SectionWrapper>
         )}
         
         {siteConfig.sections.gifts && (
-          <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <SectionWrapper id="gifts" bgClass="bg-card">
-              <Gifts />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="gifts" bgClass="bg-card">
+            <Gifts />
+          </SectionWrapper>
         )}
         
         {siteConfig.sections.shareAndConnect && (
-          <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <SectionWrapper id="share-connect" bgClass="bg-background-transparent">
-              <ShareAndConnect />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="share-connect" bgClass="bg-background-transparent">
+            <ShareAndConnect />
+          </SectionWrapper>
         )}
 
         {siteConfig.sections.rsvp && (
-          <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <SectionWrapper id="rsvp" bgClass="bg-card">
-              <Rsvp />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="rsvp" bgClass="bg-card">
+            <Rsvp />
+          </SectionWrapper>
         )}
 
         {siteConfig.sections.share && (
-          <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background-transparent"/>
-            <SectionWrapper id="share" bgClass="bg-background-transparent">
-              <ShareInvitation />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="share" bgClass="bg-background-transparent">
+            <ShareInvitation />
+          </SectionWrapper>
         )}
 
         {siteConfig.sections.seeYou && (
-          <>
-            <SectionSeparator waveColor="fill-background-transparent" bgColor="bg-card"/>
-            <SectionWrapper id="see-you" bgClass="bg-card">
-              <SeeYou />
-            </SectionWrapper>
-          </>
+          <SectionWrapper id="see-you" bgClass="bg-card">
+            <SeeYou />
+          </SectionWrapper>
         )}
       </main>
       <Footer />
