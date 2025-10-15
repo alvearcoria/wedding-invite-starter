@@ -17,26 +17,24 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
   const iconName = item.icon as IconName;
 
   useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
+        // Update isVisible state based on whether the element is intersecting
+        setIsVisible(entry.isIntersecting);
       },
       {
-        threshold: 0.5,
+        threshold: 0.3, // Trigger when 30% of the item is visible
       }
     );
 
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+    observer.observe(element);
 
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
+      if (element) {
+        observer.unobserve(element);
       }
     };
   }, []);
@@ -96,3 +94,4 @@ export function Timeline() {
     </>
   );
 }
+
