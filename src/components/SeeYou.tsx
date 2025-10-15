@@ -5,7 +5,7 @@ import { Heart } from "./icons/Heart";
 
 export function SeeYou() {
   return (
-    <section className="relative flex h-[80vh] min-h-[600px] w-full flex-col items-center justify-center overflow-hidden text-white">
+    <section className="relative flex h-[50vh] min-h-[400px] w-full flex-col items-center justify-center overflow-hidden text-white bg-card">
       <div className="absolute inset-0 bg-primary/60 z-10" />
       <Image
         src={siteConfig.seeYouImage.src}
