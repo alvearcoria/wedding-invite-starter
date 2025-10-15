@@ -11,22 +11,20 @@ export function WelcomeModal() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    if (siteConfig.sections.music) {
-      const timer = setTimeout(() => {
-        if (sessionStorage.getItem('welcomeModalClosed') !== 'true') {
-          setIsVisible(true);
-        }
-      }, 100);
-      return () => clearTimeout(timer);
+    // Show the modal only if music is enabled and it hasn't been closed in this session.
+    if (siteConfig.sections.music && sessionStorage.getItem('welcomeModalClosed') !== 'true') {
+      setIsVisible(true);
     }
   }, []);
 
   useEffect(() => {
+    // Block body scroll when the modal is visible.
     if (isVisible) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
+    // Cleanup function to ensure scroll is re-enabled when the component unmounts.
     return () => {
       document.body.style.overflow = 'auto';
     };
@@ -37,10 +35,11 @@ export function WelcomeModal() {
     sessionStorage.setItem('welcomeModalClosed', 'true');
     setTimeout(() => {
       setIsVisible(false);
-    }, 500); 
+    }, 500); // Wait for fade-out animation to complete.
   }
 
   const handleEnterWithMusic = () => {
+    // Dispatch a global event that MusicControl will listen for.
     window.dispatchEvent(new CustomEvent("playAudio"));
     handleClose();
   };
