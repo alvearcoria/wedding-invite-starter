@@ -37,7 +37,15 @@ export async function submitRsvp(formData: RsvpInput): Promise<{ success: string
 
   } catch (error) {
     console.error("No se pudo procesar el RSVP:", error);
-    const errorMessage = error instanceof Error ? error.message : "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.";
+    
+    let errorMessage = "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.";
+    if (error instanceof Error) {
+        // Provide a more specific error message if initialization failed.
+        if (error.message.includes('Firebase Admin SDK')) {
+            errorMessage = error.message;
+        }
+    }
+    
     return { error: errorMessage };
   }
 }
