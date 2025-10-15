@@ -105,12 +105,12 @@ export const siteConfig = {
   },
 
   timelineEvents: [
-    { time: "4:30 PM", event: "Ceremonia", description: "Sean testigos de nuestros votos y el comienzo de nuestro para siempre.", icon: "Church" },
-    { time: "8:00 PM", event: "Recepción", description: "Disfruten de la bienvenida.", icon: "Bell" },
-    { time: "8:30 PM", event: "Primer Baile", description: "Nuestro primer baile como esposos.", icon: "HeartHandshake" },
-    { time: "9:00 PM", event: "Cena", description: "Acompáñennos para una deliciosa cena.", icon: "Utensils" },    
-    { time: "10:00 PM", event: "¡Fiesta!", description: "¡Vamos a la pista de baile!", icon: "Music" },
-    { time: "12:30 AM", event: "Tornaboda", description: "Continuemos la celebración.", icon: "Coffee" },
+    { time: "4:30 PM", event: "Ceremonia", description: "Sean testigos de nuestros votos y el comienzo de nuestro para siempre.", icon: "church" },
+    { time: "8:00 PM", event: "Recepción", description: "Disfruten de la bienvenida.", icon: "bell" },
+    { time: "8:30 PM", event: "Primer Baile", description: "Nuestro primer baile como esposos.", icon: "heart-handshake" },
+    { time: "9:00 PM", event: "Cena", description: "Acompáñennos para una deliciosa cena.", icon: "utensils" },    
+    { time: "10:00 PM", event: "¡Fiesta!", description: "¡Vamos a la pista de baile!", icon: "music" },
+    { time: "12:30 AM", event: "Tornaboda", description: "Continuemos la celebración.", icon: "coffee" },
   ],
 
   gifts: {

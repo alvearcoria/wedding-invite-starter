@@ -1,21 +1,11 @@
+
 "use client";
 
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
-import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee, type LucideProps } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from '@/config/site';
-
-const iconMap: { [key: string]: ComponentType<LucideProps> } = {
-  Church,
-  Bell,
-  GlassWater,
-  PenSquare,
-  Utensils,
-  HeartHandshake,
-  Music,
-  Coffee,
-};
+import { IconName, Icon } from '@/components/icons';
 
 type TimelineEvent = (typeof siteConfig.timelineEvents)[0];
 
@@ -24,7 +14,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
   const [isVisible, setIsVisible] = useState(false);
   const isEven = index % 2 === 0;
 
-  const IconComponent = iconMap[item.icon];
+  const iconName = item.icon as IconName;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -75,7 +65,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
           "flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground transition-all duration-500",
           isVisible ? "bg-primary text-primary-foreground scale-110" : "scale-90"
           )}>
-          {IconComponent && <IconComponent className="h-6 w-6" />}
+          <Icon name={iconName} className="h-6 w-6" />
         </div>
       </div>
       {/* This empty div is just for spacing */}

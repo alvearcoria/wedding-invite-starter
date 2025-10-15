@@ -1,10 +1,10 @@
 
-import { Hash, Camera } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { CopyToClipboard } from "./CopyToClipboard";
 import QrCode from "./QrCode";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Icon } from "./icons";
 
 export function ShareAndConnect() {
   const { hashtag, qrAlbum } = siteConfig;
@@ -28,7 +28,7 @@ export function ShareAndConnect() {
         {showHashtag && (
           <Card className="text-center">
             <CardHeader>
-              <Hash className="mx-auto h-10 w-10 text-primary" />
+              <Icon name="hash" className="mx-auto h-10 w-10 text-primary" />
               <CardTitle className="font-headline text-2xl font-semibold">En Redes Sociales</CardTitle>
               <CardDescription>
                 Usa nuestro hashtag para que no nos perdamos ninguna de tus publicaciones.
@@ -48,7 +48,7 @@ export function ShareAndConnect() {
         {showQr && (
           <Card className="text-center">
             <CardHeader>
-              <Camera className="mx-auto h-10 w-10 text-primary" />
+              <Icon name="camera" className="mx-auto h-10 w-10 text-primary" />
               <CardTitle className="font-headline text-2xl font-semibold">Nuestro Álbum</CardTitle>
               <CardDescription>
                 Escanea el código para subir tus fotos y videos a nuestro álbum compartido.

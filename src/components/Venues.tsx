@@ -1,11 +1,11 @@
 
 import Image from "next/image";
-import { MapPin, Church, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
 import MapWrapper from "./Map";
+import { Icon } from "./icons";
 
 export function Venues() {
   const { ceremony, reception } = siteConfig.venues;
@@ -29,7 +29,7 @@ export function Venues() {
                 />
                 <div className="absolute inset-0 bg-primary/70" />
                 <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-primary-foreground p-4">
-                    <Church className="h-10 w-10 mb-2" />
+                    <Icon name="church" className="h-10 w-10 mb-2" />
                     <CardTitle className="font-headline text-2xl">La Ceremonia</CardTitle>
                     <CardDescription className="text-primary-foreground/80">{ceremony.name}</CardDescription>
                 </div>
@@ -41,7 +41,7 @@ export function Venues() {
                 </div>
                 <Button variant="outline" asChild className="mt-4 w-full">
                 <a href={ceremony.mapsUrl} target="_blank" rel="noopener noreferrer">
-                    <MapPin className="mr-2 h-4 w-4" />
+                    <Icon name="map-pin" className="mr-2 h-4 w-4" />
                     Abrir en Mapas
                 </a>
                 </Button>
@@ -59,7 +59,7 @@ export function Venues() {
                 />
                 <div className="absolute inset-0 bg-primary/70" />
                 <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-primary-foreground p-4">
-                    <Bell className="h-10 w-10 mb-2" />
+                    <Icon name="bell" className="h-10 w-10 mb-2" />
                     <CardTitle className="font-headline text-2xl">La Recepción</CardTitle>
                     <CardDescription className="text-primary-foreground/80">{reception.name}</CardDescription>
                 </div>
@@ -71,7 +71,7 @@ export function Venues() {
                 </div>
                 <Button variant="outline" asChild className="mt-4 w-full">
                 <a href={reception.mapsUrl} target="_blank" rel="noopener noreferrer">
-                    <MapPin className="mr-2 h-4 w-4" />
+                    <Icon name="map-pin" className="mr-2 h-4 w-4" />
                     Abrir en Mapas
                 </a>
                 </Button>

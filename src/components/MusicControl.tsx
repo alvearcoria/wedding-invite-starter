@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Music, Music2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { Icon } from "./icons";
 
 export function MusicControl() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -73,7 +74,7 @@ export function MusicControl() {
         )}
         aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
       >
-        {isPlaying ? <Music className="h-5 w-5" /> : <Music2 className="h-5 w-5" />}
+        {isPlaying ? <Icon name="music" className="h-5 w-5" /> : <Icon name="music-2" className="h-5 w-5" />}
       </Button>
     </div>
   );

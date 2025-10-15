@@ -49,14 +49,15 @@ export function RsvpForm() {
     },
   });
 
-  const onSubmit = async (data: RsvpInput) => {
-    // Honeypot check
+  const onSubmit = (data: RsvpInput) => {
+    // Honeypot check for spam prevention
     if (data._hp) {
       console.log("Honeypot field filled, likely spam. Silently succeeding.");
-       toast({
+      toast({
         title: "¡Confirmación Recibida!",
         description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
       });
+      form.reset();
       return;
     }
     
@@ -69,61 +70,51 @@ export function RsvpForm() {
       return;
     }
 
-    try {
-      // Prepara los datos para Firestore, excluyendo 'slug' y '_hp'
-      const guestData = {
-        name: data.name,
-        phone: data.phone || '', // Asegura que el teléfono sea siempre una cadena
-        attending: data.attending,
-        companions: data.companions,
-        message: data.message || '', // Asegura que el mensaje sea siempre una cadena
-        createdAt: serverTimestamp(),
-        source: 'website-client',
-      };
+    const guestData = {
+      name: data.name,
+      phone: data.phone || '',
+      attending: data.attending,
+      companions: data.companions,
+      message: data.message || '',
+      createdAt: serverTimestamp(),
+      source: 'website-client',
+    };
+    
+    const guestsCollection = collection(firestore, 'invitations', data.slug, 'guests');
+    
+    // Non-blocking write with optimistic UI
+    addDoc(guestsCollection, guestData).catch(serverError => {
+      console.error("Error writing document: ", serverError);
       
-      const guestsCollection = collection(firestore, 'invitations', data.slug, 'guests');
-      
-      addDoc(guestsCollection, guestData).catch(serverError => {
-        // Create and emit a contextual error for security rule violations.
-        const contextualError = new FirestorePermissionError({
-          path: guestsCollection.path,
-          operation: 'create',
-          requestResourceData: guestData,
-        });
-        errorEmitter.emit('permission-error', contextualError);
-        
-        // Also show a toast to the user
-        toast({
-            variant: "destructive",
-            title: "Error de Permiso",
-            description: "No se pudo guardar tu confirmación. Verifica que los datos sean válidos.",
-        });
-        console.error("Security rule error:", contextualError);
+      const contextualError = new FirestorePermissionError({
+        path: guestsCollection.path,
+        operation: 'create',
+        requestResourceData: guestData,
       });
 
-      // Optimistically show success toast
+      errorEmitter.emit('permission-error', contextualError);
+      
       toast({
-        title: "¡Confirmación Recibida!",
-        description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
+          variant: "destructive",
+          title: "Error de Permiso",
+          description: "No se pudo guardar tu confirmación. Verifica que los datos sean válidos.",
       });
+    });
 
-      if (data.attending) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
-      }
-      form.reset();
+    toast({
+      title: "¡Confirmación Recibida!",
+      description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
+    });
 
-    } catch (error) {
-       console.error("Error in RSVP form submission:", error);
-       toast({
-        variant: "destructive",
-        title: "¡Oh no! Algo salió mal.",
-        description: error instanceof Error ? error.message : "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.",
+    if (data.attending) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
       });
     }
+    
+    form.reset();
   };
 
   return (

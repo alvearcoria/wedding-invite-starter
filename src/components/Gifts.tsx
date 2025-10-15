@@ -1,5 +1,4 @@
 
-import { Gift, University } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
@@ -8,7 +7,7 @@ import { CopyToClipboard } from "./CopyToClipboard";
 import { Envelope } from "./icons/Envelope";
 import { Money } from "./icons/Money";
 import { Chest } from "./icons/Chest";
-import { Plus, ArrowRight } from "lucide-react";
+import { Icon } from "./icons";
 
 export function Gifts() {
   const { gifts } = siteConfig;
@@ -44,9 +43,9 @@ export function Gifts() {
               <CardContent className="flex flex-col items-center gap-4">
                  <div className="flex items-center justify-center gap-2 text-foreground/70">
                     <Envelope className="h-8 w-8" />
-                    <Plus className="h-5 w-5" />
+                    <Icon name="plus" className="h-5 w-5" />
                     <Money className="h-8 w-8" />
-                    <ArrowRight className="h-5 w-5" />
+                    <Icon name="arrow-right" className="h-5 w-5" />
                     <Chest className="h-8 w-8" />
                  </div>
                  <p className="font-cursive text-2xl text-foreground/80">Thank you :)</p>
@@ -57,7 +56,7 @@ export function Gifts() {
         {showList && (
           <Card>
             <CardHeader>
-              <Gift className="mb-4 h-10 w-10 text-accent-foreground" />
+              <Icon name="gift" className="mb-4 h-10 w-10 text-accent-foreground" />
               <CardTitle className="font-headline">Mesa de Regalos</CardTitle>
               <CardDescription>
                 Tenemos una mesa de regalos para quienes deseen contribuir de esta manera.
@@ -75,7 +74,7 @@ export function Gifts() {
         {showBank && (
           <Card>
             <CardHeader>
-              <University className="mb-4 h-10 w-10 text-accent-foreground" />
+              <Icon name="landmark" className="mb-4 h-10 w-10 text-accent-foreground" />
               <CardTitle className="font-headline">Fondo para Luna de Miel</CardTitle>
               <CardDescription>
                 Una contribución a nuestro fondo para la luna de miel también sería muy apreciada.

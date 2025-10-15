@@ -3,7 +3,7 @@ import Image from "next/image";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
 import { Button } from "./ui/button";
-import { ExternalLink } from "lucide-react";
+import { Icon } from "./icons";
 
 export function DressCode() {
   const { dressCode } = siteConfig;
@@ -49,7 +49,7 @@ export function DressCode() {
           <Button asChild className="mt-6" size="lg">
             <a href={dressCode.imageUrl} target="_blank" rel="noopener noreferrer">
               {dressCode.imageButtonLabel}
-              <ExternalLink className="ml-2 h-4 w-4" />
+              <Icon name="external-link" className="ml-2 h-4 w-4" />
             </a>
           </Button>
         )}

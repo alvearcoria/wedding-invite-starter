@@ -4,7 +4,6 @@ import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { Countdown } from "./Countdown";
 import { FormattedDate } from "./FormattedDate";
-import { ArrowDown } from "lucide-react";
 import { Icon } from "@/components/icons/index";
 
 export function Hero() {
@@ -51,7 +50,7 @@ export function Hero() {
         aria-label="Desplázate hacia abajo" 
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce rounded-full border-2 border-white/50 p-2 transition-colors hover:bg-white/10"
       >
-        <ArrowDown className="h-6 w-6 text-white/80"/>
+        <Icon name="arrow-down" className="h-6 w-6 text-white/80"/>
       </a>
     </section>
   );

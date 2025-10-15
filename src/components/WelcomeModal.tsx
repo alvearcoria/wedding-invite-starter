@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Music, VolumeX } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { Icon } from "./icons";
 
 export function WelcomeModal() {
   const [isVisible, setIsVisible] = useState(false);
@@ -72,11 +73,11 @@ export function WelcomeModal() {
         </p>
         <div className="flex w-full flex-col gap-3">
             <Button onClick={handleEnterWithMusic} size="lg" className="shadow-lg">
-                <Music className="mr-2 h-5 w-5" />
+                <Icon name="music" className="mr-2 h-5 w-5" />
                 Entrar con música
             </Button>
              <Button onClick={handleEnterWithoutMusic} variant="ghost" size="sm">
-                <VolumeX className="mr-2 h-4 w-4" />
+                <Icon name="volume-x" className="mr-2 h-4 w-4" />
                 Continuar sin música
             </Button>
         </div>

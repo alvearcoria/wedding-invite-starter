@@ -9,13 +9,12 @@ import { siteConfig } from '@/config/site';
 import type { RsvpInput } from '@/types/rsvp';
 import Papa from 'papaparse';
 import { useMemoFirebase } from '@/firebase/provider';
-
+import { Icon } from "@/components/icons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { Users, UserCheck, UserX, MessageSquare, Download, Loader2, PartyPopper, Frown } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 function AdminStats({ guests }: { guests: RsvpInput[] | null }) {
@@ -40,10 +39,10 @@ function AdminStats({ guests }: { guests: RsvpInput[] | null }) {
   }, [guests]);
 
   const statCards = [
-    { title: 'Total de Asistentes', value: stats.total, note: `${stats.confirmed} invitados + ${stats.companions} acompañantes`, Icon: PartyPopper, color: 'text-primary' },
-    { title: 'Invitados que Asistirán', value: stats.confirmed, note: `${stats.confirmedPercentage.toFixed(0)}% de las respuestas`, Icon: UserCheck, color: 'text-green-500' },
-    { title: 'Invitados que No Asistirán', value: stats.declined, note: 'Respuestas negativas recibidas', Icon: Frown, color: 'text-red-500' },
-    { title: 'Total con Mensajes', value: stats.messages, note: 'Invitados que dejaron un mensaje', Icon: MessageSquare, color: 'text-blue-500' },
+    { title: 'Total de Asistentes', value: stats.total, note: `${stats.confirmed} invitados + ${stats.companions} acompañantes`, IconName: 'party-popper' as const, color: 'text-primary' },
+    { title: 'Invitados que Asistirán', value: stats.confirmed, note: `${stats.confirmedPercentage.toFixed(0)}% de las respuestas`, IconName: 'user-check' as const, color: 'text-green-500' },
+    { title: 'Invitados que No Asistirán', value: stats.declined, note: 'Respuestas negativas recibidas', IconName: 'frown' as const, color: 'text-red-500' },
+    { title: 'Total con Mensajes', value: stats.messages, note: 'Invitados que dejaron un mensaje', IconName: 'message-square' as const, color: 'text-blue-500' },
   ];
 
   return (
@@ -52,7 +51,7 @@ function AdminStats({ guests }: { guests: RsvpInput[] | null }) {
         <Card key={i} className="hover:shadow-lg transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-            <card.Icon className={`h-5 w-5 text-muted-foreground ${card.color}`} />
+            <Icon name={card.IconName} className={`h-5 w-5 text-muted-foreground ${card.color}`} />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{card.value}</div>
@@ -71,7 +70,7 @@ function GuestsTable({ guests, onExport }: { guests: RsvpInput[] | null, onExpor
     if (!guests) {
         return (
           <Card className="flex flex-col items-center justify-center h-96 border-dashed">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <Icon name="loader-circle" className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="mt-4 text-muted-foreground">Cargando invitados...</p>
           </Card>
         );
@@ -80,7 +79,7 @@ function GuestsTable({ guests, onExport }: { guests: RsvpInput[] | null, onExpor
     if (guests.length === 0) {
         return (
           <Card className="flex flex-col items-center justify-center h-96 border-dashed">
-            <Users className="h-12 w-12 text-muted-foreground" />
+            <Icon name="users" className="h-12 w-12 text-muted-foreground" />
             <p className="mt-4 text-lg font-semibold">Aún no hay confirmaciones</p>
             <p className="text-muted-foreground text-sm">Cuando tus invitados respondan, los verás aquí.</p>
           </Card>
@@ -95,7 +94,7 @@ function GuestsTable({ guests, onExport }: { guests: RsvpInput[] | null, onExpor
                 <CardDescription>Aquí están todas las respuestas recibidas hasta ahora.</CardDescription>
             </div>
             <Button onClick={onExport} size="sm">
-              <Download className="mr-2 h-4 w-4" />
+              <Icon name="download" className="mr-2 h-4 w-4" />
               Exportar a CSV
             </Button>
         </CardHeader>

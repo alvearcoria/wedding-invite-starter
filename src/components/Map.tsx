@@ -1,3 +1,4 @@
+
 "use client";
 
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
@@ -8,7 +9,7 @@ const MapWrapper = ({ location, name }: { location: { lat: number; lng: number }
   if (!apiKey) {
     return (
       <div className="flex aspect-video w-full items-center justify-center bg-muted text-center text-sm text-muted-foreground">
-        Falta la clave de API de Google Maps. <br /> Agrégala a tus variables de entorno.
+        Falta la clave de API de Google Maps. <br /> La aplicación no puede mostrar mapas.
       </div>
     );
   }

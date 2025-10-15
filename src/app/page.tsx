@@ -108,17 +108,14 @@ export default function Home() {
         )}
 
         {siteConfig.sections.share && (
-            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
                 <ShareInvitation />
             </AnimatedSection>
-            </>
         )}
 
         {siteConfig.sections.seeYou && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
                 <SeeYou />
             </AnimatedSection>

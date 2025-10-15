@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Icon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -23,7 +24,7 @@ export function CopyToClipboard({ textToCopy }: { textToCopy: string }) {
       <Tooltip open={isCopied}>
         <TooltipTrigger asChild>
           <Button variant="ghost" size="icon" onClick={handleCopy} className="h-7 w-7">
-            {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+            {isCopied ? <Icon name="check" className="h-4 w-4 text-green-500" /> : <Icon name="copy" className="h-4 w-4" />}
             <span className="sr-only">Copiar al portapapeles</span>
           </Button>
         </TooltipTrigger>
