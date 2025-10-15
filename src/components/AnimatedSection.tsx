@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRef, useEffect, useState, type ReactNode } from "react";
@@ -43,7 +44,7 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
       ref={ref}
       className={cn(
         "transition-transform duration-1000 ease-out",
-        isVisible ? "translate-y-0" : "translate-y-4 opacity-0",
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
         className
       )}
       style={{ transitionDelay: `${delay}ms` }}

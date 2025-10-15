@@ -59,7 +59,7 @@ export function WelcomeModal() {
       />
       <div
         className={cn(
-          "relative mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-transparent p-8 text-center text-white shadow-2xl transition-all duration-300",
+          "relative mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-black/30 p-8 text-center text-white shadow-2xl transition-all duration-300",
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
       >
