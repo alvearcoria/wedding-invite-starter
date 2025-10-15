@@ -13,6 +13,7 @@ export function WelcomeModal() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
+    // sessionStorage.setItem("welcomeModalSeen", "true"); // DEBUG: Uncomment to prevent modal from showing
     const hasSeenModal = sessionStorage.getItem("welcomeModalSeen");
     if (!hasSeenModal && siteConfig.sections.music) {
       setIsOpen(true);
@@ -58,22 +59,22 @@ export function WelcomeModal() {
       />
       <div
         className={cn(
-          "relative mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-card p-8 text-center text-foreground shadow-2xl transition-all duration-300",
+          "relative mx-4 w-full max-w-md transform rounded-2xl border border-white/10 bg-transparent p-8 text-center text-white shadow-2xl transition-all duration-300",
           isClosing ? "scale-95 opacity-0" : "scale-100 opacity-100"
         )}
       >
-        <Heart className="mx-auto mb-4 h-10 w-10 text-primary" />
-        <h2 className="font-headline text-3xl md:text-4xl text-foreground text-shadow-lg">
+        <Heart className="mx-auto mb-4 h-10 w-10 text-white" />
+        <h2 className="font-headline text-3xl md:text-4xl text-shadow-lg">
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h2>
-        <p className="mt-4 text-lg text-foreground/80">
+        <p className="mt-4 text-lg text-white/80">
           ¿Deseas disfrutar de una experiencia musical mientras navegas?
         </p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-          <Button onClick={handleEnterWithMusic} size="lg" className="w-full">
+          <Button onClick={handleEnterWithMusic} size="lg" className="w-full bg-white/90 text-primary hover:bg-white">
             Entrar con música
           </Button>
-          <Button onClick={handleEnterWithoutMusic} variant="outline" size="lg" className="w-full">
+          <Button onClick={handleEnterWithoutMusic} variant="outline" size="lg" className="w-full border-white/50 text-white/80 hover:bg-white/10 hover:text-white">
             Continuar sin música
           </Button>
         </div>
