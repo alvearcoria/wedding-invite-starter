@@ -1,76 +1,101 @@
 /**
- * @fileoverview Firestore Security Rules for the Wedding Celebration Application.
- *
- * Core Philosophy:
- * This ruleset prioritizes security and restricts data access based on the user's authentication status.
- * Read access for photos is public, while other collections and write access are restricted to authenticated users.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a security model that prioritizes authenticated access and ownership.
  *
  * Data Structure:
  * - /guests/{guestId}: Stores guest information.
- * - /photos/{photoId}: Stores wedding photos.
- * - /site_configuration/{configId}: Stores site-wide configuration.
+ * - /photos/{photoId}: Stores photos for the wedding gallery.
+ * - /site_configuration/{configId}: Stores site configuration settings (single document).
  *
  * Key Security Decisions:
- * - All write access is limited to authenticated users.
- * - Photo read access is public.
- * - No data validation is performed in this prototyping phase.
+ * - Authenticated access is required for all data. Anonymous users will not have access.
+ * - `create`, `update`, and `delete` operations on all collections are disallowed by default.
+ * - The rules do NOT currently enforce complex schema validation beyond authorization checks.
+ * - List operations on /guests are not allowed.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to the guests collection.
+     * @description Controls access to guest data.
      * @path /guests/{guestId}
-     * @allow (create, update, delete) - Authenticated user creating, updating, or deleting a guest document.
-     * @deny (create, update, delete) - Unauthenticated user attempting to create, update, or delete a guest document.
-     * @allow (get, list) - Authenticated user reading guest document.
-     * @deny (get, list) - Unauthenticated user attempting to read guest document.
-     * @principle Enforces authenticated user access for guest data.
+     * @allow (create) - Denied. Guests can only be added by the application itself, not directly by users.
+     * @deny (create) - Any attempt to create a guest document.
+     * @allow (get) - Denied. Guests data is not directly exposed to users.
+     * @deny (get) - Any attempt to read a guest document.
+     * @allow (list) - Denied. Guests should not be listable.
+     * @deny (list) - Any attempt to list guest documents.
+     * @allow (update) - Denied. Guests can only be updated by the application itself, not directly by users.
+     * @deny (update) - Any attempt to update a guest document.
+     * @allow (delete) - Denied. Guests can only be deleted by the application itself, not directly by users.
+     * @deny (delete) - Any attempt to delete a guest document.
+     * @principle No data will be exposed to users, including the wedding's owners.
      */
     match /guests/{guestId} {
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to the photos collection.
+     * @description Controls access to photos in the wedding gallery.
      * @path /photos/{photoId}
-     * @allow (get, list) - Any user (authenticated or not) can read photos.
-     * @allow (create, update, delete) - Authenticated user creating, updating, or deleting a photo.
-     * @deny (create, update, delete) - Unauthenticated user attempting to create, update, or delete a photo.
-     * @principle Allows public read access to photos but restricts write access to authenticated users.
+     * @allow (get) Authenticated users can read photo data.
+     * @deny (get) Unauthenticated users cannot read photo data.
+     * @allow (list) Authenticated users can list photos.
+     * @deny (list) Unauthenticated users cannot list photos.
+     * @allow (create) Authenticated users can create photos. Requires a valid 'authorId' field in the data matching the user's UID.
+     * @deny (create) If the 'authorId' field is missing or does not match the user's UID.
+     * @allow (update) Authenticated users can update existing photos they own.
+     * @deny (update) Users cannot update photos they don't own or non-existent photos.
+     * @allow (delete) Authenticated users can delete existing photos they own.
+     * @deny (delete) Users cannot delete photos they don't own or non-existent photos.
+     * @principle Enforces authenticated access for reads and owner-only access for writes.
      */
     match /photos/{photoId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isSignedIn() && request.resource.data.authorId == resource.data.authorId && resource.data.authorId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.authorId == request.auth.uid;
     }
 
     /**
-     * @description Controls access to the site configuration collection.
+     * @description Controls access to the site configuration settings.
      * @path /site_configuration/{configId}
-     * @allow (create, update, delete) - Authenticated user creating, updating, or deleting the site configuration.
-     * @deny (create, update, delete) - Unauthenticated user attempting to create, update, or delete the site configuration.
-     * @allow (get, list) - Authenticated user reading the site configuration.
-     * @deny (get, list) - Unauthenticated user attempting to read the site configuration.
-     * @principle Enforces authenticated user access for site configuration data.
+     * @allow (get) Authenticated users can read the site configuration.
+     * @deny (get) Unauthenticated users cannot read the site configuration.
+     * @allow (list) Denied. Listing site configurations is not permitted.
+     * @deny (list) Any attempt to list site configuration documents.
+     * @allow (create) Denied. Creating site configurations is not permitted through the client.
+     * @deny (create) Any attempt to create a site configuration document.
+     * @allow (update) Denied. Site configuration should be modified by backend functions only.
+     * @deny (update) Any attempt to update the site configuration document.
+     * @allow (delete) Denied. Deleting site configurations is not permitted.
+     * @deny (delete) Any attempt to delete the site configuration document.
+     * @principle Enforces authenticated access for reads, but prevents all write access.
      */
     match /site_configuration/{configId} {
       allow get: if isSignedIn();
-      allow list: if isSignedIn();
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
+  }
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
+  // Helper Functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isOwner(userId) {
+    return request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+    return isSignedIn() && isOwner(userId) && resource != null;
   }
 }
