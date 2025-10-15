@@ -36,7 +36,7 @@ export default function Home() {
 
         {siteConfig.sections.timeline && (
            <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection>
                 <Timeline />
             </AnimatedSection>
@@ -45,7 +45,7 @@ export default function Home() {
         
         {siteConfig.sections.dressCode && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
                 <DressCode />
             </AnimatedSection>
@@ -54,7 +54,7 @@ export default function Home() {
         
         {siteConfig.sections.venues && (
             <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
+            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
             <AnimatedSection>
                 <Venues />
             </AnimatedSection>
@@ -63,7 +63,7 @@ export default function Home() {
 
         {siteConfig.sections.gallery && (
            <>
-            <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>
+            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
             <AnimatedSection>
                 <Gallery />
             </AnimatedSection>
