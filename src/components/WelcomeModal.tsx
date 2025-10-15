@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Music } from "lucide-react";
+import { Music, VolumeX } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,11 @@ export function WelcomeModal() {
   useEffect(() => {
     // Si la música está habilitada, mostramos el modal.
     if (siteConfig.sections.music) {
-      setIsVisible(true);
+      // Usamos un pequeño retraso para asegurar que la página se haya cargado
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 100); 
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -32,15 +36,22 @@ export function WelcomeModal() {
     };
   }, [isVisible]);
 
-  const handleEnter = () => {
-    // Despacha el evento para que el componente de música lo reproduzca.
-    window.dispatchEvent(new CustomEvent("playAudio"));
-    
+  const handleClose = () => {
     setIsFadingOut(true);
     setTimeout(() => {
       setIsVisible(false);
     }, 500); // Coincide con la duración de la animación de salida.
+  }
+
+  const handleEnterWithMusic = () => {
+    // Despacha el evento para que el componente de música lo reproduzca.
+    window.dispatchEvent(new CustomEvent("playAudio"));
+    handleClose();
   };
+  
+  const handleEnterWithoutMusic = () => {
+    handleClose();
+  }
 
   if (!isVisible) {
     return null;
@@ -64,10 +75,16 @@ export function WelcomeModal() {
         <p className="text-muted-foreground">
           Para una mejor experiencia, te recomendamos disfrutar de la música que hemos seleccionado para ti.
         </p>
-        <Button onClick={handleEnter} size="lg" className="shadow-lg">
-          <Music className="mr-2 h-5 w-5" />
-          Entrar con música
-        </Button>
+        <div className="flex w-full flex-col gap-3">
+            <Button onClick={handleEnterWithMusic} size="lg" className="shadow-lg">
+                <Music className="mr-2 h-5 w-5" />
+                Entrar con música
+            </Button>
+             <Button onClick={handleEnterWithoutMusic} variant="ghost" size="sm">
+                <VolumeX className="mr-2 h-4 w-4" />
+                Continuar sin música
+            </Button>
+        </div>
       </div>
     </div>
   );
