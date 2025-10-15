@@ -1,12 +1,12 @@
-
 "use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
-import { submitRsvp } from "@/app/actions";
 import { rsvpSchema, type RsvpInput } from "@/types/rsvp";
 import confetti from "canvas-confetti";
+import { useFirestore } from "@/firebase/provider";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,8 @@ import { siteConfig } from "@/config/site";
 
 export function RsvpForm() {
   const { toast } = useToast();
+  const firestore = useFirestore();
+
   const form = useForm<RsvpInput>({
     resolver: zodResolver(rsvpSchema),
     defaultValues: {
@@ -45,11 +47,38 @@ export function RsvpForm() {
   });
 
   const onSubmit = async (data: RsvpInput) => {
-    const result = await submitRsvp(data);
-    if (result.success) {
+    // Honeypot check
+    if (data._hp) {
+      console.log("Honeypot field filled, likely spam. Silently succeeding.");
+       toast({
+        title: "¡Confirmación Recibida!",
+        description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
+      });
+      return;
+    }
+    
+    if (!firestore) {
+       toast({
+        variant: "destructive",
+        title: "¡Oh no! Algo salió mal.",
+        description: "No se pudo conectar a la base de datos. Por favor, inténtalo de nuevo más tarde.",
+      });
+      return;
+    }
+
+    try {
+      const { slug, _hp, ...guestData } = data;
+      const guestsCollection = collection(firestore, 'invitations', slug, 'guests');
+      
+      await addDoc(guestsCollection, {
+        ...guestData,
+        createdAt: serverTimestamp(),
+        source: 'website-client',
+      });
+
       toast({
         title: "¡Confirmación Recibida!",
-        description: result.success,
+        description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
       });
 
       if (data.attending) {
@@ -59,13 +88,14 @@ export function RsvpForm() {
           origin: { y: 0.6 },
         });
       }
-
       form.reset();
-    } else {
-      toast({
+
+    } catch (error) {
+       console.error("Error submitting RSVP:", error);
+       toast({
         variant: "destructive",
         title: "¡Oh no! Algo salió mal.",
-        description: result.error,
+        description: "Hubo un problema al enviar tu RSVP. Por favor, inténtalo de nuevo más tarde.",
       });
     }
   };
