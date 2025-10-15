@@ -14,7 +14,6 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { SeeYou } from "@/components/SeeYou";
 import { ShareInvitation } from "@/components/ShareInvitation";
 import { SectionSeparator } from "@/components/SectionSeparator";
-import { Hotels } from "@/components/Hotels";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 import { ShareAndConnect } from "@/components/ShareAndConnect";
 import { WelcomeModal } from "@/components/WelcomeModal";
@@ -71,15 +70,6 @@ export default function Home() {
            </>
         )}
         
-        {siteConfig.sections.hotels && (
-           <>
-            <SectionSeparator waveColor="fill-card" bgColor="bg-background"/>
-            <AnimatedSection>
-                <Hotels />
-            </AnimatedSection>
-           </>
-        )}
-
         {siteConfig.sections.gifts && (
            <>
             <SectionSeparator waveColor="fill-background" bgColor="bg-card"/>

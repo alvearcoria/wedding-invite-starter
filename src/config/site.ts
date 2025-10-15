@@ -27,7 +27,6 @@ export const siteConfig = {
     gallery: true,
     shareAndConnect: true,
     gifts: true,
-    hotels: false,
     share: true,
     seeYou: true,
     rsvp: true,
@@ -42,7 +41,6 @@ export const siteConfig = {
     { name: "Lugar", href: "#venues" },
     { name: "Galería", href: "#gallery" },
     { name: "Regalos", href: "#gifts" },
-    { name: "Hospaje", href: "#hotels"},
   ],
   
   story: {
@@ -138,12 +136,6 @@ export const siteConfig = {
   qrAlbum: {
     url: "https://photos.app.goo.gl/example",
   },
-
-  hotels: [
-    { name: "Hotel Cercano", distance: "5 min del lugar", tel: "81-1234-5678", mapsUrl: "https://goo.gl/maps/example1" },
-    { name: "Hotel Opción B", distance: "10 min del lugar", tel: "81-8765-4321", mapsUrl: "https://goo.gl/maps/example2" },
-    { name: "Airbnb's Sugeridos", distance: "Varía", tel: "N/A", mapsUrl: "https://www.airbnb.mx/" },
-  ]
 };
 
 export type SiteConfig = typeof siteConfig;
