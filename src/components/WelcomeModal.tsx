@@ -12,20 +12,34 @@ export function WelcomeModal() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    // Always show the modal if music is enabled in the site config.
+    // Si la música está habilitada, mostramos el modal.
     if (siteConfig.sections.music) {
       setIsVisible(true);
     }
   }, []);
 
+  useEffect(() => {
+    // Efecto para bloquear el scroll del body cuando el modal está visible.
+    if (isVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    // Función de limpieza para restaurar el scroll si el componente se desmonta.
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isVisible]);
+
   const handleEnter = () => {
-    // Dispatch a custom event to tell the MusicControl component to play
+    // Despacha el evento para que el componente de música lo reproduzca.
     window.dispatchEvent(new CustomEvent("playAudio"));
     
     setIsFadingOut(true);
     setTimeout(() => {
       setIsVisible(false);
-    }, 500); // Match fade-out duration
+    }, 500); // Coincide con la duración de la animación de salida.
   };
 
   if (!isVisible) {
@@ -40,17 +54,19 @@ export function WelcomeModal() {
       )}
     >
       <div className={cn(
-          "flex flex-col items-center gap-6 text-center text-foreground transition-all duration-500 ease-out",
+          "flex max-w-sm flex-col items-center gap-6 rounded-lg border bg-card/80 p-8 text-center text-foreground shadow-2xl transition-all duration-500 ease-out",
           isVisible && !isFadingOut ? "opacity-100 scale-100" : "opacity-0 scale-95"
         )}
       >
-        <h2 className="font-headline text-4xl">
+        <h2 className="font-headline text-5xl">
           {siteConfig.couple.her} & {siteConfig.couple.him}
         </h2>
-        <p>Te recomendamos activar la música para una mejor experiencia.</p>
-        <Button onClick={handleEnter} size="lg">
+        <p className="text-muted-foreground">
+          Para una mejor experiencia, te recomendamos disfrutar de la música que hemos seleccionado para ti.
+        </p>
+        <Button onClick={handleEnter} size="lg" className="shadow-lg">
           <Music className="mr-2 h-5 w-5" />
-          Entrar y activar música
+          Entrar con música
         </Button>
       </div>
     </div>
