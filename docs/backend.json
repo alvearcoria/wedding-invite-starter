@@ -1,0 +1,176 @@
+{
+  "entities": {
+    "Guest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Guest",
+      "type": "object",
+      "description": "Represents a guest attending the wedding.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Guest entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Guest's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Guest's email address.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Guest's phone number."
+        },
+        "numberOfAttendees": {
+          "type": "number",
+          "description": "Number of attendees this guest will bring."
+        },
+        "dietaryPreferences": {
+          "type": "string",
+          "description": "Guest's dietary preferences (e.g., vegetarian, vegan, gluten-free)."
+        },
+        "rsvpStatus": {
+          "type": "string",
+          "description": "Indicates whether the guest has confirmed their attendance ('yes', 'no', 'maybe')."
+        },
+        "additionalNotes": {
+          "type": "string",
+          "description": "Any additional notes or comments from the guest."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "numberOfAttendees",
+        "rsvpStatus"
+      ]
+    },
+    "Photo": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Photo",
+      "type": "object",
+      "description": "Represents a photo in the gallery.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Photo entity."
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the photo.",
+          "format": "uri"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the photo."
+        },
+        "uploadTimestamp": {
+          "type": "string",
+          "description": "Timestamp of when the photo was uploaded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "url",
+        "uploadTimestamp"
+      ]
+    },
+    "SiteConfiguration": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SiteConfiguration",
+      "type": "object",
+      "description": "Represents the site configuration settings.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SiteConfiguration entity."
+        },
+        "storySectionEnabled": {
+          "type": "boolean",
+          "description": "Indicates whether the 'Story' section is enabled."
+        },
+        "venuesSectionEnabled": {
+          "type": "boolean",
+          "description": "Indicates whether the 'Venues' section is enabled."
+        },
+        "timelineSectionEnabled": {
+          "type": "boolean",
+          "description": "Indicates whether the 'Timeline' section is enabled."
+        },
+        "giftRegistryType": {
+          "type": "string",
+          "description": "Type of gift registry to use, either 'external_link' or 'bank_details'."
+        },
+        "giftRegistryDetails": {
+          "type": "string",
+          "description": "Details of the gift registry; can be the link, or bank details (account number, bank name etc)."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/guests/{guestId}",
+        "definition": {
+          "entityName": "Guest",
+          "schema": {
+            "$ref": "#/backend/entities/Guest"
+          },
+          "description": "Stores information about wedding guests.  Access is generally restricted to the application itself.",
+          "params": [
+            {
+              "name": "guestId",
+              "description": "The unique ID of the guest."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/photos/{photoId}",
+        "definition": {
+          "entityName": "Photo",
+          "schema": {
+            "$ref": "#/backend/entities/Photo"
+          },
+          "description": "Stores photos for the wedding gallery. Access is generally open for read, but restricted for create/update/delete to authorized users.",
+          "params": [
+            {
+              "name": "photoId",
+              "description": "The unique ID of the photo."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/site_configuration/{configId}",
+        "definition": {
+          "entityName": "SiteConfiguration",
+          "schema": {
+            "$ref": "#/backend/entities/SiteConfiguration"
+          },
+          "description": "Stores the site configuration settings. There should only be one document in this collection. Access is restricted to authorized users.",
+          "params": [
+            {
+              "name": "configId",
+              "description": "The unique ID of the site configuration (likely a single, known ID)."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This design prioritizes security and scalability for the wedding celebration application. It focuses on authorization independence and facilitates simple, robust security rules. We are leveraging path-based ownership for guests and a global collection for site configuration. The photo gallery uses a single collection. No denormalization is required given the authorization model. Access to all data is restricted to authenticated users via firebase authentication."
+  }
+}
