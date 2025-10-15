@@ -1,9 +1,8 @@
-
 "use client";
 
-import { useEffect, useRef, useState, FC, ComponentType } from 'react';
+import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
-import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee, LucideProps } from "lucide-react";
+import { Church, Bell, GlassWater, PenSquare, Utensils, HeartHandshake, Music, Coffee, type LucideProps } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from '@/config/site';
 
@@ -30,7 +29,10 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
       },
       {
         threshold: 0.5,
@@ -84,7 +86,7 @@ const TimelineItem = ({ item, index }: { item: TimelineEvent, index: number }) =
 
 export function Timeline() {
   return (
-    <SectionWrapper id="timeline" className="bg-card py-16 md:py-24 lg:py-32">
+    <SectionWrapper id="timeline" bgClass="bg-card">
       <SectionHeader
         title="El Gran Día"
         description="Esto es lo que pueden esperar durante la celebración de nuestra boda."

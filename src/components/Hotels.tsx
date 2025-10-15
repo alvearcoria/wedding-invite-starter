@@ -10,7 +10,7 @@ export function Hotels() {
   if (!hotels || hotels.length === 0) return null;
 
   return (
-    <SectionWrapper id="hotels">
+    <SectionWrapper id="hotels" bgClass="bg-card">
       <SectionHeader
         title="Opciones de Hospedaje"
         description="Si vienes de fuera, aquí te dejamos algunas recomendaciones cercanas."

@@ -19,7 +19,7 @@ export function ShareAndConnect() {
   const gridCols = showHashtag && showQr ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
   return (
-    <SectionWrapper id="share-connect" className="bg-background py-16 md:py-24">
+    <SectionWrapper id="share-connect" bgClass="bg-card">
       <SectionHeader
         title="Comparte y Conecta"
         description="Ayúdanos a capturar cada momento y a compartir la alegría en redes sociales."

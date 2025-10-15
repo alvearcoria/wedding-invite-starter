@@ -1,64 +1,48 @@
-
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface AnimatedSectionProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   delay?: number;
-  direction?: 'up' | 'left' | 'right';
 }
 
-export function AnimatedSection({ children, className, delay = 0, direction = 'up' }: AnimatedSectionProps) {
+export function AnimatedSection({ children, className, delay = 0 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // Disparar la animación solo una vez cuando el elemento entra en la vista
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          observer.unobserve(element);
         }
       },
       {
-        threshold: 0.1,
+        threshold: 0.1, // La animación se dispara cuando el 10% del elemento es visible
       }
     );
 
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+    observer.observe(element);
 
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
+      observer.unobserve(element);
     };
   }, []);
-
-  const getDirectionClasses = () => {
-    if (isVisible) return "opacity-100 translate-x-0 translate-y-0";
-    switch (direction) {
-      case 'left':
-        return "opacity-0 -translate-x-8";
-      case 'right':
-        return "opacity-0 translate-x-8";
-      case 'up':
-      default:
-        return "opacity-0 translate-y-8";
-    }
-  };
 
   return (
     <div
       ref={ref}
       className={cn(
-        "transition-all duration-1000 ease-out",
-        getDirectionClasses(),
+        "transition-opacity duration-1000 ease-out",
+        isVisible ? "opacity-100" : "opacity-0",
         className
       )}
       style={{ transitionDelay: `${delay}ms` }}

@@ -6,11 +6,12 @@ interface SectionWrapperProps {
   id: string;
   children: ReactNode;
   className?: string;
+  bgClass?: string;
 }
 
-export function SectionWrapper({ id, children, className }: SectionWrapperProps) {
+export function SectionWrapper({ id, children, className, bgClass = 'bg-background' }: SectionWrapperProps) {
   return (
-    <section id={id} className={cn("", className)}>
+    <section id={id} className={cn("py-16 md:py-24", bgClass, className)}>
       <div className="container mx-auto px-4 md:px-6">
         {children}
       </div>

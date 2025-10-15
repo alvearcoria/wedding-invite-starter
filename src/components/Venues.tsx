@@ -11,7 +11,7 @@ export function Venues() {
   const { ceremony, reception } = siteConfig.venues;
   
   return (
-    <SectionWrapper id="venues" className="py-16 md:py-24">
+    <SectionWrapper id="venues" bgClass="bg-card">
       <SectionHeader
         title="Ceremonia y Recepción"
         description="Encuentra el camino a nuestra celebración. ¡Estamos ansiosos por verte allí!"

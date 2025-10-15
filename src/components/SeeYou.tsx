@@ -5,7 +5,7 @@ import { Heart } from "./icons/Heart";
 
 export function SeeYou() {
   return (
-    <section className="relative w-full py-24 md:py-32 lg:py-40">
+    <section className="relative w-full py-24 md:py-32 lg:py-40 bg-card">
        <div className="absolute inset-0 bg-primary/80 z-10" />
       <Image
         src={siteConfig.seeYouImage.src}

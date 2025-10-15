@@ -12,7 +12,7 @@ import { siteConfig } from "@/config/site";
 
 export function Gallery() {
   return (
-    <SectionWrapper id="gallery">
+    <SectionWrapper id="gallery" bgClass="bg-background">
       <SectionHeader
         title="Nuestros Momentos"
         description="Un vistazo a nuestro viaje juntos. Esperamos crear nuevos recuerdos con ustedes."
