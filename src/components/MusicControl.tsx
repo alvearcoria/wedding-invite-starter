@@ -12,52 +12,49 @@ export function MusicControl() {
   const [isReady, setIsReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Initialize audio element
+  // Initialize audio element and event listeners
   useEffect(() => {
-    if (siteConfig.sections.music && !audioRef.current) {
-      const audio = new Audio(siteConfig.musicUrl);
-      audio.loop = true;
-      audio.oncanplaythrough = () => setIsReady(true);
-      audioRef.current = audio;
+    if (!siteConfig.sections.music) return;
 
-      return () => {
-        audio.pause();
-        audio.src = "";
-      };
-    }
-  }, []);
+    const audio = new Audio(siteConfig.musicUrl);
+    audio.loop = true;
+    audioRef.current = audio;
 
-  // Autoplay on first user interaction
-  useEffect(() => {
-    if (!isReady || !audioRef.current) return;
+    const handleCanPlay = () => setIsReady(true);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
 
-    const handleFirstInteraction = () => {
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(console.error);
-      }
-      // Remove listener after first interaction to avoid multiple plays
-      window.removeEventListener('click', handleFirstInteraction, { capture: true });
+    audio.addEventListener('canplaythrough', handleCanPlay);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+
+    // Custom event listeners
+    const playAudio = () => {
+        if (isReady) audio.play().catch(console.error);
     };
+    const pauseAudio = () => audio.pause();
 
-    window.addEventListener('click', handleFirstInteraction, { capture: true, once: true });
+    window.addEventListener("playAudio" as any, playAudio);
+    window.addEventListener("pauseAudio" as any, pauseAudio);
 
     return () => {
-      window.removeEventListener('click', handleFirstInteraction, { capture: true });
+      audio.removeEventListener('canplaythrough', handleCanPlay);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      window.removeEventListener("playAudio" as any, playAudio);
+      window.removeEventListener("pauseAudio" as any, pauseAudio);
+      audio.pause();
+      audio.src = "";
     };
-  }, [isReady]);
+  }, [isReady]); // Rerunning this effect if isReady changes is fine and safe.
 
   const toggleMusic = () => {
-    if (!isReady || !audioRef.current) return;
-    
+    if (!audioRef.current || !isReady) return;
+
     if (isPlaying) {
       audioRef.current.pause();
-      setIsPlaying(false);
     } else {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(console.error);
+      audioRef.current.play().catch(console.error);
     }
   };
 
@@ -72,10 +69,12 @@ export function MusicControl() {
         size="icon"
         onClick={toggleMusic}
         className={cn(
-          "rounded-full shadow-lg",
+          "rounded-full shadow-lg transition-opacity",
+          !isReady ? "opacity-0" : "opacity-100",
           isPlaying && "animate-pulse"
         )}
         aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
+        disabled={!isReady}
       >
         {isPlaying ? <Icon name="music" className="h-5 w-5" /> : <Icon name="music-2" className="h-5 w-5" />}
       </Button>

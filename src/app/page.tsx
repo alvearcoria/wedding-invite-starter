@@ -17,12 +17,14 @@ import { SectionSeparator } from "@/components/SectionSeparator";
 import { Hotels } from "@/components/Hotels";
 import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 import { ShareAndConnect } from "@/components/ShareAndConnect";
+import { WelcomeModal } from "@/components/WelcomeModal";
 
 export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-x-hidden bg-background">
       <main className="flex-1">
         <MusicControl />
+        <WelcomeModal />
         
         <Hero />
         <ScrollToTopOnMount />
