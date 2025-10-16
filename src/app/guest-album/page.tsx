@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFirestore, useStorage } from '@/firebase/provider';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, query, where, orderBy, startAt, limit as firestoreLimit } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { siteConfig } from '@/config/site';
 import { useToast } from '@/hooks/use-toast';
@@ -15,13 +15,6 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -29,10 +22,12 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { getGuestPhotos, type GuestPhoto } from '@/ai/flows/get-guest-photos';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// --- Type Definitions ---
+
 type FileWithPreview = File & { preview: string };
+
 type UploadProgress = {
   fileName: string;
   progress: number;
@@ -40,7 +35,64 @@ type UploadProgress = {
   error?: string;
 };
 
-// --- Upload Modal Component ---
+type GuestPhoto = {
+  id: string;
+  downloadURL: string;
+  uploadedAt?: any;
+};
+
+
+// --- Firestore Fetch Logic ---
+
+const SLUG = siteConfig.slug;
+const PAGE_SIZE = 20;
+
+async function fetchRandomPhotos(firestore: any): Promise<GuestPhoto[]> {
+  const pivot = Math.random();
+
+  // Q1: fotos con rand >= pivot
+  const q1 = query(
+    collection(firestore, "photos"),
+    where("slug", "==", SLUG),
+    orderBy("rand", "asc"),
+    startAt(pivot),
+    firestoreLimit(PAGE_SIZE)
+  );
+
+  const res1 = await getDocs(q1);
+  let items = res1.docs.map(d => ({ id: d.id, ...d.data() })) as GuestPhoto[];
+
+  // Si no alcanzamos 20, Q2: rand < pivot
+  if (items.length < PAGE_SIZE) {
+    const remaining = PAGE_SIZE - items.length;
+    const q2 = query(
+      collection(firestore, "photos"),
+      where("slug", "==", SLUG),
+      orderBy("rand", "asc"),
+      firestoreLimit(remaining)
+    );
+    const res2 = await getDocs(q2);
+
+    const seen = new Set(items.map(x => x.id));
+    res2.docs.forEach(d => {
+      if (!seen.has(d.id)) {
+        items.push({ id: d.id, ...d.data() } as GuestPhoto);
+      }
+    });
+  }
+
+  // Barajeo ligero
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+
+  return items.slice(0, PAGE_SIZE);
+}
+
+
+// --- UI Components ---
+
 function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: () => void; onUploadComplete: () => void; }) {
   const { toast } = useToast();
   const firestore = useFirestore();
@@ -115,6 +167,7 @@ function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: ()
                 downloadURL,
                 uploadedAt: serverTimestamp(),
                 uploader: 'guest-upload',
+                rand: Math.random(), // <-- Add random field here
               });
 
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
@@ -238,23 +291,72 @@ function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: ()
 }
 
 
-// --- Guest Photo Gallery Component ---
-function GuestGallery({ photos, isLoading, error }: { photos: GuestPhoto[] | null; isLoading: boolean; error: Error | null; }) {
+function GuestAlbumGrid({ photos }: { photos: GuestPhoto[] }) {
+  if (!photos?.length) {
+    return (
+      <div className="rounded-2xl border border-dashed p-12 text-center opacity-70">
+        <div className="text-2xl font-semibold mb-2">Recuerdos Compartidos</div>
+        <p>¡Aún no hay fotos! Sé el primero en compartir 😊</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      {photos.map((p) => (
+        <a
+          key={p.id}
+          href={p.downloadURL}
+          target="_blank"
+          rel="noreferrer"
+          className="block overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+        >
+          <Image 
+            src={p.downloadURL} 
+            alt="Recuerdo de la boda" 
+            width={400}
+            height={400}
+            className="w-full h-48 object-cover" 
+          />
+        </a>
+      ))}
+    </div>
+  );
+}
+
+
+function GuestGallery({ version, onUploadComplete }: { version: number; onUploadComplete: () => void; }) {
+  const [photos, setPhotos] = useState<GuestPhoto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const firestore = useFirestore();
+
+  const loadPhotos = useCallback(async () => {
+    if (!firestore) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fetchedPhotos = await fetchRandomPhotos(firestore);
+      setPhotos(fetchedPhotos);
+    } catch (e: any) {
+      console.error(e);
+      setError("No se pudieron cargar las fotos. Por favor, revisa los permisos de Firestore y asegúrate de que el índice compuesto ('slug' asc, 'rand' asc) exista.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [firestore]);
+
+  useEffect(() => {
+    loadPhotos();
+  }, [loadPhotos, version]);
+
   if (isLoading) {
     return (
-      <Card className="shadow-lg">
-        <CardHeader>
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-4 w-64" />
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
-            <Icon name="loader-circle" className="h-16 w-16 text-muted-foreground animate-spin" />
-            <h2 className="mt-4 text-2xl font-bold tracking-tight">Cargando Recuerdos...</h2>
-            <p className="mt-2 text-muted-foreground">Estamos preparando la galería.</p>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="w-full h-48 rounded-xl" />
+            ))}
+        </div>
     );
   }
 
@@ -263,103 +365,22 @@ function GuestGallery({ photos, isLoading, error }: { photos: GuestPhoto[] | nul
         <Card className="shadow-lg bg-destructive/10">
             <CardHeader>
                 <CardTitle className="text-destructive">Error al Cargar la Galería</CardTitle>
-                <CardDescription className="text-destructive/80">No pudimos obtener las fotos. Es posible que el servidor no tenga permisos.</CardDescription>
+                <CardDescription className="text-destructive/80">{error}</CardDescription>
             </CardHeader>
-            <CardContent>
-                <p className="text-sm text-destructive">Por favor, asegúrate de haber concedido el rol `Cloud Datastore User` a la cuenta de servicio de Firebase en IAM.</p>
-                <pre className="mt-4 text-xs bg-destructive/20 p-2 rounded-md">{error.message}</pre>
-            </CardContent>
         </Card>
     );
   }
 
-  if (!photos || photos.length === 0) {
-    return (
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle>Recuerdos Compartidos</CardTitle>
-          <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
-            <Icon name="image" className="h-16 w-16 text-muted-foreground" />
-            <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
-            <p className="mt-2 text-muted-foreground">
-              ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle>Recuerdos Compartidos</CardTitle>
-        <CardDescription>Estos son los últimos momentos que han compartido nuestros invitados.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Carousel
-          opts={{ align: 'start', loop: photos.length > 2 }}
-          className="w-full"
-        >
-          <CarouselContent>
-            {photos.map((photo) => (
-              <CarouselItem key={photo.id} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
-                  <Card className="overflow-hidden rounded-lg group">
-                    <CardContent className="flex aspect-[3/4] items-center justify-center p-0">
-                      <Image
-                        src={photo.downloadURL}
-                        alt="Foto de invitado"
-                        width={600}
-                        height={800}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="ml-12" />
-          <CarouselNext className="mr-12" />
-        </Carousel>
-      </CardContent>
-    </Card>
-  );
+  return <GuestAlbumGrid photos={photos} />;
 }
 
 
 // --- Main Page Component ---
 export default function GuestAlbumPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [photos, setPhotos] = useState<GuestPhoto[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [version, setVersion] = useState(0); // Used to force a re-fetch
-
-  const fetchPhotos = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const result = await getGuestPhotos({ slug: siteConfig.slug });
-      setPhotos(result.photos);
-    } catch (e: any) {
-      console.error("Failed to fetch photos:", e);
-      setError(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPhotos();
-  }, [version]);
+  const [version, setVersion] = useState(0); 
 
   const handleUploadComplete = () => {
-    // Increment version to trigger a re-fetch of photos
     setVersion(v => v + 1);
   };
   
@@ -367,7 +388,6 @@ export default function GuestAlbumPage() {
     <div className="bg-muted/20 min-h-screen">
       <main className="container mx-auto flex flex-1 flex-col gap-8 p-4 md:p-8">
         
-        {/* Header Card */}
         <Card className="shadow-md">
             <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex flex-col gap-1">
@@ -399,12 +419,10 @@ export default function GuestAlbumPage() {
             </CardHeader>
         </Card>
         
-        {/* Gallery Section */}
-        <GuestGallery photos={photos} isLoading={isLoading} error={error} />
+        <GuestGallery version={version} onUploadComplete={handleUploadComplete} />
 
       </main>
     </div>
   );
 }
 
-    

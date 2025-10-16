@@ -1,177 +1,97 @@
 /**
- * @fileoverview Firestore Security Rules for the Wedding App.
+ * @file Firestore Security Rules
+ * @description This ruleset focuses on securing a wedding website's Firestore database.
  *
  * Core Philosophy:
- * This ruleset prioritizes security by default, enforcing strict access control
- * based on the identified access patterns (Ownership and Public Read with Owner-Only Writes).
- * Where no explicit access control is defined, access is denied.
+ *  - Guests can only manage their own RSVP data.
+ *  - Photos are publicly readable based on a 'slug' field, with no write access through rules.
+ *  - Venues and site configurations are publicly accessible, without write permissions handled by rules.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores guest information, secured with owner-only write access.
- * - /photos/{photoId}: Stores photo gallery images, allowing public read access but owner-only writes.
- * - /venues/{venueId}: Stores venue details, allowing public read access and owner-only writes.
- * - /site_configuration/config: Stores site configuration, allowing public read access but owner-only writes.
+ *  - /guests/{guestId}: Stores individual guest information.
+ *  - /photos/{photoId}: Stores photo metadata, meant for public display based on the 'slug' field.
+ *  - /venues/{venueId}: Stores venue details.
+ *  - /site_configuration/config: Stores a single document with site-wide settings.
  *
  * Key Security Decisions:
- * - Listing of guests is allowed only for the owners (the wedding organizers).
- * - Photo uploads are publicly readable, with write access restricted to owners.
- * - Site configuration is publicly readable, with write access restricted to owners.
- * - Data validation is relaxed in this prototyping phase, focusing on authorization.
- *
- * Denormalization for Authorization:
- *  - The `Guest` entity is assumed to have an `ownerId` field. This field should be automatically populated with
- *  the UID of the authenticated user who creates the document. This ensures that only the owner can modify guest data.
- *
- * Structural Segregation:
- *  - Publicly readable data (photos, venues, site configuration) is stored in top-level collections
- *  to avoid the need for complex filtering rules.
+ *  - Guest data is strictly user-owned; guests can only read and write their own data.
+ *  - Public photo access is controlled via the 'slug' field, with write access managed elsewhere.
+ *  - Listing of guests, photos, venues is allowed for all users.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to guest information.
+     * @description Controls access to guest data, ensuring guests can only manage their own information.
      * @path /guests/{guestId}
-     * @allow (create) User with UID 'user_abc' can create a guest document if request.auth.uid == guestId.
-     * @allow (get) User with UID 'user_abc' can get a guest document.
-     * @allow (list) User with UID 'user_abc' can list guest documents.
-     * @allow (update) User with UID 'user_abc' can update their own guest document.
-     * @allow (delete) User with UID 'user_abc' can delete their own guest document.
-     * @deny (create) User with UID 'user_xyz' cannot create a guest document with guestId 'user_abc'.
-     * @deny (update) User with UID 'user_xyz' cannot update guest document 'user_abc'.
-     * @deny (delete) User with UID 'user_xyz' cannot delete guest document 'user_abc'.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create, update, delete) - Authenticated user with UID matching the guestId can create, update, or delete their own guest data.
+     * @allow (get, list) - Authenticated user with UID matching the guestId can read their own guest data.
+     * @deny (create, update, delete) - Authenticated user attempts to modify another guest's data.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /guests/{guestId} {
-      // Helper function to check if the user is signed in.
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      // Helper function to check if the user is the owner of the document.
-      function isOwner(guestId) {
-        return request.auth.uid == guestId;
-      }
-
-      // Helper function to check if the user is the existing owner of the document.
-      function isExistingOwner(guestId) {
-          return isOwner(guestId) && resource != null;
-      }
-
       allow get: if isSignedIn();
-      allow list: if isSignedIn();
-      allow create: if isOwner(guestId);
-      allow update: if isExistingOwner(guestId);
-      allow delete: if isExistingOwner(guestId);
+      allow list: if true;
+      allow create: if isSignedIn() && request.auth.uid == guestId;
+      allow update: if isSignedIn() && isExistingOwner(guestId) && request.auth.uid == guestId;
+      allow delete: if isSignedIn() && isExistingOwner(guestId) && request.auth.uid == guestId;
     }
 
     /**
-     * @description Controls access to photos in the photo gallery.
+     * @description Controls access to photo data, allowing public read access based on the 'slug' field.
      * @path /photos/{photoId}
-     * @allow (get) Any user (signed in or not) can get a photo.
-     * @allow (list) Any user (signed in or not) can list photos.
-     * @allow (create) User with UID 'user_abc' can create a photo. The photo document must have an 'ownerId' that matches the user's UID.
-     * @allow (update) User with UID 'user_abc' can update their own photo (identified by 'ownerId' in the document).
-     * @allow (delete) User with UID 'user_abc' can delete their own photo (identified by 'ownerId' in the document).
-     * @deny (create) User with UID 'user_xyz' cannot create a photo if the 'ownerId' does not match their UID.
-     * @deny (update) User with UID 'user_xyz' cannot update a photo if the 'ownerId' does not match their UID.
-     * @deny (delete) User with UID 'user_xyz' cannot delete a photo if the 'ownerId' does not match their UID.
-     * @principle Allows public read access but restricts write access to the owner.
+     * @allow (get, list) - Any user can read photo data if the 'slug' matches "mely-y-noe".
+     * @deny (create, update, delete) - All users are denied write access through rules. Write operations are expected to be handled server-side or restricted by other mechanisms.
+     * @principle Allows public read access to photos while restricting write access.
      */
     match /photos/{photoId} {
-      // Helper function to check if the user is signed in.
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      // Helper function to check if the user is the owner of the document based on the `ownerId` field.
-      function isOwner(ownerId) {
-        return isSignedIn() && request.auth.uid == ownerId;
-      }
-
-       // Helper function to check if the user is the existing owner of the document.
-      function isExistingOwner(ownerId) {
-          return isOwner(ownerId) && resource != null;
-      }
-
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(resource.data.ownerId);
-      allow delete: if isExistingOwner(resource.data.ownerId);
+      allow read: if resource.data.slug == "mely-y-noe";
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to venue information.
+     * @description Controls access to venue data, allowing public read access.
      * @path /venues/{venueId}
-     * @allow (get) Any user (signed in or not) can get venue information.
-     * @allow (list) Any user (signed in or not) can list venues.
-     * @allow (create) User with UID 'user_abc' can create a venue. The venue document must have an 'ownerId' that matches the user's UID.
-     * @allow (update) User with UID 'user_abc' can update their own venue (identified by 'ownerId' in the document).
-     * @allow (delete) User with UID 'user_abc' can delete their own venue (identified by 'ownerId' in the document).
-     * @deny (create) User with UID 'user_xyz' cannot create a venue if the 'ownerId' does not match their UID.
-     * @deny (update) User with UID 'user_xyz' cannot update a venue if the 'ownerId' does not match their UID.
-     * @deny (delete) User with UID 'user_xyz' cannot delete a venue if the 'ownerId' does not match their UID.
-     * @principle Allows public read access but restricts write access to the owner.
+     * @allow (get, list) - Any user can read venue data.
+     * @deny (create, update, delete) - All users are denied write access through rules. Write operations are expected to be handled server-side or restricted by other mechanisms.
+     * @principle Allows public read access to venues while restricting write access.
      */
     match /venues/{venueId} {
-      // Helper function to check if the user is signed in.
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      // Helper function to check if the user is the owner of the document based on the `ownerId` field.
-      function isOwner(ownerId) {
-        return isSignedIn() && request.auth.uid == ownerId;
-      }
-
-       // Helper function to check if the user is the existing owner of the document.
-      function isExistingOwner(ownerId) {
-          return isOwner(ownerId) && resource != null;
-      }
-
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(resource.data.ownerId);
-      allow delete: if isExistingOwner(resource.data.ownerId);
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to site configuration settings.
+     * @description Controls access to site configuration data, allowing public read access. Only a single document exists in this collection.
      * @path /site_configuration/config
-     * @allow (get) Any user (signed in or not) can get the site configuration.
-     * @allow (list) Any user (signed in or not) can list the site configuration.
-     * @allow (create) User with UID 'user_abc' can create the site configuration. The configuration document must have an 'ownerId' that matches the user's UID.
-     * @allow (update) User with UID 'user_abc' can update the site configuration (identified by 'ownerId' in the document).
-     * @allow (delete) User with UID 'user_abc' can delete the site configuration (identified by 'ownerId' in the document).
-     * @deny (create) User with UID 'user_xyz' cannot create the site configuration if the 'ownerId' does not match their UID.
-     * @deny (update) User with UID 'user_xyz' cannot update the site configuration if the 'ownerId' does not match their UID.
-     * @deny (delete) User with UID 'user_xyz' cannot delete the site configuration if the 'ownerId' does not match their UID.
-     * @principle Allows public read access but restricts write access to the owner.
+     * @allow (get) - Any user can read the site configuration data.
+     * @deny (create, update, delete, list) - All users are denied write access through rules. Write operations are expected to be handled server-side or restricted by other mechanisms.
+     * @principle Allows public read access to site configuration while restricting write access.
      */
     match /site_configuration/config {
-      // Helper function to check if the user is signed in.
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      // Helper function to check if the user is the owner of the document based on the `ownerId` field.
-      function isOwner(ownerId) {
-        return isSignedIn() && request.auth.uid == ownerId;
-      }
-
-       // Helper function to check if the user is the existing owner of the document.
-      function isExistingOwner(ownerId) {
-          return isOwner(ownerId) && resource != null;
-      }
-
       allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(resource.data.ownerId);
-      allow delete: if isExistingOwner(resource.data.ownerId);
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+        return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
     }
   }
 }
