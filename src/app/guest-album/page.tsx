@@ -302,21 +302,21 @@ function GuestAlbumGrid({ photos }: { photos: GuestPhoto[] }) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
       {photos.map((p) => (
          <Dialog key={p.id}>
             <DialogTrigger asChild>
-                <div className="block overflow-hidden rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                <div className="block overflow-hidden rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer group aspect-square">
                     <Image 
                         src={p.downloadURL} 
                         alt="Recuerdo de la boda" 
                         width={400}
                         height={400}
-                        className="w-full h-48 object-cover" 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
                     />
                 </div>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
+            <DialogContent className="max-w-3xl w-[95vw] p-0 bg-transparent border-none shadow-none">
                  <DialogHeader className="sr-only">
                     <DialogTitle>Imagen del álbum de invitados</DialogTitle>
                     <DialogDescription>
@@ -365,9 +365,9 @@ function GuestGallery({ version, onUploadComplete }: { version: number; onUpload
 
   if (isLoading) {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {[...Array(8)].map((_, i) => (
-                <Skeleton key={i} className="w-full h-48 rounded-xl" />
+                <Skeleton key={i} className="w-full aspect-square rounded-xl" />
             ))}
         </div>
     );
@@ -405,12 +405,12 @@ export default function GuestAlbumPage() {
             <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex flex-col gap-1">
                     <h1 className="font-headline text-3xl font-bold tracking-tight">Álbum de Invitados</h1>
-                    <p className="text-muted-foreground">¡Sube tus fotos y revive los mejores momentos de la boda!</p>
+                    <p className="text-muted-foreground">¡Sube tus fotos y revive los mejores momentos!</p>
                 </div>
-                <div className="flex-shrink-0 flex flex-col sm:flex-row gap-2">
+                <div className="flex-shrink-0 flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                         <DialogTrigger asChild>
-                            <Button size="lg"><Icon name="camera" className="mr-2"/> Comparte Tus Momentos</Button>
+                            <Button size="lg" className="w-full sm:w-auto"><Icon name="camera" className="mr-2"/> Comparte Tus Momentos</Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-xl">
                             <DialogHeader>
@@ -425,8 +425,8 @@ export default function GuestAlbumPage() {
                             />
                         </DialogContent>
                     </Dialog>
-                    <Button asChild variant="outline" size="lg">
-                        <a href="/"><Icon name="arrow-left" className="mr-2" />Volver a la Invitación</a>
+                    <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+                        <a href="/"><Icon name="arrow-left" className="mr-2" />Volver</a>
                     </Button>
                 </div>
             </CardHeader>
@@ -438,3 +438,6 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+
+    
