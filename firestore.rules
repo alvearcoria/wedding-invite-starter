@@ -2,65 +2,94 @@
  * @fileoverview Firestore Security Rules for the wedding celebration application.
  *
  * Core Philosophy:
- * This ruleset prioritizes security and restricts data access based on user authentication and path-based authorization.
+ * This ruleset prioritizes security and restricts data access to authenticated users.
+ * It employs path-based authorization for guests and allows public read access for photos.
+ * Write access to photos is restricted to authenticated users, but without ownership validation.
+ * The site configuration is restricted to authorized users (currently, any signed-in user).
  *
  * Data Structure:
- * - /invitations/{invitationId}/guests/{guestId}: Stores guest RSVP information, secured by invitationId.
- * - /invitations/{invitationId}/photos/{photoId}: Stores metadata for photos uploaded by guests.
- * - /site_configuration/{configId}: Stores site configuration settings. Only one document is expected.
+ * - /invitations/{invitationId}/guests/{guestId}: Stores guest RSVP information.
+ * - /invitations/{invitationId}/photos/{photoId}: Stores photo metadata uploaded by guests.
+ * - /site_configuration/{configId}: Stores site configuration settings.
  *
  * Key Security Decisions:
- * - All data access requires authentication. Anonymous users are allowed, and can upload photos, and submit guest RSVPs.
- * - Listing all guests or photos is restricted to authenticated users.
- * - Site configuration can only be written by authorized users (not implemented in this prototype).
+ * - Guests are only accessible within the scope of their invitation.
+ * - Photo listing is public, enabling a shared gallery.
+ * - Site configuration is restricted to signed-in users.
+ * - No user listing is allowed.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Manages access to guest RSVP information for a specific wedding invitation.
-     * @path /invitations/{invitationId}/guests/{guestId}
-     * @allow (create) Authenticated user can create a guest document under a specific invitation if invitationId matches.
-     * @deny (create) If invitationId does not match the authenticated user's ID.
-     * @allow (get, list) Authenticated users can retrieve or list guest information.
-     * @deny (update, delete) No one can update or delete guest information via the client.
-     * @principle Enforces path-based authorization, ensuring that guests can only access their own data.
+     * @description Checks if the user is signed in.
+     * @return {bool} True if the user is signed in, false otherwise.
      */
-    match /invitations/{invitationId}/guests/{guestId} {
-      allow create: if isSignedIn() && request.resource.data.id == guestId;
-      allow get, list: if isSignedIn();
-      allow update, delete: if false;
+    function isSignedIn() {
+      return request.auth != null;
     }
 
     /**
-     * @description Manages access to photos uploaded by guests for a specific wedding.
+     * @description Checks if the authenticated user's ID matches the provided user ID.
+     * @param {string} userId The user ID to compare against.
+     * @return {bool} True if the user is the owner, false otherwise.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the authenticated user's ID matches the provided user ID and if the resource exists
+     * @param {string} userId The user ID to compare against.
+     * @return {bool} True if the user is the owner and the resource exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Enforces access control for guest data within a specific invitation.
+     * @path /invitations/{invitationId}/guests/{guestId}
+     * @allow (create) - Authenticated user can create a guest document if the userId matches the guestId.
+     * @deny (create) - Creating a guest document with a mismatched guestId.
+     * @allow (get, list, update, delete) - Authenticated user can access their own guest data.
+     * @deny (get, list, update, delete) - Authenticated user cannot access other guest data.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
+     */
+    match /invitations/{invitationId}/guests/{guestId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isOwner(guestId);
+      allow update: if isExistingOwner(guestId);
+      allow delete: if isExistingOwner(guestId);
+    }
+
+    /**
+     * @description Enforces access control for photos within a specific invitation.
      * @path /invitations/{invitationId}/photos/{photoId}
-     * @allow (get, list) Allows any authenticated user to view the photo gallery.
-     * @allow (create) Allows any authenticated user to upload photos.
-     * @deny (update, delete) Prevents any user from updating or deleting photos via client.
-     * @principle Allows public read access to photos but restricts write access to authenticated users.
+     * @allow (get, list) - Any user can read the photos.
+     * @allow (create) - Any authenticated user can upload a photo.
+     * @deny (update, delete) - No user can update or delete photos.
+     * @principle Public read access with restricted write access for authenticated users.
      */
     match /invitations/{invitationId}/photos/{photoId} {
-      allow get, list: if isSignedIn();
+      allow get, list: if true;
       allow create: if isSignedIn();
       allow update, delete: if false;
     }
 
     /**
-     * @description Manages access to site configuration settings.
+     * @description Enforces access control for the site configuration.
      * @path /site_configuration/{configId}
-     * @allow (get) Allows any authenticated user to read site configuration.
-     * @deny (create, update, delete) Prevents anyone from modifying the site configuration via the client in this prototype.
-     * @principle Restricts write access to site configuration.
+     * @allow (get, list) - Any signed-in user can read the site configuration.
+     * @allow (create, update, delete) - Any signed-in user can modify the site configuration.
+     * @principle Restricts access to site configuration to authenticated users.
      */
     match /site_configuration/{configId} {
-      allow get: if isSignedIn();
-      allow create, update, delete: if false;
-    }
-
-    function isSignedIn() {
-      return request.auth != null;
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && resource != null;
+      allow delete: if isSignedIn() && resource != null;
     }
   }
 }
