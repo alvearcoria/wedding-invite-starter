@@ -5,5 +5,5 @@ export const firebaseConfig = {
   "authDomain": "mely-noe-wedding-celebration.firebaseapp.com",
   "measurementId": "",
   "messagingSenderId": "643335247531",
-  "storageBucket": "mely-noe-wedding-celebration.appspot.com"
+  "storageBucket": "mely-noe-wedding-celebration.firebasestorage.app"
 };
