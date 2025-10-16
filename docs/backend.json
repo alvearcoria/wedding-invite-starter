@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Guest": {
@@ -152,5 +153,6 @@
       }
     ],
     "reasoning": "This Firestore data structure is designed to support the Mely & Noe Wedding Celebration app, focusing on security, scalability, and ease of management. It incorporates denormalization to ensure Authorization Independence, adheres to Structural Segregation for homogeneous security postures, and utilizes consistent Access Modeling patterns.\n\n*   **Authorization Independence:** The structure avoids `get()` calls in security rules by denormalizing authorization data. For instance, if access to photos needs to be restricted to specific users or groups, the relevant user/group information would be stored directly within the `Photo` document or in a parent collection, rather than relying on fetching it from a separate document or user record.\n*   **Structural Segregation:** Different types of data with varying access requirements are stored in separate collections. For example, public photos are stored separately from potentially private site configurations.\n*   **Access Modeling:** Path-based ownership is employed where appropriate (e.g., potentially user-specific data, if any existed, would be stored under `/users/{userId}`). Membership Maps are used for collaborative data access where needed.\n*   **QAPs (Rules are not Filters):** The design supports secure `list` operations by structuring data to align with access control requirements. For example, public photos are stored in a separate collection, allowing unrestricted `list` access, while other collections can have more restrictive rules.\n\nThe `siteConfiguration` is designed to be singleton, so there is only one document within that collection. This can be ensured within the code logic that handles the configuration updates.\n\nThe photo uploads will be handled via Firebase Storage and the metadata will be stored in firestore."
-  }
+  },
+  "projectId": "mely-noe-wedding-celebration"
 }

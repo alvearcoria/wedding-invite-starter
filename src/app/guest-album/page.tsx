@@ -359,5 +359,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-    
