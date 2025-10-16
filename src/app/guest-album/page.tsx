@@ -25,7 +25,8 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { Auth } from 'firebase/auth';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -179,24 +180,29 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
             reject(error);
           },
           async () => {
-            try {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              
-              addDoc(photosCollection, {
-                storagePath,
-                downloadURL,
-                uploadedAt: serverTimestamp(),
-                uploader: 'guest-upload',
-              }).catch(serverError => {
-                 console.error("Error writing document to Firestore:", serverError);
-              });
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            const photoData = {
+              storagePath,
+              downloadURL,
+              uploadedAt: serverTimestamp(),
+              uploader: 'guest-upload',
+            };
 
-              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
-              resolve();
-            } catch (error) {
-              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: (error as Error).message } : u));
-              reject(error);
-            }
+            addDoc(photosCollection, photoData)
+              .then(() => {
+                setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
+                resolve();
+              })
+              .catch(serverError => {
+                const contextualError = new FirestorePermissionError({
+                  path: photosCollection.path,
+                  operation: 'create',
+                  requestResourceData: photoData,
+                });
+                errorEmitter.emit('permission-error', contextualError);
+                setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: (serverError as Error).message } : u));
+                reject(serverError);
+              });
           }
         );
       });
@@ -349,5 +355,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-    
