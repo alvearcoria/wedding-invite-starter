@@ -147,7 +147,7 @@ export const siteConfig = {
   galleryImages: imageData.galleryImages,
   
   qrAlbum: {
-    url: `${getSiteUrl()}/upload`,
+    url: `${getSiteUrl()}/guest-album`,
   },
 };
 

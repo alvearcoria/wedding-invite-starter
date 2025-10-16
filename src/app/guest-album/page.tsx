@@ -3,9 +3,10 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useAuth, useFirestore, useFirebaseApp } from '@/firebase/provider';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useAuth, useFirestore, useFirebaseApp, useMemoFirebase } from '@/firebase/provider';
+import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { useCollection } from '@/firebase/firestore/use-collection';
 import { siteConfig } from '@/config/site';
 import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -23,8 +25,73 @@ type UploadProgress = {
   status: 'pending' | 'uploading' | 'completed' | 'error';
   error?: string;
 };
+type Photo = {
+  downloadURL: string;
+  caption?: string;
+};
 
-export default function UploadPage() {
+function GuestGallery() {
+  const firestore = useFirestore();
+  
+  const photosQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(
+      collection(firestore, 'invitations', siteConfig.slug, 'photos'),
+      orderBy('uploadedAt', 'desc')
+    );
+  }, [firestore]);
+
+  const { data: photos, isLoading, error } = useCollection<Photo>(photosQuery);
+  const hasPhotos = photos && photos.length > 0;
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <Skeleton key={index} className="aspect-square w-full" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!hasPhotos) {
+      return (
+        <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-muted/50">
+          <Icon name="camera" className="h-16 w-16 text-muted-foreground" />
+          <p className="mt-4 text-lg font-semibold">¡Sé el primero en compartir un momento!</p>
+          <p className="text-muted-foreground">Las fotos que subas aparecerán aquí para todos.</p>
+        </div>
+      );
+  }
+  
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-destructive/10 text-destructive">
+          <Icon name="frown" className="h-16 w-16" />
+          <p className="mt-4 text-lg font-semibold">Error al Cargar la Galería</p>
+          <p className="text-destructive/80">No se pudieron cargar las fotos. Por favor, inténtalo de nuevo más tarde.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {photos.map((photo, index) => (
+        <div key={index} className="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow">
+          <Image
+            src={photo.downloadURL}
+            alt={photo.caption || 'Foto de invitado'}
+            width={400}
+            height={400}
+            className="w-full h-full object-cover aspect-square transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function GuestAlbumPage() {
   const { toast } = useToast();
   const { user, isUserLoading } = useAuth();
   const firestore = useFirestore();
@@ -50,7 +117,7 @@ export default function UploadPage() {
         preview: URL.createObjectURL(file),
       })
     );
-    setFiles(prev => [...prev, ...filesWithPreview]);
+    setFiles(prev => [...prev, ...filesWithPreview].slice(0, 20)); // Limit to 20 files at a time
   }, [toast]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -67,9 +134,8 @@ export default function UploadPage() {
       initiateAnonymousSignIn(useAuth());
       toast({
         title: 'Autenticando...',
-        description: 'Preparando todo para subir tus fotos de forma segura.',
+        description: 'Preparando todo para subir tus fotos de forma segura. Inténtalo de nuevo en un momento.',
       });
-      // The user state will change, and the user can retry.
       return;
     }
     
@@ -99,7 +165,6 @@ export default function UploadPage() {
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
-            console.error(`Upload failed for ${file.name}:`, error);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: error.message } : u));
             reject(error);
           },
@@ -107,7 +172,6 @@ export default function UploadPage() {
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               
-              // Non-blocking write, as per project guidelines
               addDoc(photosCollection, {
                 storagePath,
                 downloadURL,
@@ -115,13 +179,11 @@ export default function UploadPage() {
                 uploader: 'guest-upload',
               }).catch(serverError => {
                  console.error("Error writing document to Firestore:", serverError);
-                 // The global error handler in FirebaseProvider will catch this
               });
 
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (error) {
-              console.error(`Firestore doc creation failed for ${file.name}:`, error);
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: (error as Error).message } : u));
               reject(error);
             }
@@ -152,22 +214,22 @@ export default function UploadPage() {
 
   return (
     <div className="bg-muted/40 min-h-screen">
-      <main className="container mx-auto flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">
+      <main className="container mx-auto flex flex-1 flex-col gap-8 p-4 md:p-8">
         <div className="flex items-center justify-between">
            <div className="flex flex-col gap-1">
-             <h1 className="text-3xl font-bold tracking-tight">Comparte Tus Momentos</h1>
-             <p className="text-muted-foreground">¡Sube tus fotos y videos para nuestro álbum de bodas!</p>
+             <h1 className="text-3xl font-bold tracking-tight">Álbum de Invitados</h1>
+             <p className="text-muted-foreground">¡Sube tus fotos y revive los mejores momentos de la boda!</p>
            </div>
             <Button asChild variant="outline">
-                <a href="/#gallery"><Icon name="arrow-right" className="mr-2" />Volver a la Galería</a>
+                <a href="/"><Icon name="arrow-right" className="mr-2" />Volver a la Invitación</a>
             </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Subir Archivos</CardTitle>
+            <CardTitle>Comparte Tus Momentos</CardTitle>
             <CardDescription>
-              Selecciona o arrastra las imágenes que quieras compartir.
+              Selecciona o arrastra las imágenes que quieras compartir con todos.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -183,7 +245,7 @@ export default function UploadPage() {
                 <p className="mt-4 font-semibold">
                   {isDragActive ? 'Suelta las imágenes aquí' : 'Arrastra tus fotos o haz clic para seleccionar'}
                 </p>
-                <p className="text-sm text-muted-foreground">Solo se permiten archivos de imagen.</p>
+                <p className="text-sm text-muted-foreground">Solo se permiten archivos de imagen (hasta 20 por tanda).</p>
               </div>
             )}
             
@@ -252,15 +314,21 @@ export default function UploadPage() {
 
           </CardContent>
         </Card>
+        
+        <div className="space-y-4">
+            <h2 className="text-2xl font-bold tracking-tight">Recuerdos Compartidos</h2>
+            <GuestGallery />
+        </div>
       </main>
     </div>
   );
 }
 
-// Add an icon for upload-cloud to lucide icons
-import { UploadCloud } from 'lucide-react';
-Icon.register = {
-  ...Icon.register,
-  'upload-cloud': UploadCloud,
-};
-
+// Add an icon for upload-cloud if not present
+if (!Icon.register['upload-cloud']) {
+  const LucideUploadCloud = require('lucide-react').UploadCloud;
+  Icon.register = {
+    ...Icon.register,
+    'upload-cloud': LucideUploadCloud,
+  };
+}
