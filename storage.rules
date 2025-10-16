@@ -3,31 +3,34 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
+  
+    // Reglas para la carpeta de subidas de cada boda
+    match /weddings/{slug}/uploads/{fileId} {
     
-    // Reglas para la carpeta de subidas de fotos de la boda
-    // Permite la subida de imágenes de hasta 10MB.
-    // Prohíbe la modificación o eliminación de archivos.
-    // La lectura es pública para que las imágenes se muestren en la galería.
-    match /weddings/{eventId}/uploads/{fileId} {
-
+      // Función para validar que el archivo es una imagen
       function isImage() {
         return request.resource.contentType.matches('image/.*');
       }
-
+      
+      // Función para validar que el archivo pesa menos de 10 MB
       function isUnderSizeLimit() {
-        // Límite de 10 MB
         return request.resource.size < 10 * 1024 * 1024;
       }
 
-      // Cualquiera puede subir una imagen, siempre que sea una imagen y esté por debajo del límite de tamaño.
-      // Se recomienda activar App Check en Firebase para protegerse contra bots.
+      // PERMISOS:
+      // Permitir 'create' (subir) si el archivo es una imagen y está por debajo del límite de tamaño.
+      // Esto permite que cualquiera suba una foto.
       allow create: if isImage() && isUnderSizeLimit();
-
-      // La lectura es pública para que la galería pueda mostrar las imágenes.
+      
+      // Permitir 'read' (leer/descargar) a cualquiera.
+      // Esto es necesario para que las imágenes se puedan mostrar en la galería.
       allow read: if true;
-
-      // Nadie puede actualizar o eliminar archivos desde el cliente.
+      
+      // No permitir 'update' o 'delete' a nadie a través de las reglas de cliente.
+      // La eliminación de fotos se manejaría desde un panel de administrador con credenciales privilegiadas.
       allow update, delete: if false;
     }
   }
 }
+
+    

@@ -1,26 +1,33 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Invitations collection
+    // Reglas para la colección 'invitations'
     match /invitations/{slug} {
 
-      // Guests subcollection: Allow anyone to create (submit RSVP)
+      // Subcolección 'guests' (para RSVP)
+      // Cualquiera puede crear un documento (enviar su confirmación)
       match /guests/{guestId} {
         allow create: if true;
-        // Only authenticated users (admins) can read/update/delete
+
+        // Solo los usuarios autenticados (administradores) pueden leer, actualizar o borrar.
         allow read, update, delete: if request.auth != null;
       }
 
-      // Photos subcollection:
-      // Allow anyone to create (upload photo metadata)
-      // Allow anyone to read (view the gallery)
+      // Subcolección 'photos' (para el álbum de invitados)
       match /photos/{photoId} {
-        allow create, read: if true;
-        // Only authenticated users (admins) can update/delete
+      
+        // Cualquiera puede leer la lista de fotos (para ver la galería)
+        // Cualquiera puede crear un documento (añadir la metadata de una foto subida)
+        allow read, create: if true;
+
+        // Solo los usuarios autenticados (administradores) pueden actualizar o borrar.
         allow update, delete: if request.auth != null;
       }
     }
   }
 }
+
+    
