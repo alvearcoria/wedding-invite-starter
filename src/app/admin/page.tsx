@@ -167,8 +167,6 @@ export default function AdminPage() {
 
   const guestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    // **FIX:** Query the 'guests' collection and filter by the specific wedding slug.
-    // This aligns with security rules that only allow reading documents for the current event.
     return query(collection(firestore, 'guests'), where('slug', '==', siteConfig.slug));
   }, [firestore]);
 

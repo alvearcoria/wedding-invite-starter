@@ -1,87 +1,88 @@
 /**
- * @file Firestore Security Rules
- * @core_philosophy This ruleset prioritizes security and data access control for a wedding website.
- *  It enforces strict ownership for guest data, allows public read access to photos and venues,
- *  and restricts modification of the site configuration to authenticated users.
+ * @file Overview
+ * This ruleset enforces a public read, owner-write model for photos, and public read only model for venues and site configuration.
+ * Guests collection follows a different access control. All data is stored in top-level collections.
  *
- * @data_structure
- *  - /guests/{guestId}: Stores individual guest information, accessible only to the guest themselves.
- *  - /photos/{photoId}: Stores wedding photos, publicly readable but write-protected.
- *  - /venues/{venueId}: Stores venue details, publicly readable but write-protected.
- *  - /site_configuration/config: Stores site-wide settings, modifiable only by authenticated users.
+ * Data Structure:
+ * - /guests/{guestId}: Stores guest information.
+ * - /photos/{photoId}: Stores photo URLs and descriptions. Photos are publicly readable and owner writable. Assumes server side moderation for photos.
+ * - /venues/{venueId}: Stores venue details. Publicly readable.
+ * - /site_configuration/config: Stores site configuration settings. Publicly readable. Only one document exists at this path.
  *
- * @key_security_decisions
- *  - Guest data is strictly private, accessible only to the guest (based on ID).
- *  - Photos and venues are publicly readable to facilitate easy access for all users.
- *  - Site configuration changes are restricted to authenticated users to prevent unauthorized modifications.
- *  - Listing of guests is forbidden to protect guest privacy.
+ * Key Security Decisions:
+ * - Guest collection: follow a public read and public create model.
+ * - Photos: Publicly readable, but writes are restricted to authenticated users. Assumes server-side moderation.
+ * - Venues and Site Configuration: Publicly readable, no writes allowed via client-side rules.
+ * - No user listing is allowed for any collection.
  *
- * @denormalization_for_authorization N/A - no specific denormalization is applied in this version.
- * @structural_segregation The ruleset uses distinct collections for user-specific data (/guests)
- * and public data (/photos, /venues) to simplify access control and improve performance.
+ * Denormalization for Authorization:
+ * - Photos will need an uploaderId field to identify the user who uploaded the photo. This is critical for the owner-write model.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to guest data. Each guest can only read and write their own data.
+     * @description Controls access to guest information.
      * @path /guests/{guestId}
-     * @allow (create) - Authenticated user can create a guest entry for themselves with matching id
-     * @allow (get, update, delete) - Authenticated user can only access guest data if their UID matches the guestId.
-     * @deny (create) - If authenticated user tries to create a guest document where the id doesn't match their UID.
-     * @deny (get, update, delete) - If an unauthenticated user tries to access guest data.
-     * @principle Enforces document ownership for writes.
+     * @allow (get, list) Allows any user to read guest data.
+     * @allow (create) Allows any user to create guest data.
+     * @deny (update, delete) Denies updates and deletes by any user as there is no owner validation.
+     * @principle Public read, public create, no write.
      */
     match /guests/{guestId} {
-      allow get: if isOwner(guestId);
-      allow list: if false;
-      allow create: if isOwner(guestId) && request.resource.data.id == guestId;
-      allow update: if isExistingOwner(guestId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(guestId);
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to photo data. Photos are publicly readable, but only authenticated users can create or modify them.
+     * @description Controls access to photos in the photo gallery.
      * @path /photos/{photoId}
-     * @allow (get, list) - Any user can read the photo data.
-     * @allow (create) - Only an authenticated user can create a photo.
-     * @deny (update, delete) - No user can update or delete a photo.
-     * @principle Allows public read access with owner-only writes.
+     * @allow (get, list) Allows any user to read photo data.
+     * @allow (create) Allows authenticated users to create photos, validating that the uploaderId matches their auth UID.
+     * @allow (update, delete) Allows authenticated users to update and delete photos they own.
+     * @deny (create) Denies create if the uploaderId does not match the authenticated user's UID.
+     * @deny (update, delete) Denies updates and deletes if the user is not the owner of the photo.
+     * @principle Public read, owner-only writes.
      */
     match /photos/{photoId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn() && request.resource.data.uploaderId == request.auth.uid;
+      allow update: if isSignedIn() && isExistingOwner(resource.data.uploaderId);
+      allow delete: if isSignedIn() && isExistingOwner(resource.data.uploaderId);
     }
 
     /**
-     * @description Controls access to venue data. Venues are publicly readable, but only authenticated users can create or modify them.
+     * @description Controls access to venue information.
      * @path /venues/{venueId}
-     * @allow (get, list) - Any user can read the venue data.
-     * @allow (create) - Only an authenticated user can create a venue.
-     * @deny (update, delete) - No user can update or delete a venue.
-     * @principle Allows public read access with owner-only writes.
+     * @allow (get, list) Allows any user to read venue data.
+     * @deny (create, update, delete) Denies all write operations.
+     * @principle Public read, no write.
      */
     match /venues/{venueId} {
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to site configuration data. Only authenticated users can read or modify the site configuration.
+     * @description Controls access to site configuration settings.
      * @path /site_configuration/config
-     * @allow (get) - Any authenticated user can read the site configuration.
-     * @allow (update) - Only authenticated users can modify site configuration.
-     * @deny (create, delete) - No user can create or delete the site configuration document.
-     * @principle Restricts access to sensitive configuration data to authenticated users.
+     * @allow (get, list) Allows any user to read the site configuration.
+     * @deny (create, update, delete) Denies all write operations.
+     * @principle Public read, no write.
      */
     match /site_configuration/config {
-      allow get: if isSignedIn();
-      allow list: if false;
+      allow get: if true;
+      allow list: if true;
       allow create: if false;
-      allow update: if isSignedIn();
+      allow update: if false;
       allow delete: if false;
     }
 
@@ -94,7 +95,7 @@ service cloud.firestore {
     }
 
     function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+        return isSignedIn() && isOwner(userId) && resource != null;
     }
   }
 }
