@@ -206,7 +206,7 @@ export default function AdminPage() {
                     Exportar a CSV
                 </Button>
                  <Button asChild variant="outline">
-                    <a href="/"><Icon name="arrow-left" className="mr-2" />Volver</a>
+                    <a href="/guest-album"><Icon name="image" className="mr-2" />Ir al Álbum</a>
                 </Button>
             </div>
         </div>
@@ -229,5 +229,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
-    
