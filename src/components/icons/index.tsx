@@ -6,6 +6,7 @@ import { ManSuit } from './ManSuit';
 import { WomanDress } from './WomanDress';
 import {
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   Bell,
   Camera,
@@ -20,6 +21,7 @@ import {
   GlassWater,
   Hash,
   HeartHandshake,
+  Image,
   Landmark,
   Link,
   LoaderCircle,
@@ -49,6 +51,7 @@ export const Icons = {
   mansuit: ManSuit,
   womandress: WomanDress,
   'arrow-down': ArrowDown,
+  'arrow-left': ArrowLeft,
   'arrow-right': ArrowRight,
   bell: Bell,
   camera: Camera,
@@ -63,6 +66,7 @@ export const Icons = {
   'glass-water': GlassWater,
   hash: Hash,
   'heart-handshake': HeartHandshake,
+  image: Image,
   landmark: Landmark,
   link: Link,
   'loader-circle': LoaderCircle,
