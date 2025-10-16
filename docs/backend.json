@@ -8,121 +8,88 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the Guest entity."
+          "description": "Unique identifier for the guest."
         },
         "name": {
           "type": "string",
-          "description": "Guest's full name."
+          "description": "The guest's name."
         },
-        "email": {
-          "type": "string",
-          "description": "Guest's email address.",
-          "format": "email"
-        },
-        "phoneNumber": {
-          "type": "string",
-          "description": "Guest's phone number."
-        },
-        "numberOfAttendees": {
+        "numberAttendees": {
           "type": "number",
-          "description": "Number of attendees this guest will bring."
+          "description": "The number of attendees in the guest's party."
         },
         "dietaryPreferences": {
           "type": "string",
-          "description": "Guest's dietary preferences (e.g., vegetarian, vegan, gluten-free)."
+          "description": "Dietary preferences or restrictions of the guest."
         },
-        "rsvpStatus": {
-          "type": "string",
-          "description": "Indicates whether the guest has confirmed their attendance ('yes', 'no', 'maybe')."
-        },
-        "additionalNotes": {
-          "type": "string",
-          "description": "Any additional notes or comments from the guest."
+        "rsvp": {
+          "type": "boolean",
+          "description": "Indicates whether the guest has RSVP'd."
         }
       },
       "required": [
         "id",
         "name",
-        "numberOfAttendees",
-        "rsvpStatus"
+        "numberAttendees",
+        "dietaryPreferences",
+        "rsvp"
       ]
     },
     "Photo": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Photo",
       "type": "object",
-      "description": "Represents a photo uploaded by a guest.",
+      "description": "Represents a photo in the shared photo gallery.",
       "properties": {
-        "storagePath": {
+        "id": {
           "type": "string",
-          "description": "The full path to the image file in Firebase Storage."
+          "description": "Unique identifier for the photo."
         },
-        "downloadURL": {
+        "url": {
           "type": "string",
-          "format": "uri",
-          "description": "The public URL to view the photo."
+          "description": "URL of the photo.",
+          "format": "uri"
         },
-        "uploadedAt": {
+        "uploadTimestamp": {
           "type": "string",
-          "format": "date-time",
-          "description": "Server timestamp of when the photo was uploaded."
-        },
-        "uploader": {
-          "type": "string",
-          "description": "Optional identifier for the uploader (e.g., 'anon')."
-        },
-        "caption": {
-          "type": "string",
-          "description": "Optional caption for the photo."
-        },
-        "width": {
-          "type": "integer",
-          "description": "The width of the image in pixels."
-        },
-        "height": {
-          "type": "integer",
-          "description": "The height of the image in pixels."
+          "description": "Timestamp of when the photo was uploaded.",
+          "format": "date-time"
         }
       },
       "required": [
-        "storagePath",
-        "downloadURL",
-        "uploadedAt"
+        "id",
+        "url",
+        "uploadTimestamp"
       ]
     },
     "SiteConfiguration": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "SiteConfiguration",
       "type": "object",
-      "description": "Represents the site configuration settings.",
+      "description": "Configuration settings for the wedding website.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the SiteConfiguration entity."
+          "description": "Unique identifier for the configuration."
         },
         "storySectionEnabled": {
           "type": "boolean",
-          "description": "Indicates whether the 'Story' section is enabled."
+          "description": "Indicates whether the story section is enabled."
         },
         "venuesSectionEnabled": {
           "type": "boolean",
-          "description": "Indicates whether the 'Venues' section is enabled."
+          "description": "Indicates whether the venues section is enabled."
         },
         "timelineSectionEnabled": {
           "type": "boolean",
-          "description": "Indicates whether the 'Timeline' section is enabled."
-        },
-        "giftRegistryType": {
-          "type": "string",
-          "description": "Type of gift registry to use, either 'external_link' or 'bank_details'."
-        },
-        "giftRegistryDetails": {
-          "type": "string",
-          "description": "Details of the gift registry; can be the link, or bank details (account number, bank name etc)."
+          "description": "Indicates whether the timeline section is enabled."
         }
       },
       "required": [
-        "id"
+        "id",
+        "storySectionEnabled",
+        "venuesSectionEnabled",
+        "timelineSectionEnabled"
       ]
     }
   },
@@ -135,41 +102,33 @@
   "firestore": {
     "structure": [
       {
-        "path": "/invitations/{invitationId}/guests/{guestId}",
+        "path": "/guests/{guestId}",
         "definition": {
           "entityName": "Guest",
           "schema": {
             "$ref": "#/backend/entities/Guest"
           },
-          "description": "Stores guest RSVP information for a specific wedding invitation.",
+          "description": "Stores guest information, including RSVP status, dietary preferences, and the number of attendees. Includes denormalized data for authorization independence.",
           "params": [
             {
-              "name": "invitationId",
-              "description": "The unique slug for the wedding event."
-            },
-            {
               "name": "guestId",
-              "description": "The unique ID of the guest."
+              "description": "The unique identifier for the guest."
             }
           ]
         }
       },
       {
-        "path": "/invitations/{invitationId}/photos/{photoId}",
+        "path": "/photos/{photoId}",
         "definition": {
           "entityName": "Photo",
           "schema": {
             "$ref": "#/backend/entities/Photo"
           },
-          "description": "Stores metadata for photos uploaded by guests for a specific wedding. Access is public for reading, but restricted for writing.",
+          "description": "Stores photos uploaded to the shared photo gallery. Allows listing all photos for all users.",
           "params": [
             {
-              "name": "invitationId",
-              "description": "The unique slug for the wedding event."
-            },
-            {
               "name": "photoId",
-              "description": "The unique ID of the photo."
+              "description": "The unique identifier for the photo."
             }
           ]
         }
@@ -181,16 +140,16 @@
           "schema": {
             "$ref": "#/backend/entities/SiteConfiguration"
           },
-          "description": "Stores the site configuration settings. There should only be one document in this collection. Access is restricted to authorized users.",
+          "description": "Stores site-wide configuration settings, such as enabling or disabling sections of the website.",
           "params": [
             {
               "name": "configId",
-              "description": "The unique ID of the site configuration (likely a single, known ID)."
+              "description": "The unique identifier for the site configuration."
             }
           ]
         }
       }
     ],
-    "reasoning": "This design prioritizes security and scalability for the wedding celebration application. It focuses on authorization independence and facilitates simple, robust security rules. We are leveraging path-based ownership for guests and a global collection for site configuration. The photo gallery uses a single collection. No denormalization is required given the authorization model. Access to all data is restricted to authenticated users via firebase authentication."
+    "reasoning": "The Firestore structure is designed to manage wedding-related data, including guest RSVPs, photos, and site configurations. It emphasizes security and scalability by adhering to the principles of Authorization Independence and Structural Segregation. Authorization independence is achieved by avoiding hierarchical authorization dependencies (`get()` calls in security rules). Structural Segregation is achieved by ensuring that each collection has a homogeneous security posture.\n\n*   **Guests:** Guest data is stored in a flat collection `/guests/{guestId}`. This simplifies access control, as each document can be evaluated independently.\n*   **Photos:** Photos uploaded by users are stored in `/photos/{photoId}`. The structure facilitates simple `list` operations, allowing guests to view the gallery. No user-specific subcollections are used, keeping access control simple and efficient.\n*   **Site Configuration:** Site-wide configuration data is stored in `/site_configuration/{configId}`. This allows easy management of features like enabling/disabling sections of the website.\n\nThis design allows us to implement secure `list` operations (QAPs) for the photo gallery because all photos share the same security requirements. There's no need to filter based on user-specific criteria. Additionally, authorization is independent, simplifying rules and allowing atomic operations."
   }
 }
