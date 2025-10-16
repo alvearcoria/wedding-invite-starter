@@ -118,7 +118,11 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de la foto: ${e.message}` });
+               toast({
+                variant: 'destructive',
+                title: 'Error de Base de Datos',
+                description: e.message || 'No se pudo guardar la referencia de la foto.',
+              });
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Firestore Error: ${e.code}` } : u));
               reject(e);
             }
@@ -232,69 +236,6 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
 
 // --- Guest Photo Gallery Component ---
 function GuestGallery() {
-    const firestore = useFirestore();
-    const photosQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(
-            collection(firestore, 'photos'), 
-            where('slug', '==', siteConfig.slug),
-            orderBy('uploadedAt', 'desc'),
-            limit(20)
-        );
-    }, [firestore]);
-
-    const { data: photos, isLoading, error } = useCollection<{downloadURL: string}>(photosQuery);
-
-    if (isLoading) {
-        return (
-             <Card className="shadow-lg">
-                <CardHeader>
-                    <CardTitle>Recuerdos Compartidos</CardTitle>
-                    <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
-                </CardHeader>
-                <CardContent className="flex items-center justify-center py-16">
-                   <Icon name="loader-circle" className="h-8 w-8 animate-spin text-muted-foreground" />
-                </CardContent>
-            </Card>
-        )
-    }
-
-    if (error) {
-        return (
-            <Card className="shadow-lg bg-destructive/10 border-destructive">
-                <CardHeader>
-                    <CardTitle>Error al Cargar Galería</CardTitle>
-                    <CardDescription className="text-destructive/80">
-                        No se pudieron cargar las fotos. Es posible que haya un problema con los permisos.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                     <pre className="text-xs bg-destructive/10 p-4 rounded-md overflow-x-auto"><code>{error.message}</code></pre>
-                </CardContent>
-            </Card>
-        )
-    }
-  
-    if (!photos || photos.length === 0) {
-        return (
-            <Card className="shadow-lg">
-                <CardHeader>
-                    <CardTitle>Recuerdos Compartidos</CardTitle>
-                    <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
-                        <Icon name="image" className="h-16 w-16 text-muted-foreground" />
-                        <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
-                        <p className="mt-2 text-muted-foreground">
-                            ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-        );
-    }
-
     return (
         <Card className="shadow-lg">
             <CardHeader>
@@ -302,38 +243,16 @@ function GuestGallery() {
                 <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Carousel
-                  opts={{
-                    align: "start",
-                    loop: photos.length > 2,
-                  }}
-                  className="w-full"
-                >
-                    <CarouselContent>
-                        {photos.map((photo, index) => (
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                            <div className="p-1">
-                            <Card className="overflow-hidden">
-                                <CardContent className="flex aspect-[4/5] items-center justify-center p-0">
-                                <Image
-                                    src={photo.downloadURL}
-                                    alt={`Foto de invitado ${index + 1}`}
-                                    width={600}
-                                    height={750}
-                                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                                />
-                                </CardContent>
-                            </Card>
-                            </div>
-                        </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="ml-12" />
-                    <CarouselNext className="mr-12" />
-                </Carousel>
+                <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
+                    <Icon name="image" className="h-16 w-16 text-muted-foreground" />
+                    <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
+                    <p className="mt-2 text-muted-foreground">
+                        ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
+                    </p>
+                </div>
             </CardContent>
         </Card>
-    )
+    );
 }
 
 
