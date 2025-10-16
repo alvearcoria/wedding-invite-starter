@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useFirestore, useFirebaseApp, useMemoFirebase } from '@/firebase/provider';
+import { useFirestore, useFirebaseApp, useMemoFirebase, useUser } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useCollection } from '@/firebase/firestore/use-collection';
@@ -39,19 +39,22 @@ type Photo = {
 
 function GuestGallery() {
   const firestore = useFirestore();
-  
+  const { isUserLoading } = useUser();
+
   const photosQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    // Wait until the user is authenticated (even anonymously) before creating the query.
+    if (isUserLoading || !firestore) return null;
     return query(
       collection(firestore, 'invitations', siteConfig.slug, 'photos'),
       orderBy('uploadedAt', 'desc')
     );
-  }, [firestore]);
+  }, [firestore, isUserLoading]);
 
   const { data: photos, isLoading, error } = useCollection<Photo>(photosQuery);
   const hasPhotos = photos && photos.length > 0;
 
-  if (isLoading) {
+  // Show a more specific loading state while authentication is in progress.
+  if (isUserLoading || (isLoading && !photos)) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {Array.from({ length: 10 }).map((_, index) => (
@@ -61,7 +64,7 @@ function GuestGallery() {
     );
   }
 
-  if (!hasPhotos) {
+  if (!hasPhotos && !isLoading) {
       return (
         <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-muted/50">
           <Icon name="camera" className="h-16 w-16 text-muted-foreground" />
@@ -84,7 +87,7 @@ function GuestGallery() {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      {photos.map((photo, index) => (
+      {photos?.map((photo, index) => (
         <div key={index} className="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow">
           <Image
             src={photo.downloadURL}
