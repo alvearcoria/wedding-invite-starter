@@ -167,7 +167,7 @@ function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: ()
                 downloadURL,
                 uploadedAt: serverTimestamp(),
                 uploader: 'guest-upload',
-                rand: Math.random(), // <-- Add random field here
+                rand: Math.random(),
               });
 
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
@@ -316,13 +316,19 @@ function GuestAlbumGrid({ photos }: { photos: GuestPhoto[] }) {
                     />
                 </div>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl p-2 bg-transparent border-none shadow-none">
+            <DialogContent className="max-w-4xl p-0 bg-transparent border-none shadow-none">
+                 <DialogHeader className="sr-only">
+                    <DialogTitle>Imagen del álbum de invitados</DialogTitle>
+                    <DialogDescription>
+                      Una imagen ampliada del álbum de invitados de la boda.
+                    </DialogDescription>
+                 </DialogHeader>
                  <Image 
                     src={p.downloadURL} 
-                    alt="Recuerdo de la boda" 
+                    alt="Recuerdo de la boda ampliado" 
                     width={1200}
                     height={800}
-                    className="w-full h-auto object-contain rounded-lg shadow-2xl max-h-[80vh]" 
+                    className="w-full h-auto object-contain rounded-lg shadow-2xl max-h-[90vh]" 
                 />
             </DialogContent>
          </Dialog>
@@ -432,5 +438,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-    
