@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import type { RsvpInput } from '@/types/rsvp';
 import Papa from 'papaparse';
 import { Icon } from "@/components/icons";
@@ -167,7 +167,6 @@ export default function AdminPage() {
 
   const guestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    // This query now correctly targets the 'guests' collection and filters by the slug.
     return query(collection(firestore, 'guests'), where('slug', '==', siteConfig.slug));
   }, [firestore]);
 
@@ -201,10 +200,15 @@ export default function AdminPage() {
                 <h1 className="text-3xl font-bold tracking-tight">Panel de Administración</h1>
                 <p className="text-muted-foreground">Bienvenido al panel de tu boda. Aquí puedes ver todas las confirmaciones en tiempo real.</p>
             </div>
-            <Button onClick={handleExport} disabled={!guests || guests.length === 0}>
-                <Icon name="download" className="mr-2 h-4 w-4" />
-                Exportar a CSV
-            </Button>
+            <div className="flex items-center gap-2">
+                <Button onClick={handleExport} disabled={!guests || guests.length === 0}>
+                    <Icon name="download" className="mr-2 h-4 w-4" />
+                    Exportar a CSV
+                </Button>
+                 <Button asChild variant="outline">
+                    <a href="/"><Icon name="arrow-left" className="mr-2" />Volver</a>
+                </Button>
+            </div>
         </div>
         
         <AdminStats guests={guests} isLoading={isLoading} />
@@ -225,3 +229,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+    
