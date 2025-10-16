@@ -144,15 +144,8 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     const storage = getStorage(firebaseApp);
     const photosCollection = collection(firestore, 'invitations', siteConfig.slug, 'photos');
 
-    const allUploads = files.map(file => {
+    const uploadPromises = files.map(file => {
       return new Promise<void>((resolve, reject) => {
-        if (!file.type?.startsWith('image/')) {
-          console.warn('Skipping non-image file:', file.name);
-          setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: 'No es una imagen' } : u));
-          resolve();
-          return;
-        }
-
         const fileId = crypto.randomUUID();
         const storagePath = `weddings/${siteConfig.slug}/uploads/${fileId}-${file.name}`;
         const storageRef = ref(storage, storagePath);
@@ -167,25 +160,23 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
-            console.error('UPLOAD ERROR:', error.code, error.message);
+            console.error(`Upload error for ${file.name}:`, error);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: error.message } : u));
             reject(error);
           },
           async () => {
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              const photoData = {
+              await addDoc(photosCollection, {
                 storagePath,
                 downloadURL,
                 uploadedAt: serverTimestamp(),
                 uploader: 'guest-upload', // simplified uploader ID
-              };
-              
-              await addDoc(photosCollection, photoData);
+              });
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              console.error("FIRESTORE WRITE ERROR:", e);
+              console.error(`Firestore write error for ${file.name}:`, e);
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: e.message } : u));
               reject(e);
             }
@@ -195,25 +186,26 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     });
 
     try {
-      await Promise.all(allUploads);
+      await Promise.all(uploadPromises);
       toast({
         title: '¡Subida completada!',
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
       setTimeout(() => {
         closeDialog();
+        // Reset state after closing
         setFiles([]);
         setUploads([]);
         setIsUploading(false);
       }, 1500);
     } catch (error) {
-      console.error('One or more uploads failed', error);
+      console.error('One or more uploads failed overall.', error);
       toast({
         variant: 'destructive',
         title: 'Error en la subida',
         description: 'Algunas fotos no se pudieron subir. Por favor, inténtalo de nuevo.',
       });
-      setIsUploading(false);
+      setIsUploading(false); // Allow user to try again
     }
   };
 

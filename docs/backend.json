@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Guest": {
@@ -169,5 +170,5 @@
     ],
     "reasoning": "The Firestore structure is designed to accommodate the wedding celebration application, focusing on guest management, photo gallery, and site configuration.  Authorization Independence is achieved through path-based ownership for photos, linking them directly to guests via `/guests/{guestId}/photos/{photoId}`. This eliminates the need for complex `get()` calls in security rules to verify ownership. Site configurations are stored in a global collection. This structure facilitates straightforward security rules and supports the app's core features.\n\n**Authorization Independence:** The `/guests/{guestId}/photos/{photoId}` structure ensures that access to photos is directly tied to the guest who uploaded them, eliminating the need to fetch parent document data for authorization.\n\n**QAPs Support:** The structure supports secure listing of guests and photos:\n\n*   Guests: Listing guests will require security rules to prevent unauthorized access, potentially limiting list access to administrators or the wedding organizers.\n*   Photos:  Photos are nested under the guest, so listing photos is implicitly secured by the guest's ownership. An alternative approach might be a top-level `/photos` collection, but this would require a membership-based model for write access control.\n\nThe chosen structure prioritizes ease of implementation and secure access control for the app's primary data entities."
   },
-  "projectId": "sturdy-dryad-456015-i7"
+  "projectId": "wedding-invite-c09a3"
 }

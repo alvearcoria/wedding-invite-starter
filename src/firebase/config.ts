@@ -1,8 +1,8 @@
 export const firebaseConfig = {
-  "projectId": "sturdy-dryad-456015-i7",
-  "appId": "1:776451676239:web:9815779774347743d5f50f",
-  "storageBucket": "sturdy-dryad-456015-i7.appspot.com",
+  "projectId": "wedding-invite-c09a3",
+  "appId": "1:562643869273:web:531732c510c345b91b9793",
+  "storageBucket": "wedding-invite-c09a3.appspot.com",
   "apiKey": "AIzaSyC4-wLgL0m310h5m4s3_i2k1j0f9e8d7c6",
-  "authDomain": "sturdy-dryad-456015-i7.firebaseapp.com",
-  "messagingSenderId": "776451676239"
+  "authDomain": "wedding-invite-c09a3.firebaseapp.com",
+  "messagingSenderId": "562643869273"
 };
