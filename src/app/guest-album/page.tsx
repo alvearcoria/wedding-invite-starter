@@ -304,21 +304,28 @@ function GuestAlbumGrid({ photos }: { photos: GuestPhoto[] }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
       {photos.map((p) => (
-        <a
-          key={p.id}
-          href={p.downloadURL}
-          target="_blank"
-          rel="noreferrer"
-          className="block overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-        >
-          <Image 
-            src={p.downloadURL} 
-            alt="Recuerdo de la boda" 
-            width={400}
-            height={400}
-            className="w-full h-48 object-cover" 
-          />
-        </a>
+         <Dialog key={p.id}>
+            <DialogTrigger asChild>
+                <div className="block overflow-hidden rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                    <Image 
+                        src={p.downloadURL} 
+                        alt="Recuerdo de la boda" 
+                        width={400}
+                        height={400}
+                        className="w-full h-48 object-cover" 
+                    />
+                </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl p-2 bg-transparent border-none shadow-none">
+                 <Image 
+                    src={p.downloadURL} 
+                    alt="Recuerdo de la boda" 
+                    width={1200}
+                    height={800}
+                    className="w-full h-auto object-contain rounded-lg shadow-2xl max-h-[80vh]" 
+                />
+            </DialogContent>
+         </Dialog>
       ))}
     </div>
   );
@@ -425,3 +432,5 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+    
