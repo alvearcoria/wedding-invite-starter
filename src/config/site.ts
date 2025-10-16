@@ -63,13 +63,13 @@ export const siteConfig = {
     intro_line2: "Hoy damos gracias a Dios por habernos hecho coincidir en el camino y empezar una vida juntos.",
     parents: {
       her: {
-        title_main: "Padres de la novia",
+        title_main: "Padres",
         title_secondary: "de la novia:",
         father: "Raul Sánchez Torres",
         mother: "Francisca Alvear Acosta",
       },
       him: {
-        title_main: "Mamá del novio",
+        title_main: "Mamá",
         title_secondary: "del novio:",
         mother: "Lourdes Aracely Fernández Galindo",
         father: null,
