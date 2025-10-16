@@ -1,102 +1,26 @@
-/**
- * @file Firestore Security Rules for the Mely & Noe Wedding Celebration app.
- *
- * Core Philosophy:
- * This ruleset prioritizes a secure-by-default posture with clearly defined access patterns.
- * It enforces strict ownership for user-specific data (where applicable) and allows public read access for certain collections like `photos`.
- * All write operations require authentication.
- *
- * Data Structure:
- * - `/guests/{guestId}`: Stores guest information. Write access is limited to authenticated users.
- * - `/photos/{photoId}`: Stores photo metadata. Public read access is allowed, but write access is restricted to authenticated users.
- * - `/siteConfiguration/weddingConfig`: Stores global site configuration. Write access is restricted to authenticated users. This is a singleton document.
- *
- * Key Security Decisions:
- * - User listing is generally disallowed unless explicitly required and secured.
- * - Read-only collections (publicly readable) are explicitly marked as such.
- * - The rules err on the side of caution, denying access unless explicitly granted.
- *
- * Denormalization for Authorization:
- *  There is currently no denormalized authorization.
- */
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * @description Manages access control for guest data.
-     * @path /guests/{guestId}
-     * @allow (create) - An authenticated user can create a guest entry.
-     * @allow (update) - An authenticated user can update a guest entry.
-     * @allow (delete) - An authenticated user can delete a guest entry.
-     * @allow (get) - An authenticated user can get a guest entry.
-     * @allow (list) - An authenticated user can list guest entries.
-     * @deny (create) - An unauthenticated user attempts to create a guest entry.
-     * @deny (update) - An unauthenticated user attempts to update a guest entry.
-     * @deny (delete) - An unauthenticated user attempts to delete a guest entry.
-     * @principle Enforces authenticated access for all guest data operations.
-     */
-    match /guests/{guestId} {
-      // Read rules
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
+    // Invitations collection
+    match /invitations/{slug} {
 
-      // Write rules
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource != null;
-      allow delete: if isSignedIn() && resource != null;
+      // Guests subcollection: Allow anyone to create (submit RSVP)
+      match /guests/{guestId} {
+        allow create: if true;
+        // Only authenticated users (admins) can read/update/delete
+        allow read, update, delete: if request.auth != null;
+      }
+
+      // Photos subcollection:
+      // Allow anyone to create (upload photo metadata)
+      // Allow anyone to read (view the gallery)
+      match /photos/{photoId} {
+        allow create, read: if true;
+        // Only authenticated users (admins) can update/delete
+        allow update, delete: if request.auth != null;
+      }
     }
-
-    /**
-     * @description Manages access control for photo metadata.  All users can view the photos.
-     * @path /photos/{photoId}
-     * @allow (get) - Any user can read a photo's metadata.
-     * @allow (list) - Any user can list all photos.
-     * @allow (create) - An authenticated user can create a photo entry.
-     * @allow (update) - An authenticated user can update a photo entry.
-     * @allow (delete) - An authenticated user can delete a photo entry.
-     * @deny (create) - An unauthenticated user attempts to create a photo entry.
-     * @deny (update) - An unauthenticated user attempts to update a photo entry.
-     * @deny (delete) - An unauthenticated user attempts to delete a photo entry.
-     * @principle Allows public read access, but restricts write access to authenticated users.
-     */
-    match /photos/{photoId} {
-      // Read rules
-      allow get: if true;
-      allow list: if true;
-
-      // Write rules
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource != null;
-      allow delete: if isSignedIn() && resource != null;
-    }
-
-    /**
-     * @description Manages access control for site configuration settings. This is a singleton document.
-     * @path /siteConfiguration/weddingConfig
-     * @allow (get) - Any user can read the site configuration.
-     * @allow (create) - An authenticated user can create site configuration.
-     * @allow (update) - An authenticated user can update site configuration.
-     * @allow (delete) - An authenticated user can delete site configuration.
-     * @deny (create) - An unauthenticated user attempts to create site configuration.
-     * @deny (update) - An unauthenticated user attempts to update site configuration.
-     * @deny (delete) - An unauthenticated user attempts to delete site configuration.
-     * @principle Restricts write access to site configuration to authenticated users.
-     */
-    match /siteConfiguration/weddingConfig {
-      // Read rules
-      allow get: if true;
-      allow list: if false;
-
-      // Write rules
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource != null;
-      allow delete: if isSignedIn() && resource != null;
-    }
-  }
-
-  // Helper function to determine if a user is signed in
-  function isSignedIn() {
-    return request.auth != null;
   }
 }
