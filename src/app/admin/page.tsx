@@ -167,6 +167,7 @@ export default function AdminPage() {
 
   const guestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
+    // This query now correctly targets the 'guests' collection and filters by the slug.
     return query(collection(firestore, 'guests'), where('slug', '==', siteConfig.slug));
   }, [firestore]);
 
