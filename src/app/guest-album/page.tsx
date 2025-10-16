@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFirestore, useStorage } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -29,6 +29,8 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { getGuestPhotos, type GuestPhoto } from '@/ai/flows/get-guest-photos';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -39,7 +41,7 @@ type UploadProgress = {
 };
 
 // --- Upload Modal Component ---
-function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
+function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: () => void; onUploadComplete: () => void; }) {
   const { toast } = useToast();
   const firestore = useFirestore();
   const storage = useStorage();
@@ -138,6 +140,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         title: '¡Subida completada!',
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
+      onUploadComplete();
       setTimeout(() => {
         closeDialog();
         setFiles([]);
@@ -149,7 +152,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     }
   };
 
-  const allCompleted = useMemo(() => uploads.length > 0 && uploads.every(u => u.status === 'completed'), [uploads]);
+  const allCompleted = uploads.length > 0 && uploads.every(u => u.status === 'completed');
 
   return (
      <div className="space-y-6">
@@ -236,33 +239,130 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
 
 
 // --- Guest Photo Gallery Component ---
-function GuestGallery() {
-    // This component is intentionally left without data-fetching logic
-    // to prevent the permission-denied error. It serves as a placeholder.
+function GuestGallery({ photos, isLoading, error }: { photos: GuestPhoto[] | null; isLoading: boolean; error: Error | null; }) {
+  if (isLoading) {
     return (
-        <Card className="shadow-lg">
+      <Card className="shadow-lg">
+        <CardHeader>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
+            <Icon name="loader-circle" className="h-16 w-16 text-muted-foreground animate-spin" />
+            <h2 className="mt-4 text-2xl font-bold tracking-tight">Cargando Recuerdos...</h2>
+            <p className="mt-2 text-muted-foreground">Estamos preparando la galería.</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+     return (
+        <Card className="shadow-lg bg-destructive/10">
             <CardHeader>
-                <CardTitle>Recuerdos Compartidos</CardTitle>
-                <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
+                <CardTitle className="text-destructive">Error al Cargar la Galería</CardTitle>
+                <CardDescription className="text-destructive/80">No pudimos obtener las fotos. Es posible que el servidor no tenga permisos.</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
-                    <Icon name="image" className="h-16 w-16 text-muted-foreground" />
-                    <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
-                    <p className="mt-2 text-muted-foreground">
-                        ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
-                    </p>
-                </div>
+                <p className="text-sm text-destructive">Por favor, asegúrate de haber concedido el rol `Cloud Datastore User` a la cuenta de servicio de Firebase en IAM.</p>
+                <pre className="mt-4 text-xs bg-destructive/20 p-2 rounded-md">{error.message}</pre>
             </CardContent>
         </Card>
     );
+  }
+
+  if (!photos || photos.length === 0) {
+    return (
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle>Recuerdos Compartidos</CardTitle>
+          <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
+            <Icon name="image" className="h-16 w-16 text-muted-foreground" />
+            <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
+            <p className="mt-2 text-muted-foreground">
+              ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="shadow-lg">
+      <CardHeader>
+        <CardTitle>Recuerdos Compartidos</CardTitle>
+        <CardDescription>Estos son los últimos momentos que han compartido nuestros invitados.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Carousel
+          opts={{ align: 'start', loop: photos.length > 2 }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {photos.map((photo) => (
+              <CarouselItem key={photo.id} className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <Card className="overflow-hidden rounded-lg group">
+                    <CardContent className="flex aspect-[3/4] items-center justify-center p-0">
+                      <Image
+                        src={photo.downloadURL}
+                        alt="Foto de invitado"
+                        width={600}
+                        height={800}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="ml-12" />
+          <CarouselNext className="mr-12" />
+        </Carousel>
+      </CardContent>
+    </Card>
+  );
 }
 
 
 // --- Main Page Component ---
 export default function GuestAlbumPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [photos, setPhotos] = useState<GuestPhoto[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [version, setVersion] = useState(0); // Used to force a re-fetch
 
+  const fetchPhotos = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await getGuestPhotos({ slug: siteConfig.slug });
+      setPhotos(result.photos);
+    } catch (e: any) {
+      console.error("Failed to fetch photos:", e);
+      setError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPhotos();
+  }, [version]);
+
+  const handleUploadComplete = () => {
+    // Increment version to trigger a re-fetch of photos
+    setVersion(v => v + 1);
+  };
+  
   return (
     <div className="bg-muted/20 min-h-screen">
       <main className="container mx-auto flex flex-1 flex-col gap-8 p-4 md:p-8">
@@ -286,7 +386,10 @@ export default function GuestAlbumPage() {
                                     Selecciona o arrastra las imágenes que quieras compartir.
                                 </DialogDescription>
                             </DialogHeader>
-                            <UploadModalContent closeDialog={() => setIsModalOpen(false)} />
+                            <UploadModalContent 
+                                closeDialog={() => setIsModalOpen(false)}
+                                onUploadComplete={handleUploadComplete}
+                            />
                         </DialogContent>
                     </Dialog>
                     <Button asChild variant="outline" size="lg">
@@ -297,9 +400,11 @@ export default function GuestAlbumPage() {
         </Card>
         
         {/* Gallery Section */}
-        <GuestGallery />
+        <GuestGallery photos={photos} isLoading={isLoading} error={error} />
 
       </main>
     </div>
   );
 }
+
+    
