@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "Guest": {
@@ -13,7 +12,7 @@
         },
         "name": {
           "type": "string",
-          "description": "The guest's name."
+          "description": "The guest's full name."
         },
         "numberAttendees": {
           "type": "number",
@@ -21,18 +20,21 @@
         },
         "dietaryPreferences": {
           "type": "string",
-          "description": "Dietary preferences or restrictions of the guest."
+          "description": "The guest's dietary preferences or restrictions."
         },
         "rsvp": {
           "type": "boolean",
           "description": "Indicates whether the guest has RSVP'd."
+        },
+        "additionalNotes": {
+          "type": "string",
+          "description": "Any additional notes from the guest."
         }
       },
       "required": [
         "id",
         "name",
         "numberAttendees",
-        "dietaryPreferences",
         "rsvp"
       ]
     },
@@ -40,7 +42,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Photo",
       "type": "object",
-      "description": "Represents a photo in the shared photo gallery.",
+      "description": "Represents a photo in the photo gallery.",
       "properties": {
         "id": {
           "type": "string",
@@ -55,6 +57,10 @@
           "type": "string",
           "description": "Timestamp of when the photo was uploaded.",
           "format": "date-time"
+        },
+        "guestId": {
+          "type": "string",
+          "description": "Reference to Guest. (Relationship: Guest 1:N Photo)"
         }
       },
       "required": [
@@ -67,30 +73,36 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "SiteConfiguration",
       "type": "object",
-      "description": "Configuration settings for the wedding website.",
+      "description": "Represents the site configuration settings.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the configuration."
+          "description": "Unique identifier for the site configuration."
         },
-        "storySectionEnabled": {
+        "enableStorySection": {
           "type": "boolean",
           "description": "Indicates whether the story section is enabled."
         },
-        "venuesSectionEnabled": {
+        "enableVenuesSection": {
           "type": "boolean",
           "description": "Indicates whether the venues section is enabled."
         },
-        "timelineSectionEnabled": {
+        "enableTimelineSection": {
           "type": "boolean",
           "description": "Indicates whether the timeline section is enabled."
+        },
+        "giftRegistryLink": {
+          "type": "string",
+          "description": "Link to the gift registry.",
+          "format": "uri"
+        },
+        "bankDetails": {
+          "type": "string",
+          "description": "Bank details for monetary gifts."
         }
       },
       "required": [
-        "id",
-        "storySectionEnabled",
-        "venuesSectionEnabled",
-        "timelineSectionEnabled"
+        "id"
       ]
     }
   },
@@ -109,7 +121,7 @@
           "schema": {
             "$ref": "#/backend/entities/Guest"
           },
-          "description": "Stores guest information, including RSVP status, dietary preferences, and the number of attendees. Includes denormalized data for authorization independence.",
+          "description": "Stores guest information. Each document represents a single guest.",
           "params": [
             {
               "name": "guestId",
@@ -119,14 +131,18 @@
         }
       },
       {
-        "path": "/photos/{photoId}",
+        "path": "/guests/{guestId}/photos/{photoId}",
         "definition": {
           "entityName": "Photo",
           "schema": {
             "$ref": "#/backend/entities/Photo"
           },
-          "description": "Stores photos uploaded to the shared photo gallery. Allows listing all photos for all users.",
+          "description": "Stores photos uploaded by guests. Path-based ownership ensures that only the associated guest can manage these photos.",
           "params": [
+            {
+              "name": "guestId",
+              "description": "The unique identifier for the guest who uploaded the photo."
+            },
             {
               "name": "photoId",
               "description": "The unique identifier for the photo."
@@ -141,17 +157,16 @@
           "schema": {
             "$ref": "#/backend/entities/SiteConfiguration"
           },
-          "description": "Stores site-wide configuration settings, such as enabling or disabling sections of the website.",
+          "description": "Stores site configuration settings. There should be only one document in this collection.",
           "params": [
             {
               "name": "configId",
-              "description": "The unique identifier for the site configuration."
+              "description": "The unique identifier for the site configuration document (e.g., 'main')."
             }
           ]
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to manage wedding-related data, including guest RSVPs, photos, and site configurations. It emphasizes security and scalability by adhering to the principles of Authorization Independence and Structural Segregation. Authorization independence is achieved by avoiding hierarchical authorization dependencies (`get()` calls in security rules). Structural Segregation is achieved by ensuring that each collection has a homogeneous security posture.\n\n*   **Guests:** Guest data is stored in a flat collection `/guests/{guestId}`. This simplifies access control, as each document can be evaluated independently.\n*   **Photos:** Photos uploaded by users are stored in `/photos/{photoId}`. The structure facilitates simple `list` operations, allowing guests to view the gallery. No user-specific subcollections are used, keeping access control simple and efficient.\n*   **Site Configuration:** Site-wide configuration data is stored in `/site_configuration/{configId}`. This allows easy management of features like enabling/disabling sections of the website.\n\nThis design allows us to implement secure `list` operations (QAPs) for the photo gallery because all photos share the same security requirements. There's no need to filter based on user-specific criteria. Additionally, authorization is independent, simplifying rules and allowing atomic operations."
-  },
-  "projectId": "wedding-site-73595-2"
+    "reasoning": "The Firestore structure is designed to accommodate the wedding celebration application, focusing on guest management, photo gallery, and site configuration.  Authorization Independence is achieved through path-based ownership for photos, linking them directly to guests via `/guests/{guestId}/photos/{photoId}`. This eliminates the need for complex `get()` calls in security rules to verify ownership. Site configurations are stored in a global collection. This structure facilitates straightforward security rules and supports the app's core features.\n\n**Authorization Independence:** The `/guests/{guestId}/photos/{photoId}` structure ensures that access to photos is directly tied to the guest who uploaded them, eliminating the need to fetch parent document data for authorization.\n\n**QAPs Support:** The structure supports secure listing of guests and photos:\n\n*   Guests: Listing guests will require security rules to prevent unauthorized access, potentially limiting list access to administrators or the wedding organizers.\n*   Photos:  Photos are nested under the guest, so listing photos is implicitly secured by the guest's ownership. An alternative approach might be a top-level `/photos` collection, but this would require a membership-based model for write access control.\n\nThe chosen structure prioritizes ease of implementation and secure access control for the app's primary data entities."
+  }
 }
