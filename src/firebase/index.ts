@@ -5,6 +5,7 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 // IMPORTANTE: NO MODIFICAR ESTA FUNCIÓN
 export function initializeFirebase() {
@@ -13,6 +14,23 @@ export function initializeFirebase() {
   // Forzar el bucket de Storage correcto y añadir un log de depuración.
   const storage = getStorage(app, `gs://${firebaseConfig.storageBucket}`);
   console.log('Storage bucket en uso:', `gs://${firebaseConfig.storageBucket}`);
+
+  // Inicializar App Check
+  if (typeof window !== 'undefined') {
+    try {
+      // Clave de prueba de reCAPTCHA v3. Funciona solo en localhost.
+      // TODO: Reemplazar con tu propia clave de sitio para producción.
+      const recaptchaSiteKey = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+      
+      initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(recaptchaSiteKey),
+        isTokenAutoRefreshEnabled: true,
+      });
+      console.log('Firebase App Check inicializado.');
+    } catch (error) {
+      console.error('Error al inicializar Firebase App Check:', error);
+    }
+  }
 
   return {
     firebaseApp: app,
