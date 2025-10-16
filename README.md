@@ -1,19 +1,20 @@
-# Plantilla de Invitación de Boda Elegante
+# Invitación de Boda Digital y Personalizable
 
-¡Bienvenido! Este es un proyecto de Next.js diseñado para crear una invitación de boda digital, moderna y totalmente personalizable. La plantilla está construida para ser fácil de editar, incluso si no tienes mucha experiencia en programación.
+¡Bienvenido! Este es un proyecto de Next.js diseñado para crear una invitación de boda digital, moderna y totalmente personalizable. La plantilla ha sido mejorada para incluir funcionalidades interactivas avanzadas, manteniendo la facilidad de edición.
 
-## Características
+## ✨ Características Principales
 
-- **Diseño Moderno y Responsivo:** Se ve increíble en cualquier dispositivo, desde móviles hasta computadoras de escritorio.
-- **Altamente Personalizable:** Cambia nombres, fechas, lugares, fotos y más desde un único archivo de configuración.
-- **Funcionalidad RSVP Integrada:** Los invitados pueden confirmar su asistencia a través de un formulario funcional conectado a una base de datos segura de Firebase (Firestore).
-- **Panel de Administración:** Una página privada para que los novios puedan ver en tiempo real quién ha confirmado, cuántos acompañantes vienen y los mensajes que han dejado.
-- **Animaciones Sutiles:** Las secciones aparecen suavemente a medida que el usuario se desplaza.
-- **Componentes Interactivos:** Incluye un carrusel de galería, mapas de Google integrados y uso compartido por WhatsApp.
+- **Diseño Moderno y Adaptable:** Se ve increíble en cualquier dispositivo, desde móviles hasta computadoras de escritorio.
+- **Altamente Personalizable:** Cambia nombres, fechas, lugares, fotos y más desde un único archivo de configuración (`/src/config/site.ts`).
+- **Formulario RSVP Inteligente:** Los invitados pueden confirmar su asistencia a través de un formulario dinámico que se ajusta según la respuesta del invitado.
+- **Panel de Administración:** Una página privada (`/admin`) para que los novios puedan ver en tiempo real quién ha confirmado, cuántos acompañantes vienen y los mensajes que han dejado. Incluye estadísticas y la opción de exportar a CSV.
+- **Álbum de Fotos Colaborativo:** Una página dedicada (`/guest-album`) donde los invitados pueden subir sus propias fotos de la boda, creando un recuerdo compartido.
+- **Componentes Interactivos:** Incluye un carrusel de galería, mapas de Google integrados y un código QR funcional para compartir el álbum.
+- **Animaciones Sutiles:** Las secciones aparecen suavemente a medida que el usuario se desplaza, mejorando la experiencia visual.
 
 ---
 
-## Cómo Empezar
+## 🚀 Cómo Empezar
 
 Para poner en marcha el proyecto en tu entorno local, sigue estos pasos:
 
@@ -26,20 +27,13 @@ Para poner en marcha el proyecto en tu entorno local, sigue estos pasos:
     Copia el contenido de `.env` a un nuevo archivo llamado `.env.local`. Este archivo es donde guardarás tus claves de API secretas.
 
 3.  **Configurar Firebase (¡MUY IMPORTANTE!)**
-    Para que el formulario de RSVP y el panel de administración funcionen, necesitas conectar el proyecto a Firebase.
+    Para que el formulario de RSVP, el álbum de invitados y el panel de administración funcionen, necesitas conectar el proyecto a Firebase.
     
-    a. **Pide la configuración inicial:** Simplemente dile al asistente: **"configura Firebase para el RSVP"**. El asistente se encargará de crear el proyecto y llenar las siguientes variables en tu archivo `.env.local`:
+    a. **Pide la configuración inicial:** Simplemente dile al asistente: **"configura Firebase"**. El asistente se encargará de crear el proyecto y llenar las siguientes variables en tu archivo `.env.local`:
     
     ```
-    # Firebase Service Account Credentials (generadas por el asistente)
+    # Credenciales de Firebase generadas por el asistente
     FIREBASE_PROJECT_ID="tu-project-id"
-    FIREBASE_CLIENT_EMAIL="tu-client-email"
-    FIREBASE_PRIVATE_KEY="tu-private-key"
-    
-    # Firebase Admin SDK configuration (generadas por el asistente)
-    NEXT_PUBLIC_FIREBASE_API_KEY="tu-api-key"
-    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="tu-auth-domain"
-    NEXT_PUBLIC_FIREBASE_PROJECT_ID="tu-project-id"
     # ... y otras variables de Firebase
     ```
 
@@ -54,11 +48,13 @@ Para poner en marcha el proyecto en tu entorno local, sigue estos pasos:
     npm run dev
     ```
 
-Abre [http://localhost:9002](http://localhost:9002) en tu navegador para ver la invitación. Para ver el panel de administración, ve a [http://localhost:9002/admin](http://localhost:9002/admin).
+Abre [http://localhost:9002](http://localhost:9002) en tu navegador para ver la invitación.
+-   Para ver el panel de administración, ve a [http://localhost:9002/admin](http://localhost:9002/admin).
+-   Para ver el álbum de invitados, ve a [http://localhost:9002/guest-album](http://localhost:9002/guest-album).
 
 ---
 
-## ✨ Personaliza Tu Invitación
+## 🎨 Personaliza Tu Invitación
 
 ¡Esta es la parte más importante! Para personalizar la invitación con los detalles de tu boda, solo necesitas editar un archivo:
 
@@ -75,15 +71,14 @@ export const siteConfig = {
     him: "Nombre de Él",
   },
   // ESTE CAMPO ES CRÍTICO PARA LA PRIVACIDAD DE LOS DATOS
-  slug: "nombre-ella-y-el", // Un identificador único para la boda. No usar espacios ni caracteres especiales.
-  weddingDate: "2025-12-05T17:00:00-06:00", // Formato: AAAA-MM-DDTHH:mm:ss con zona horaria
+  slug: "nombre-ella-y-el", // Un identificador único para la boda.
+  weddingDate: "2025-12-05T17:00:00-06:00", // Formato ISO 8601
   city: "Ciudad, Estado, País",
   hashtag: "#LosNoviosParaSiempre",
-  musicUrl: "URL_DE_TU_CANCION.mp3", // Enlace a un archivo .mp3
-  ...
+  // ...
 };
 ```
-**Importante:** El `slug` es lo que asegura que los invitados de una boda no se mezclen con los de otra. **Cada boda debe tener un `slug` único.**
+**Importante:** El `slug` asegura que los datos de tu boda (invitados, fotos) estén separados de otros. **Cada boda debe tener un `slug` único.**
 
 ### Secciones Visibles
 
@@ -98,16 +93,14 @@ Puedes activar o desactivar secciones completas cambiando `true` a `false`.
     venues: true,
     gallery: true,
     shareAndConnect: true,
-    gifts: true,
-    seeYou: true,
-    rsvp: true,
+    // ...
   },
 ```
 
 ### Imágenes y Lugares
 
-Sigue las mismas instrucciones que antes para actualizar lugares, imágenes de la galería, etc.
+Edita las URLs de las imágenes y las direcciones de los lugares directamente en este archivo. Para el álbum colaborativo, el código QR en la sección "Comparte y Conecta" enlazará automáticamente a `/guest-album`.
 
 ---
 
-¡Y eso es todo! Con solo editar `site.ts` y configurar Firebase, puedes tener una invitación de boda completamente funcional y personalizada, lista para compartir.
+¡Y eso es todo! Con solo editar `site.ts` y configurar Firebase, tienes una invitación de boda completamente funcional y personalizada, lista para compartir.
