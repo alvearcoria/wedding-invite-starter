@@ -77,6 +77,7 @@ function GuestGallery() {
           <Icon name="frown" className="h-16 w-16" />
           <p className="mt-4 text-lg font-semibold">Error al Cargar la Galería</p>
           <p className="text-destructive/80">No se pudieron cargar las fotos. Por favor, inténtalo de nuevo más tarde.</p>
+          <pre className="mt-2 text-xs bg-destructive/10 p-2 rounded"><code>{error.message}</code></pre>
       </div>
     )
   }
@@ -136,47 +137,70 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   };
   
   const handleUpload = async () => {
-    if (!firestore || !firebaseApp || files.length === 0) return;
+    console.log("DEBUG: handleUpload iniciado.");
 
+    if (files.length === 0) {
+      console.log("DEBUG: No hay archivos para subir. Saliendo.");
+      return;
+    }
+
+    if (!firestore || !firebaseApp) {
+      console.error("DEBUG: Firestore o FirebaseApp no están disponibles.");
+      toast({ variant: "destructive", title: "Error de configuración", description: "La conexión con Firebase no está lista."});
+      return;
+    }
+
+    console.log(`DEBUG: Hay ${files.length} archivos seleccionados.`);
     setIsUploading(true);
     setUploads(files.map(f => ({ fileName: f.name, progress: 0, status: 'pending' })));
 
     const storage = getStorage(firebaseApp);
     const photosCollection = collection(firestore, 'invitations', siteConfig.slug, 'photos');
-
+    console.log("DEBUG: Instancias de Storage y Firestore obtenidas.");
+    
     const uploadPromises = files.map(file => {
       return new Promise<void>((resolve, reject) => {
+        console.log(`DEBUG: [${file.name}] - Iniciando proceso de subida.`);
         const fileId = crypto.randomUUID();
         const storagePath = `weddings/${siteConfig.slug}/uploads/${fileId}-${file.name}`;
         const storageRef = ref(storage, storagePath);
         const metadata = { contentType: file.type || 'image/jpeg' };
 
+        console.log(`DEBUG: [${file.name}] - Ruta de Storage: ${storagePath}`);
+        
         const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+        console.log(`DEBUG: [${file.name}] - Tarea de subida creada.`);
 
         uploadTask.on(
           'state_changed',
           (snapshot) => {
             const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            console.log(`DEBUG: [${file.name}] - Progreso: ${progress}%, Estado: ${snapshot.state}`);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
-            console.error(`Upload error for ${file.name}:`, error);
+            console.error(`DEBUG: [${file.name}] - ERROR DE SUBIDA A STORAGE:`, error.code, error.message, error);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: error.message } : u));
             reject(error);
           },
           async () => {
+            console.log(`DEBUG: [${file.name}] - Subida a Storage completada.`);
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              console.log(`DEBUG: [${file.name}] - URL de descarga obtenida: ${downloadURL}`);
+              
               await addDoc(photosCollection, {
                 storagePath,
                 downloadURL,
                 uploadedAt: serverTimestamp(),
-                uploader: 'guest-upload', // simplified uploader ID
+                uploader: 'guest-upload',
               });
+              console.log(`DEBUG: [${file.name}] - Documento añadido a Firestore.`);
+
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              console.error(`Firestore write error for ${file.name}:`, e);
+              console.error(`DEBUG: [${file.name}] - ERROR DE ESCRITURA EN FIRESTORE:`, e.code, e.message, e);
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: e.message } : u));
               reject(e);
             }
@@ -187,23 +211,23 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
 
     try {
       await Promise.all(uploadPromises);
+      console.log("DEBUG: Todas las promesas de subida se completaron.");
       toast({
         title: '¡Subida completada!',
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
       setTimeout(() => {
         closeDialog();
-        // Reset state after closing
         setFiles([]);
         setUploads([]);
         setIsUploading(false);
       }, 1500);
     } catch (error) {
-      console.error('One or more uploads failed overall.', error);
+      console.error('DEBUG: Al menos una subida falló.', error);
       toast({
         variant: 'destructive',
         title: 'Error en la subida',
-        description: 'Algunas fotos no se pudieron subir. Por favor, inténtalo de nuevo.',
+        description: 'Algunas fotos no se pudieron subir. Por favor, revisa la consola e inténtalo de nuevo.',
       });
       setIsUploading(false); // Allow user to try again
     }
@@ -335,3 +359,5 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+    
