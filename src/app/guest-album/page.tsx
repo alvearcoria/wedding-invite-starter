@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFirestore, useStorage } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -30,20 +30,16 @@ type UploadProgress = {
   error?: string;
 };
 
-// NOTE: La galería de invitados ha sido eliminada para prevenir errores de permisos de Firestore.
-// La página ahora se enfoca únicamente en la funcionalidad de subida.
-// Las fotos pueden ser vistas por la pareja en el panel de /admin.
-
 function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
   const firestore = useFirestore();
-  const storage = useStorage(); // Usar el hook de storage
+  const storage = useStorage();
   
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[]) => {
     const validFiles = acceptedFiles.filter(file => file.type.startsWith('image/'));
     
     if (validFiles.length !== acceptedFiles.length) {
@@ -60,7 +56,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
       })
     );
     setFiles(prev => [...prev, ...filesWithPreview].slice(0, 20));
-  }, [toast]);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -72,7 +68,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   };
   
   const handleUpload = async () => {
-    if (files.length === 0) return;
+    if (files.length === 0 || !storage || !firestore) return;
     
     setIsUploading(true);
     setUploads(files.map(f => ({ fileName: f.name, progress: 0, status: 'pending' })));
@@ -86,25 +82,21 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         const storageRef = ref(storage, storagePath);
         const metadata = { contentType: file.type || 'image/jpeg' };
         
-        console.log('DEBUG: creando tarea', storagePath);
         const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
         uploadTask.on(
           'state_changed',
           (snapshot) => {
             const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            console.log(`DEBUG: progreso ${progress}% estado ${snapshot.state}`);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
-            console.error('UPLOAD ERROR >>>', error.code, error.message);
             toast({ variant: "destructive", title: "Error de Subida", description: `No se pudo subir ${file.name}: ${error.code}` });
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Storage Error: ${error.code}` } : u));
             reject(error);
           },
           async () => {
             try {
-              console.log(`DEBUG: [${file.name}] - Subida completada. Obteniendo URL.`);
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               
               await addDoc(photosCollection, {
@@ -114,12 +106,10 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
                 uploadedAt: serverTimestamp(),
                 uploader: 'guest-upload',
               });
-              console.log(`DEBUG: [${file.name}] - Guardado en Firestore completado.`);
 
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              console.error('FIRESTORE ERROR >>>', e?.code ?? e);
               toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de ${file.name}.` });
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Firestore Error: ${e.code}` } : u));
               reject(e);
@@ -142,7 +132,6 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         setIsUploading(false);
       }, 1500);
     } catch (error) {
-      // El toast de error individual ya se muestra en el observer de error
       setIsUploading(false);
     }
   };

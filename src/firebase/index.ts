@@ -11,9 +11,8 @@ import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 export function initializeFirebase() {
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   
-  // Forzar el bucket de Storage correcto y añadir un log de depuración.
+  // Forzar el bucket de Storage correcto.
   const storage = getStorage(app, `gs://${firebaseConfig.storageBucket}`);
-  console.log('Storage bucket en uso:', `gs://${firebaseConfig.storageBucket}`);
 
   // Inicializar App Check
   if (typeof window !== 'undefined') {
@@ -26,7 +25,6 @@ export function initializeFirebase() {
         provider: new ReCaptchaV3Provider(recaptchaSiteKey),
         isTokenAutoRefreshEnabled: true,
       });
-      console.log('Firebase App Check inicializado.');
     } catch (error) {
       console.error('Error al inicializar Firebase App Check:', error);
     }
