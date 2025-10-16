@@ -72,8 +72,6 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     
     setIsUploading(true);
     setUploads(files.map(f => ({ fileName: f.name, progress: 0, status: 'pending' })));
-
-    const photosCollection = collection(firestore, 'photos');
     
     const uploadPromises = files.map(file => {
       return new Promise<void>((resolve, reject) => {
@@ -98,7 +96,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
           async () => {
             try {
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              
+              const photosCollection = collection(firestore, 'photos');
               await addDoc(photosCollection, {
                 slug: siteConfig.slug,
                 storagePath,
@@ -110,7 +108,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de ${file.name}.` });
+              toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de ${file.name}. Código: ${e.code}` });
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Firestore Error: ${e.code}` } : u));
               reject(e);
             }
