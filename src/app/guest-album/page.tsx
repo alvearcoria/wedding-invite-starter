@@ -3,10 +3,9 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useFirestore, useFirebaseApp, useMemoFirebase, useUser } from '@/firebase/provider';
-import { collection, addDoc, serverTimestamp, query, orderBy, where } from 'firebase/firestore';
+import { useFirestore, useFirebaseApp } from '@/firebase/provider';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { useCollection } from '@/firebase/firestore/use-collection';
 import { siteConfig } from '@/config/site';
 import { useToast } from '@/hooks/use-toast';
 import { Icon } from '@/components/icons';
@@ -15,7 +14,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
@@ -32,77 +30,10 @@ type UploadProgress = {
   status: 'pending' | 'uploading' | 'completed' | 'error';
   error?: string;
 };
-type Photo = {
-  downloadURL: string;
-  slug: string;
-  caption?: string;
-};
 
-function GuestGallery() {
-  const firestore = useFirestore();
-  const { isUserLoading } = useUser();
-
-  const photosQuery = useMemoFirebase(() => {
-    // Wait until the user is authenticated (even anonymously) before creating the query.
-    if (isUserLoading || !firestore) return null;
-    return query(
-      collection(firestore, 'photos'),
-      where('slug', '==', siteConfig.slug),
-      orderBy('uploadedAt', 'desc')
-    );
-  }, [firestore, isUserLoading]);
-
-  const { data: photos, isLoading, error } = useCollection<Photo>(photosQuery);
-  const hasPhotos = photos && photos.length > 0;
-
-  // Show a more specific loading state while authentication is in progress.
-  if (isUserLoading || (isLoading && !photos)) {
-    return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton key={index} className="aspect-square w-full" />
-        ))}
-      </div>
-    );
-  }
-
-  if (!hasPhotos && !isLoading) {
-      return (
-        <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-muted/50">
-          <Icon name="camera" className="h-16 w-16 text-muted-foreground" />
-          <p className="mt-4 text-lg font-semibold">¡Sé el primero en compartir un momento!</p>
-          <p className="text-muted-foreground">Las fotos que subas aparecerán aquí para todos.</p>
-        </div>
-      );
-  }
-  
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-destructive/10 text-destructive">
-          <Icon name="frown" className="h-16 w-16" />
-          <p className="mt-4 text-lg font-semibold">Error al Cargar la Galería</p>
-          <p className="text-destructive/80">No se pudieron cargar las fotos. Por favor, inténtalo de nuevo más tarde.</p>
-          <pre className="mt-2 text-xs bg-destructive/10 p-2 rounded"><code>{error.message}</code></pre>
-      </div>
-    )
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      {photos?.map((photo, index) => (
-        <div key={index} className="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow">
-          <Image
-            src={photo.downloadURL}
-            alt={photo.caption || 'Foto de invitado'}
-            width={400}
-            height={400}
-            className="w-full h-full object-cover aspect-square transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
+// NOTE: The GuestGallery component has been removed to prevent Firestore permission errors.
+// The page now focuses solely on the upload functionality.
+// Photos can be viewed by the wedding couple in the /admin dashboard.
 
 function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
@@ -357,8 +288,16 @@ export default function GuestAlbumPage() {
         </div>
         
         <div className="space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">Recuerdos Compartidos</h2>
-            <GuestGallery />
+            <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
+              <Icon name="image" className="h-16 w-16 text-muted-foreground" />
+              <h2 className="mt-4 text-2xl font-bold tracking-tight">Recuerdos Compartidos</h2>
+              <p className="mt-2 text-muted-foreground">
+                ¡Gracias por compartir tus momentos con nosotros!
+              </p>
+              <p className="text-sm text-muted-foreground/80 mt-1">
+                Todas las fotos aparecerán en el álbum privado de los novios.
+              </p>
+            </div>
         </div>
       </main>
     </div>
