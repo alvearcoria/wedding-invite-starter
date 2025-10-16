@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFirestore, useFirebaseApp, useMemoFirebase } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
@@ -24,8 +24,6 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -139,94 +137,69 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   
   const handleUpload = async () => {
     if (!firestore || !firebaseApp || files.length === 0) return;
-  
+
     setIsUploading(true);
-    setUploads(files.map(file => ({
-      fileName: file.name,
-      progress: 0,
-      status: 'pending',
-    })));
-  
+    setUploads(files.map(f => ({ fileName: f.name, progress: 0, status: 'pending' })));
+
     const storage = getStorage(firebaseApp);
     const photosCollection = collection(firestore, 'invitations', siteConfig.slug, 'photos');
-  
-    const uploadPromises = files.map(file => {
-      // Create a new Promise for each file upload
-      return new Promise<void>(async (resolve, reject) => {
-        try {
-          if (!file.type?.startsWith('image/')) {
-            console.warn('Archivo ignorado (no es imagen):', file.name, file.type);
-            // Update status for this file and resolve to continue with other files
-            setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: 'Not an image' } : u));
-            resolve();
-            return;
-          }
-  
-          const fileId = crypto.randomUUID();
-          const storagePath = `weddings/${siteConfig.slug}/uploads/${fileId}-${file.name}`;
-          const storageRef = ref(storage, storagePath);
-          const metadata = { contentType: file.type || 'image/jpeg' };
-  
-          const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-  
-          uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-              const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
-            },
-            (error) => {
-              console.error('UPLOAD ERROR:', error.code, error.message);
-              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: error.message } : u));
-              reject(error); // Reject the promise for this file
-            },
-            async () => {
-              try {
-                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                const photoData = {
-                  storagePath,
-                  downloadURL,
-                  uploadedAt: serverTimestamp(),
-                  uploader: 'guest-upload',
-                };
-  
-                // Use non-blocking write with error handling
-                addDoc(photosCollection, photoData).catch(serverError => {
-                  console.error("FIRESTORE ERROR:", serverError);
-                  const contextualError = new FirestorePermissionError({
-                    path: photosCollection.path,
-                    operation: 'create',
-                    requestResourceData: photoData,
-                  });
-                  errorEmitter.emit('permission-error', contextualError);
-                  // This error is critical, reject the file's promise
-                  reject(serverError);
-                });
-  
-                setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
-                resolve(); // Successfully resolve the promise for this file
-              } catch (e: any) {
-                console.error("Error getting download URL or writing to Firestore:", e);
-                setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: e.message } : u));
-                reject(e); // Reject the promise for this file
-              }
-            }
-          );
-        } catch (e: any) {
-          console.error(`UPLOAD CATCH for ${file.name}:`, e);
-          setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: e.message } : u));
-          reject(e); // Reject the promise for this file
+
+    const allUploads = files.map(file => {
+      return new Promise<void>((resolve, reject) => {
+        if (!file.type?.startsWith('image/')) {
+          console.warn('Skipping non-image file:', file.name);
+          setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: 'No es una imagen' } : u));
+          resolve();
+          return;
         }
+
+        const fileId = crypto.randomUUID();
+        const storagePath = `weddings/${siteConfig.slug}/uploads/${fileId}-${file.name}`;
+        const storageRef = ref(storage, storagePath);
+        const metadata = { contentType: file.type || 'image/jpeg' };
+
+        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
+          },
+          (error) => {
+            console.error('UPLOAD ERROR:', error.code, error.message);
+            setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: error.message } : u));
+            reject(error);
+          },
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              const photoData = {
+                storagePath,
+                downloadURL,
+                uploadedAt: serverTimestamp(),
+                uploader: 'guest-upload', // simplified uploader ID
+              };
+              
+              await addDoc(photosCollection, photoData);
+              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
+              resolve();
+            } catch (e: any) {
+              console.error("FIRESTORE WRITE ERROR:", e);
+              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: e.message } : u));
+              reject(e);
+            }
+          }
+        );
       });
     });
-  
+
     try {
-      await Promise.all(uploadPromises);
+      await Promise.all(allUploads);
       toast({
         title: '¡Subida completada!',
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
-      // Delay closing or resetting to let user see the "completed" state
       setTimeout(() => {
         closeDialog();
         setFiles([]);
@@ -234,15 +207,16 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         setIsUploading(false);
       }, 1500);
     } catch (error) {
+      console.error('One or more uploads failed', error);
       toast({
         variant: 'destructive',
         title: 'Error en la subida',
         description: 'Algunas fotos no se pudieron subir. Por favor, inténtalo de nuevo.',
       });
-      setIsUploading(false); // Re-enable button on failure
+      setIsUploading(false);
     }
   };
-  
+
   const allCompleted = useMemo(() => uploads.length > 0 && uploads.every(u => u.status === 'completed'), [uploads]);
 
   return (
@@ -369,5 +343,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-  
