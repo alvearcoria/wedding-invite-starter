@@ -2,10 +2,24 @@
 import type { IconName } from "@/components/icons";
 import imageData from "@/lib/placeholder-images.json";
 
+// Helper function to safely get the site URL
+const getSiteUrl = () => {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  // Fallback for server-side rendering
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  // Fallback for local development
+  return "http://localhost:9002";
+};
+
+
 export const siteConfig = {
   title: "Mely & Noe: Por siempre",
   description: "Únete a nosotros para la celebración de la boda de Mely y Noe.",
-  siteUrl: "https://example.com", // Reemplazar con la URL final del sitio
+  siteUrl: getSiteUrl(),
 
   couple: {
     her: "Mely",
@@ -133,7 +147,7 @@ export const siteConfig = {
   galleryImages: imageData.galleryImages,
   
   qrAlbum: {
-    url: "https://photos.app.goo.gl/example",
+    url: `${getSiteUrl()}/upload`,
   },
 };
 

@@ -51,31 +51,43 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Photo",
       "type": "object",
-      "description": "Represents a photo in the gallery.",
+      "description": "Represents a photo uploaded by a guest.",
       "properties": {
-        "id": {
+        "storagePath": {
           "type": "string",
-          "description": "Unique identifier for the Photo entity."
+          "description": "The full path to the image file in Firebase Storage."
         },
-        "url": {
+        "downloadURL": {
           "type": "string",
-          "description": "URL of the photo.",
-          "format": "uri"
+          "format": "uri",
+          "description": "The public URL to view the photo."
         },
-        "description": {
+        "uploadedAt": {
           "type": "string",
-          "description": "Optional description of the photo."
+          "format": "date-time",
+          "description": "Server timestamp of when the photo was uploaded."
         },
-        "uploadTimestamp": {
+        "uploader": {
           "type": "string",
-          "description": "Timestamp of when the photo was uploaded.",
-          "format": "date-time"
+          "description": "Optional identifier for the uploader (e.g., 'anon')."
+        },
+        "caption": {
+          "type": "string",
+          "description": "Optional caption for the photo."
+        },
+        "width": {
+          "type": "integer",
+          "description": "The width of the image in pixels."
+        },
+        "height": {
+          "type": "integer",
+          "description": "The height of the image in pixels."
         }
       },
       "required": [
-        "id",
-        "url",
-        "uploadTimestamp"
+        "storagePath",
+        "downloadURL",
+        "uploadedAt"
       ]
     },
     "SiteConfiguration": {
@@ -123,14 +135,18 @@
   "firestore": {
     "structure": [
       {
-        "path": "/guests/{guestId}",
+        "path": "/invitations/{invitationId}/guests/{guestId}",
         "definition": {
           "entityName": "Guest",
           "schema": {
             "$ref": "#/backend/entities/Guest"
           },
-          "description": "Stores information about wedding guests.  Access is generally restricted to the application itself.",
+          "description": "Stores guest RSVP information for a specific wedding invitation.",
           "params": [
+            {
+              "name": "invitationId",
+              "description": "The unique slug for the wedding event."
+            },
             {
               "name": "guestId",
               "description": "The unique ID of the guest."
@@ -139,14 +155,18 @@
         }
       },
       {
-        "path": "/photos/{photoId}",
+        "path": "/invitations/{invitationId}/photos/{photoId}",
         "definition": {
           "entityName": "Photo",
           "schema": {
             "$ref": "#/backend/entities/Photo"
           },
-          "description": "Stores photos for the wedding gallery. Access is generally open for read, but restricted for create/update/delete to authorized users.",
+          "description": "Stores metadata for photos uploaded by guests for a specific wedding. Access is public for reading, but restricted for writing.",
           "params": [
+            {
+              "name": "invitationId",
+              "description": "The unique slug for the wedding event."
+            },
             {
               "name": "photoId",
               "description": "The unique ID of the photo."
