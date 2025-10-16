@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dialog';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import type { Auth, User } from 'firebase/auth';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -140,19 +141,39 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     setFiles(prev => prev.filter(file => file.name !== fileName));
   };
   
-  const handleUpload = async () => {
-    if (!user) {
-      initiateAnonymousSignIn(auth);
+  const handleAuthenticationAndUpload = async () => {
+    setIsUploading(true);
+
+    let currentUser = user;
+
+    // Step 1: Ensure user is authenticated
+    if (!currentUser) {
       toast({
         title: 'Autenticando...',
-        description: 'Preparando todo para subir tus fotos de forma segura. Inténtalo de nuevo en un momento.',
+        description: 'Preparando todo para subir tus fotos de forma segura.',
       });
-      return;
+      try {
+        currentUser = await initiateAnonymousSignIn(auth);
+        if (!currentUser) throw new Error("Anonymous sign-in failed to return a user.");
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error de Autenticación',
+          description: 'No se pudo iniciar sesión anónimamente. Por favor, inténtalo de nuevo.',
+        });
+        setIsUploading(false);
+        return;
+      }
     }
-    
+
+    // Step 2: Proceed with upload
+    await handleUpload(currentUser);
+  };
+
+
+  const handleUpload = async (authedUser: User) => {
     if (!firestore || !firebaseApp) return;
 
-    setIsUploading(true);
     const initialUploads = files.map(file => ({
       fileName: file.name,
       progress: 0,
@@ -215,9 +236,10 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
       setTimeout(() => {
-        closeDialog();
+        // Do not close the dialog automatically, let user upload more or close manually
         setFiles([]);
         setUploads([]);
+        setIsUploading(false);
       }, 1000);
     } catch (error) {
        toast({
@@ -225,9 +247,8 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         title: 'Error en la subida',
         description: 'Algunas fotos no se pudieron subir. Por favor, inténtalo de nuevo.',
       });
-    } finally {
-      setIsUploading(false);
-    }
+       setIsUploading(false);
+    } 
   };
   
   const allCompleted = useMemo(() => uploads.length > 0 && uploads.every(u => u.status === 'completed'), [uploads]);
@@ -306,7 +327,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
                 <Icon name="plus" className="mr-2" /> Subir más fotos
             </Button>
         ) : (
-            <Button onClick={handleUpload} disabled={files.length === 0 || isUploading || isUserLoading} size="lg" className="w-full">
+            <Button onClick={handleAuthenticationAndUpload} disabled={files.length === 0 || isUploading || isUserLoading} size="lg" className="w-full">
                 {isUploading ? <><Icon name="loader-circle" className="animate-spin mr-2"/> Subiendo...</> : <><Icon name="upload" className="mr-2"/> Subir {files.length} foto(s)</>}
             </Button>
         )}
