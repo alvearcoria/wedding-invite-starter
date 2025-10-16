@@ -76,11 +76,13 @@ export function RsvpForm() {
       attending: data.attending,
       companions: data.companions,
       message: data.message || '',
+      slug: data.slug, // Add slug to the guest data
       createdAt: serverTimestamp(),
       source: 'website-client',
     };
     
-    const guestsCollection = collection(firestore, 'invitations', data.slug, 'guests');
+    // Use the root 'guests' collection
+    const guestsCollection = collection(firestore, 'guests');
     
     // Non-blocking write with optimistic UI
     addDoc(guestsCollection, guestData).catch(serverError => {

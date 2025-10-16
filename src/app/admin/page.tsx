@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { useFirestore } from '@/firebase/provider';
-import { collection, query } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { siteConfig } from '@/config/site';
 import type { RsvpInput } from '@/types/rsvp';
@@ -140,7 +140,8 @@ export default function AdminPage() {
   
   const guestsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'invitations', siteConfig.slug, 'guests'));
+    // Query the root 'guests' collection and filter by the wedding slug
+    return query(collection(firestore, 'guests'), where('slug', '==', siteConfig.slug));
   }, [firestore]);
 
   const { data: guests, isLoading, error } = useCollection<RsvpInput>(guestsQuery);

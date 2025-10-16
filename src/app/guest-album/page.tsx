@@ -4,7 +4,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFirestore, useFirebaseApp, useMemoFirebase, useUser } from '@/firebase/provider';
-import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, orderBy, where } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { siteConfig } from '@/config/site';
@@ -34,6 +34,7 @@ type UploadProgress = {
 };
 type Photo = {
   downloadURL: string;
+  slug: string;
   caption?: string;
 };
 
@@ -45,7 +46,8 @@ function GuestGallery() {
     // Wait until the user is authenticated (even anonymously) before creating the query.
     if (isUserLoading || !firestore) return null;
     return query(
-      collection(firestore, 'invitations', siteConfig.slug, 'photos'),
+      collection(firestore, 'photos'),
+      where('slug', '==', siteConfig.slug),
       orderBy('uploadedAt', 'desc')
     );
   }, [firestore, isUserLoading]);
@@ -159,7 +161,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     setUploads(files.map(f => ({ fileName: f.name, progress: 0, status: 'pending' })));
 
     const storage = getStorage(firebaseApp);
-    const photosCollection = collection(firestore, 'invitations', siteConfig.slug, 'photos');
+    const photosCollection = collection(firestore, 'photos');
     
     const uploadPromises = files.map(file => {
       return new Promise<void>((resolve, reject) => {
@@ -192,6 +194,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
               console.log(`DEBUG: [${file.name}] - URL de descarga obtenida. Guardando en Firestore.`);
               
               await addDoc(photosCollection, {
+                slug: siteConfig.slug,
                 storagePath,
                 downloadURL,
                 uploadedAt: serverTimestamp(),
@@ -361,5 +364,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-    
