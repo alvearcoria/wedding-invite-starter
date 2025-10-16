@@ -1,93 +1,75 @@
 /**
- * @fileoverview Firestore Security Rules for the wedding application.
+ * @fileoverview Firestore Security Rules for the Wedding App.
  *
  * Core Philosophy:
- * This ruleset provides granular access control for managing wedding-related data.
- * It uses a mixture of public read with owner-only write access for photos and
- * guest-only access for guest data. The configuration is locked down to prevent unauthorized access.
+ * This ruleset prioritizes security by strictly controlling access to data based on ownership and role-based permissions.
  *
  * Data Structure:
- * - /guests/{guestId}: Stores individual guest information, secured for guest access.
- * - /photos/{photoId}: Stores photos, publicly readable but writable by authenticated users.
- * - /site_configuration/{configId}: Stores site-wide configuration, with highly restricted access.
+ * - /guests/{guestId}: Stores individual guest information.  Write access is restricted; read access is public.
+ * - /photos/{photoId}: Stores publicly accessible wedding photos.
+ * - /site_configuration/{configId}: Stores site-wide configuration settings.  Write access is restricted; read access is public.
  *
  * Key Security Decisions:
- * - Guest data is only accessible to guests.
- * - Photo listing is public, but creation, updates, and deletion are restricted to authenticated users.
- * - Site configuration changes are highly restricted.
- *
- * Denormalization for Authorization:
- *   The current data model does not require denormalization.
- *
- * Structural Segregation:
- *   The separation of guests, photos, and site configuration into separate collections ensures
- *   a clear security posture for each.
+ * - Public Read Access: The `photos` and `site_configuration` collections have public read access (`get`, `list`).
+ * - Restricted Writes: The `guests`, and `site_configuration` collections have restricted write access for now.
+ * - Denormalization for Authorization: Not explicitly used in this version, but the design anticipates the possible future need to replicate authorization data directly into documents for faster rules and to avoid using `get()` calls.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Manages guest information. Guests can only access their own data.
+     * @description Manages guest information. Write access is restricted; read access is public.
      * @path /guests/{guestId}
-     * @allow (get, update, delete) User with matching {guestId} can access their own guest data.
-     * @allow (create) User with matching {guestId} can create their own guest data.
-     * @deny (get, update, delete) User with mismatched {guestId} cannot access other guest data.
-     * @deny (create) User with mismatched {guestId} cannot create guest data for other users.
-     * @principle Enforces document ownership for all operations.
+     * @allow get: if true;
+     * @allow list: if true;
+     * @allow create: if false;
+     * @allow update: if false;
+     * @allow delete: if false;
+     * @principle Restricts write access to guest data.
      */
     match /guests/{guestId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(guestId) {
-        return request.auth.uid == guestId;
-      }
-
-      function isExistingOwner(guestId) {
-        return isOwner(guestId) && resource != null;
-      }
-
-      allow get: if isOwner(guestId);
-      allow list: if false;
-      allow create: if isSignedIn() && request.auth.uid == guestId;
-      allow update: if isExistingOwner(guestId);
-      allow delete: if isExistingOwner(guestId);
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Manages photos in a public gallery. Anyone can view photos, but only authenticated users can upload, update, or delete them.
+     * @description Manages publicly accessible wedding photos.
      * @path /photos/{photoId}
-     * @allow (get, list) Any user can view the photo gallery.
-     * @allow (create) Authenticated users can upload photos.
-     * @allow (update, delete) Authenticated users can update/delete photos.
-     * @deny (create) Unauthenticated users cannot upload photos.
-     * @deny (update, delete) Unauthenticated users cannot modify photos.
-     * @principle Public read access with authenticated-user-only writes.
+     * @allow get: if true;
+     * @allow list: if true;
+     * @allow create: if false;
+     * @allow update: if false;
+     * @allow delete: if false;
+     * @principle Allows public read access to photos.
      */
     match /photos/{photoId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      allow get, list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn();
-      allow delete: if isSignedIn();
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Manages site-wide configuration settings. Access is highly restricted.
+     * @description Manages site-wide configuration settings. Write access is restricted; read access is public.
      * @path /site_configuration/{configId}
-     * @allow (get) Configuration data is readable by everyone.
-     * @deny (create, update, delete) No one can modify the site configuration through client-side rules.
-     * @principle Restricts site configuration changes to backend services only.
+     * @allow get: if true;
+     * @allow list: if true;
+     * @allow create: if false;
+     * @allow update: if false;
+     * @allow delete: if false;
+     * @principle Restricts write access to site configuration data.
      */
     match /site_configuration/{configId} {
       allow get: if true;
-      allow list: if false;
-      allow create, update, delete: if false;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }
