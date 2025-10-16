@@ -1,8 +1,9 @@
 export const firebaseConfig = {
   "projectId": "mely-noe-wedding-celebration",
-  "appId": "1:643335247531:web:f85f0d69da05d7d46389ee",
-  "apiKey": "AIzaSyBtHhx8hKNh-6cA_XI4jnAY6ihOtKx-Qz0",
+  "appId": "1:643335247531:web:53a6f1d7d8e64c3c6389ee",
+  "apiKey": "AIzaSyDQ6E4uLmpb89L4eG2sY3iP-9s7K_o-sAY",
   "authDomain": "mely-noe-wedding-celebration.firebaseapp.com",
   "measurementId": "",
-  "messagingSenderId": "643335247531"
+  "messagingSenderId": "643335247531",
+  "storageBucket": "mely-noe-wedding-celebration.appspot.com"
 };
