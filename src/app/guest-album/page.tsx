@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useAuth, useFirestore, useFirebaseApp, useMemoFirebase } from '@/firebase/provider';
+import { useAuth, useFirestore, useFirebaseApp, useMemoFirebase, useUser } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useCollection } from '@/firebase/firestore/use-collection';
@@ -349,3 +349,5 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+    
