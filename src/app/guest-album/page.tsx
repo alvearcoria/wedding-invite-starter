@@ -323,12 +323,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-// Add an icon for upload-cloud if not present
-if (!Icon.register['upload-cloud']) {
-  const LucideUploadCloud = require('lucide-react').UploadCloud;
-  Icon.register = {
-    ...Icon.register,
-    'upload-cloud': LucideUploadCloud,
-  };
-}
