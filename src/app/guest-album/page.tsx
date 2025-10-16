@@ -25,6 +25,7 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import type { Auth } from 'firebase/auth';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -101,7 +102,8 @@ function GuestGallery() {
 
 function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
-  const { user, isUserLoading } = useAuth();
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const firebaseApp = useFirebaseApp();
   
@@ -139,7 +141,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   
   const handleUpload = async () => {
     if (!user) {
-      initiateAnonymousSignIn(useAuth());
+      initiateAnonymousSignIn(auth);
       toast({
         title: 'Autenticando...',
         description: 'Preparando todo para subir tus fotos de forma segura. Inténtalo de nuevo en un momento.',
@@ -347,5 +349,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-    
