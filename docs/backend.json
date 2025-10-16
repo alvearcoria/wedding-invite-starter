@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "Guest": {
@@ -13,11 +12,11 @@
         },
         "name": {
           "type": "string",
-          "description": "Guest's full name."
+          "description": "The name of the guest."
         },
-        "numberAttendees": {
+        "numberOfAttendees": {
           "type": "number",
-          "description": "Number of attendees for this guest."
+          "description": "The number of attendees associated with this guest."
         },
         "dietaryPreferences": {
           "type": "string",
@@ -31,7 +30,7 @@
       "required": [
         "id",
         "name",
-        "numberAttendees",
+        "numberOfAttendees",
         "dietaryPreferences",
         "rsvp"
       ]
@@ -51,6 +50,10 @@
           "description": "URL of the photo.",
           "format": "uri"
         },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the photo."
+        },
         "uploadTimestamp": {
           "type": "string",
           "description": "Timestamp of when the photo was uploaded.",
@@ -63,11 +66,51 @@
         "uploadTimestamp"
       ]
     },
+    "Venue": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Venue",
+      "type": "object",
+      "description": "Represents a venue for the wedding events.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Venue entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the venue."
+        },
+        "address": {
+          "type": "string",
+          "description": "Address of the venue."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate of the venue."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate of the venue."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of venue (ceremony, reception, etc.)"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "address",
+        "latitude",
+        "longitude",
+        "type"
+      ]
+    },
     "SiteConfiguration": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "SiteConfiguration",
       "type": "object",
-      "description": "Represents the configuration settings for the wedding website.",
+      "description": "Configuration settings for the wedding website.",
       "properties": {
         "id": {
           "type": "string",
@@ -75,28 +118,31 @@
         },
         "enableStorySection": {
           "type": "boolean",
-          "description": "Flag to enable/disable the story section."
+          "description": "Flag to enable/disable the Story section."
         },
         "enableVenuesSection": {
           "type": "boolean",
-          "description": "Flag to enable/disable the venues section."
+          "description": "Flag to enable/disable the Venues section."
         },
         "enableTimelineSection": {
           "type": "boolean",
-          "description": "Flag to enable/disable the timeline section."
+          "description": "Flag to enable/disable the Timeline section."
+        },
+        "giftRegistryUrl": {
+          "type": "string",
+          "description": "URL for the gift registry.",
+          "format": "uri"
         },
         "bankDetails": {
           "type": "string",
-          "description": "Bank details for gift giving."
-        },
-        "giftRegistryLink": {
-          "type": "string",
-          "description": "Link to the gift registry.",
-          "format": "uri"
+          "description": "Bank details for monetary gifts."
         }
       },
       "required": [
-        "id"
+        "id",
+        "enableStorySection",
+        "enableVenuesSection",
+        "enableTimelineSection"
       ]
     }
   },
@@ -115,7 +161,7 @@
           "schema": {
             "$ref": "#/backend/entities/Guest"
           },
-          "description": "Stores guest information for the wedding. Includes fields for name, number of attendees, dietary preferences, and RSVP status.",
+          "description": "Stores guest information including RSVP status, dietary preferences, and number of attendees.",
           "params": [
             {
               "name": "guestId",
@@ -131,7 +177,7 @@
           "schema": {
             "$ref": "#/backend/entities/Photo"
           },
-          "description": "Stores photo metadata, including URL and upload timestamp. All users are allowed to list the photos.",
+          "description": "Stores photo URLs and descriptions, allowing for a collaborative photo gallery. QR code integration enables easy uploads.",
           "params": [
             {
               "name": "photoId",
@@ -141,18 +187,32 @@
         }
       },
       {
-        "path": "/siteConfiguration/weddingConfig",
+        "path": "/venues/{venueId}",
+        "definition": {
+          "entityName": "Venue",
+          "schema": {
+            "$ref": "#/backend/entities/Venue"
+          },
+          "description": "Stores venue details including name, address, and coordinates.",
+          "params": [
+            {
+              "name": "venueId",
+              "description": "Unique identifier for each venue."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/site_configuration/config",
         "definition": {
           "entityName": "SiteConfiguration",
           "schema": {
             "$ref": "#/backend/entities/SiteConfiguration"
           },
-          "description": "Stores the wedding site configuration, including flags for enabling/disabling sections, bank details, and gift registry link.  This is a singleton document.",
-          "params": []
+          "description": "Stores site configuration settings such as section visibility and gift registry details. Only a single document exists in this collection."
         }
       }
     ],
-    "reasoning": "This Firestore data structure is designed to support the Mely & Noe Wedding Celebration app, focusing on security, scalability, and ease of management. It incorporates denormalization to ensure Authorization Independence, adheres to Structural Segregation for homogeneous security postures, and utilizes consistent Access Modeling patterns.\n\n*   **Authorization Independence:** The structure avoids `get()` calls in security rules by denormalizing authorization data. For instance, if access to photos needs to be restricted to specific users or groups, the relevant user/group information would be stored directly within the `Photo` document or in a parent collection, rather than relying on fetching it from a separate document or user record.\n*   **Structural Segregation:** Different types of data with varying access requirements are stored in separate collections. For example, public photos are stored separately from potentially private site configurations.\n*   **Access Modeling:** Path-based ownership is employed where appropriate (e.g., potentially user-specific data, if any existed, would be stored under `/users/{userId}`). Membership Maps are used for collaborative data access where needed.\n*   **QAPs (Rules are not Filters):** The design supports secure `list` operations by structuring data to align with access control requirements. For example, public photos are stored in a separate collection, allowing unrestricted `list` access, while other collections can have more restrictive rules.\n\nThe `siteConfiguration` is designed to be singleton, so there is only one document within that collection. This can be ensured within the code logic that handles the configuration updates.\n\nThe photo uploads will be handled via Firebase Storage and the metadata will be stored in firestore."
-  },
-  "projectId": "mely-noe-wedding-celebration"
+    "reasoning": "The Firestore structure is designed to ensure Authorization Independence, DBAC, and QAPs. User-owned data like guest RSVPs are stored under the `/guests` collection. Photo uploads, managed via QR code, are stored in the `/photos` collection, requiring no user authentication for uploads but potentially managed with server-side functions for moderation. Site configuration is stored in a single document at `/site_configuration/config` allowing easy access. This design avoids hierarchical authorization dependencies, ensuring that operations remain atomic and debuggable. It centralizes the points for security and separates concerns to prevent the rules becoming filters."
+  }
 }
