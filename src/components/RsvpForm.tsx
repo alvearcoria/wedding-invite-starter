@@ -31,6 +31,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { siteConfig } from "@/config/site";
+import { useEffect } from "react";
 
 export function RsvpForm() {
   const { toast } = useToast();
@@ -49,13 +50,22 @@ export function RsvpForm() {
     },
   });
 
+  const attendingValue = form.watch("attending");
+
+  useEffect(() => {
+    if (attendingValue === false) {
+      form.setValue("companions", 0);
+    }
+  }, [attendingValue, form]);
+
   const onSubmit = (data: RsvpInput) => {
     // Honeypot check for spam prevention
     if (data._hp) {
       console.log("Honeypot field filled, likely spam. Silently succeeding.");
+      // Show generic success to not alert the bot
       toast({
         title: "¡Confirmación Recibida!",
-        description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
+        description: "¡Gracias por tu confirmación!",
       });
       form.reset();
       return;
@@ -74,17 +84,15 @@ export function RsvpForm() {
       name: data.name,
       phone: data.phone || '',
       attending: data.attending,
-      companions: data.companions,
+      companions: data.attending ? data.companions : 0, // Ensure companions is 0 if not attending
       message: data.message || '',
-      slug: data.slug, // Add slug to the guest data
+      slug: data.slug,
       createdAt: serverTimestamp(),
       source: 'website-client',
     };
     
-    // Use the root 'guests' collection
     const guestsCollection = collection(firestore, 'guests');
     
-    // Non-blocking write with optimistic UI
     addDoc(guestsCollection, guestData).catch(serverError => {
       console.error("Error writing document: ", serverError);
       
@@ -103,16 +111,20 @@ export function RsvpForm() {
       });
     });
 
-    toast({
-      title: "¡Confirmación Recibida!",
-      description: "¡Gracias por tu confirmación! Estamos ansiosos por verte.",
-    });
-
     if (data.attending) {
+      toast({
+        title: "¡Confirmación Recibida!",
+        description: "¡Gracias, nos vemos en el gran día!",
+      });
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
+      });
+    } else {
+      toast({
+        title: "Confirmación Recibida",
+        description: "Lamentamos que no puedas acompañarnos. ¡Te tendremos en nuestros pensamientos!",
       });
     }
     
@@ -172,7 +184,7 @@ export function RsvpForm() {
                       <RadioGroupItem value="false" />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      No podré asistir, pero los recordaré.
+                      No podré asistir.
                     </FormLabel>
                   </FormItem>
                 </RadioGroup>
@@ -181,43 +193,57 @@ export function RsvpForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="companions"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Acompañantes*</FormLabel>
-              <Select onValueChange={(value) => field.onChange(Number(value))} value={String(field.value)}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona el número de acompañantes" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <SelectItem key={num} value={String(num)}>
-                      {num} {num === 1 ? "acompañante" : "acompañantes"}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
+        {attendingValue === true && (
+          <FormField
+            control={form.control}
+            name="companions"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Acompañantes</FormLabel>
+                <Select onValueChange={(value) => field.onChange(Number(value))} value={String(field.value)}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona el número de acompañantes" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <SelectItem key={num} value={String(num)}>
+                        {num === 0 ? "Solo yo" : `${num} ${num === 1 ? "acompañante" : "acompañantes"}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Deja un Mensaje (Opcional)</FormLabel>
+              <FormLabel>
+                {attendingValue === false ? "Déjanos un mensaje" : "Mensaje para los novios (Opcional)"}
+              </FormLabel>
               <FormControl>
-                <Textarea placeholder="¡Estamos muy emocionados de celebrar con ustedes!" {...field} />
+                <Textarea 
+                  placeholder={
+                    attendingValue === false 
+                      ? "Lamentamos que no puedas venir, ¿te gustaría dejar un mensaje para los novios?"
+                      : "¡Estamos muy emocionados de celebrar con ustedes!"
+                  } 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         {/* Honeypot field */}
         <FormField
           control={form.control}
@@ -230,7 +256,8 @@ export function RsvpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || attendingValue === undefined}>
           {form.formState.isSubmitting ? "Enviando..." : "Enviar Confirmación"}
         </Button>
       </form>
