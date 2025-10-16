@@ -17,6 +17,14 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -91,7 +99,7 @@ function GuestGallery() {
   );
 }
 
-export default function GuestAlbumPage() {
+function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
   const { user, isUserLoading } = useAuth();
   const firestore = useFirestore();
@@ -117,7 +125,7 @@ export default function GuestAlbumPage() {
         preview: URL.createObjectURL(file),
       })
     );
-    setFiles(prev => [...prev, ...filesWithPreview].slice(0, 20)); // Limit to 20 files at a time
+    setFiles(prev => [...prev, ...filesWithPreview].slice(0, 20));
   }, [toast]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -198,6 +206,11 @@ export default function GuestAlbumPage() {
         title: '¡Subida completada!',
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
+      setTimeout(() => {
+        closeDialog();
+        setFiles([]);
+        setUploads([]);
+      }, 1000);
     } catch (error) {
        toast({
         variant: 'destructive',
@@ -206,114 +219,125 @@ export default function GuestAlbumPage() {
       });
     } finally {
       setIsUploading(false);
-      setFiles([]);
     }
   };
   
   const allCompleted = useMemo(() => uploads.length > 0 && uploads.every(u => u.status === 'completed'), [uploads]);
 
   return (
+     <div className="space-y-6">
+        <div
+            {...getRootProps()}
+            className={`flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+            isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'
+            }`}
+        >
+            <input {...getInputProps()} />
+            <Icon name="upload-cloud" className="h-12 w-12 text-muted-foreground" />
+            <p className="mt-4 font-semibold">
+            {isDragActive ? 'Suelta las imágenes aquí' : 'Arrastra tus fotos o haz clic para seleccionar'}
+            </p>
+            <p className="text-sm text-muted-foreground">Solo se permiten archivos de imagen (hasta 20 por tanda).</p>
+        </div>
+        
+        {files.length > 0 && (
+            <div className="space-y-4">
+            <h3 className="font-semibold">Fotos Seleccionadas ({files.length})</h3>
+            <ScrollArea className="h-48">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
+                {files.map(file => (
+                    <div key={file.name} className="relative group">
+                    <Image
+                        src={file.preview}
+                        alt={file.name}
+                        width={150}
+                        height={150}
+                        onLoad={() => URL.revokeObjectURL(file.preview)}
+                        className="rounded-md object-cover aspect-square"
+                    />
+                    {!isUploading && (
+                        <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100"
+                        onClick={() => removeFile(file.name)}
+                        >
+                        <Icon name="x" className="h-4 w-4" />
+                        </Button>
+                    )}
+                    </div>
+                ))}
+                </div>
+            </ScrollArea>
+            </div>
+        )}
+        
+        {uploads.length > 0 && (
+                <div className="space-y-4">
+                <h3 className="font-semibold">Progreso de Subida</h3>
+                <div className="space-y-3">
+                {uploads.map(upload => (
+                    <div key={upload.fileName}>
+                    <div className="flex justify-between text-sm mb-1">
+                        <span className="truncate max-w-[70%]">{upload.fileName}</span>
+                        <span className="text-muted-foreground">
+                            {upload.status === 'completed' && <Icon name="check" className="h-4 w-4 text-green-500 inline"/>}
+                            {upload.status === 'error' && <Icon name="frown" className="h-4 w-4 text-red-500 inline"/>}
+                            {upload.status === 'uploading' && `${upload.progress}%`}
+                        </span>
+                    </div>
+                    <Progress value={upload.progress} />
+                    </div>
+                ))}
+                </div>
+            </div>
+        )}
+
+        {allCompleted ? (
+                <Button onClick={() => { setFiles([]); setUploads([]); }} size="lg" className="w-full">
+                <Icon name="plus" className="mr-2" /> Subir más fotos
+            </Button>
+        ) : (
+            <Button onClick={handleUpload} disabled={files.length === 0 || isUploading || isUserLoading} size="lg" className="w-full">
+                {isUploading ? <><Icon name="loader-circle" className="animate-spin mr-2"/> Subiendo...</> : <><Icon name="upload" className="mr-2"/> Subir {files.length} foto(s)</>}
+            </Button>
+        )}
+    </div>
+  );
+}
+
+
+export default function GuestAlbumPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
     <div className="bg-muted/40 min-h-screen">
       <main className="container mx-auto flex flex-1 flex-col gap-8 p-4 md:p-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
            <div className="flex flex-col gap-1">
              <h1 className="text-3xl font-bold tracking-tight">Álbum de Invitados</h1>
              <p className="text-muted-foreground">¡Sube tus fotos y revive los mejores momentos de la boda!</p>
            </div>
-            <Button asChild variant="outline">
-                <a href="/"><Icon name="arrow-right" className="mr-2" />Volver a la Invitación</a>
-            </Button>
+            <div className="flex gap-2">
+                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                    <DialogTrigger asChild>
+                        <Button size="lg"><Icon name="camera" className="mr-2"/> Comparte Tus Momentos</Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle>Sube tus fotos</DialogTitle>
+                            <DialogDescription>
+                                Selecciona o arrastra las imágenes que quieras compartir.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <UploadModalContent closeDialog={() => setIsModalOpen(false)} />
+                    </DialogContent>
+                </Dialog>
+                <Button asChild variant="outline" size="lg">
+                    <a href="/"><Icon name="arrow-right" className="mr-2" />Volver</a>
+                </Button>
+            </div>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Comparte Tus Momentos</CardTitle>
-            <CardDescription>
-              Selecciona o arrastra las imágenes que quieras compartir con todos.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {!isUploading && !allCompleted && (
-              <div
-                {...getRootProps()}
-                className={`flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-                  isDragActive ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <input {...getInputProps()} />
-                <Icon name="upload-cloud" className="h-12 w-12 text-muted-foreground" />
-                <p className="mt-4 font-semibold">
-                  {isDragActive ? 'Suelta las imágenes aquí' : 'Arrastra tus fotos o haz clic para seleccionar'}
-                </p>
-                <p className="text-sm text-muted-foreground">Solo se permiten archivos de imagen (hasta 20 por tanda).</p>
-              </div>
-            )}
-            
-            {files.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="font-semibold">Fotos Seleccionadas ({files.length})</h3>
-                <ScrollArea className="h-48">
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pr-4">
-                    {files.map(file => (
-                      <div key={file.name} className="relative group">
-                        <Image
-                          src={file.preview}
-                          alt={file.name}
-                          width={150}
-                          height={150}
-                          onLoad={() => URL.revokeObjectURL(file.preview)}
-                          className="rounded-md object-cover aspect-square"
-                        />
-                        {!isUploading && (
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100"
-                            onClick={() => removeFile(file.name)}
-                          >
-                            <Icon name="x" className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-            )}
-            
-            {uploads.length > 0 && (
-                 <div className="space-y-4">
-                    <h3 className="font-semibold">Progreso de Subida</h3>
-                    <div className="space-y-3">
-                    {uploads.map(upload => (
-                        <div key={upload.fileName}>
-                        <div className="flex justify-between text-sm mb-1">
-                            <span className="truncate max-w-[70%]">{upload.fileName}</span>
-                            <span className="text-muted-foreground">
-                                {upload.status === 'completed' && <Icon name="check" className="h-4 w-4 text-green-500 inline"/>}
-                                {upload.status === 'error' && <Icon name="frown" className="h-4 w-4 text-red-500 inline"/>}
-                                {upload.status === 'uploading' && `${upload.progress}%`}
-                            </span>
-                        </div>
-                        <Progress value={upload.progress} />
-                        </div>
-                    ))}
-                    </div>
-                </div>
-            )}
-
-            {allCompleted ? (
-                 <Button onClick={() => setUploads([])} size="lg" className="w-full">
-                    <Icon name="plus" className="mr-2" /> Subir más fotos
-                </Button>
-            ) : (
-                <Button onClick={handleUpload} disabled={files.length === 0 || isUploading || isUserLoading} size="lg" className="w-full">
-                  {isUploading ? <><Icon name="loader-circle" className="animate-spin mr-2"/> Subiendo...</> : <><Icon name="upload" className="mr-2"/> Subir {files.length} foto(s)</>}
-                </Button>
-            )}
-
-          </CardContent>
-        </Card>
         
         <div className="space-y-4">
             <h2 className="text-2xl font-bold tracking-tight">Recuerdos Compartidos</h2>
@@ -323,3 +347,5 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+    
