@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useFirestore, useFirebaseApp } from '@/firebase/provider';
+import { useFirestore, useStorage } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { siteConfig } from '@/config/site';
 import { useToast } from '@/hooks/use-toast';
 import { Icon } from '@/components/icons';
@@ -31,14 +30,14 @@ type UploadProgress = {
   error?: string;
 };
 
-// NOTE: The GuestGallery component has been removed to prevent Firestore permission errors.
-// The page now focuses solely on the upload functionality.
-// Photos can be viewed by the wedding couple in the /admin dashboard.
+// NOTE: La galería de invitados ha sido eliminada para prevenir errores de permisos de Firestore.
+// La página ahora se enfoca únicamente en la funcionalidad de subida.
+// Las fotos pueden ser vistas por la pareja en el panel de /admin.
 
 function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
   const firestore = useFirestore();
-  const firebaseApp = useFirebaseApp();
+  const storage = useStorage(); // Usar el hook de storage
   
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
@@ -73,56 +72,40 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   };
   
   const handleUpload = async () => {
-    console.log("DEBUG: handleUpload iniciado.");
-    if (files.length === 0) {
-      console.log("DEBUG: No hay archivos seleccionados. Saliendo.");
-      return;
-    }
-    console.log(`DEBUG: Hay ${files.length} archivos seleccionados.`);
-
-    if (!firestore || !firebaseApp) {
-      const errorMsg = "DEBUG: Error de configuración - La conexión con Firebase no está lista.";
-      console.error(errorMsg);
-      toast({ variant: "destructive", title: "Error de configuración", description: "La conexión con Firebase no está lista."});
-      return;
-    }
+    if (files.length === 0) return;
     
-    console.log("DEBUG: Instancias de Storage y Firestore obtenidas.");
     setIsUploading(true);
     setUploads(files.map(f => ({ fileName: f.name, progress: 0, status: 'pending' })));
 
-    const storage = getStorage(firebaseApp);
     const photosCollection = collection(firestore, 'photos');
     
     const uploadPromises = files.map(file => {
       return new Promise<void>((resolve, reject) => {
-        console.log(`DEBUG: [${file.name}] - Iniciando proceso de subida.`);
         const fileId = crypto.randomUUID();
         const storagePath = `weddings/${siteConfig.slug}/uploads/${fileId}-${file.name}`;
         const storageRef = ref(storage, storagePath);
         const metadata = { contentType: file.type || 'image/jpeg' };
         
-        console.log(`DEBUG: [${file.name}] - Ruta de Storage: ${storagePath}`);
+        console.log('DEBUG: creando tarea', storagePath);
         const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-        console.log(`DEBUG: [${file.name}] - Tarea de subida creada.`);
 
         uploadTask.on(
           'state_changed',
           (snapshot) => {
             const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-            console.log(`DEBUG: [${file.name}] - Progreso: ${progress}%, Estado: ${snapshot.state}`);
+            console.log(`DEBUG: progreso ${progress}% estado ${snapshot.state}`);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
-            console.error(`DEBUG: [${file.name}] - ERROR DE SUBIDA A STORAGE:`, error.code, error.message);
+            console.error('UPLOAD ERROR >>>', error.code, error.message);
+            toast({ variant: "destructive", title: "Error de Subida", description: `No se pudo subir ${file.name}: ${error.code}` });
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Storage Error: ${error.code}` } : u));
             reject(error);
           },
           async () => {
             try {
-              console.log(`DEBUG: [${file.name}] - Subida a Storage completada. Obteniendo URL de descarga.`);
+              console.log(`DEBUG: [${file.name}] - Subida completada. Obteniendo URL.`);
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              console.log(`DEBUG: [${file.name}] - URL de descarga obtenida. Guardando en Firestore.`);
               
               await addDoc(photosCollection, {
                 slug: siteConfig.slug,
@@ -136,7 +119,8 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              console.error(`DEBUG: [${file.name}] - ERROR DE ESCRITURA EN FIRESTORE:`, e.code, e.message);
+              console.error('FIRESTORE ERROR >>>', e?.code ?? e);
+              toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de ${file.name}.` });
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Firestore Error: ${e.code}` } : u));
               reject(e);
             }
@@ -147,7 +131,6 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
 
     try {
       await Promise.all(uploadPromises);
-      console.log("DEBUG: Todas las subidas completadas con éxito.");
       toast({
         title: '¡Subida completada!',
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
@@ -159,12 +142,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         setIsUploading(false);
       }, 1500);
     } catch (error) {
-      console.error('DEBUG: Al menos una subida falló.', error);
-      toast({
-        variant: 'destructive',
-        title: 'Error en la subida',
-        description: 'Algunas fotos no se pudieron subir. Revisa la consola para más detalles.',
-      });
+      // El toast de error individual ya se muestra en el observer de error
       setIsUploading(false);
     }
   };
