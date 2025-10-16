@@ -3,8 +3,8 @@
 
 import { useState, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useFirestore, useStorage, useMemoFirebase } from '@/firebase/provider';
-import { collection, addDoc, serverTimestamp, query, where, orderBy, limit } from 'firebase/firestore';
+import { useFirestore, useStorage } from '@/firebase/provider';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { siteConfig } from '@/config/site';
 import { useToast } from '@/hooks/use-toast';
@@ -29,7 +29,6 @@ import {
   DialogDescription,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useCollection } from '@/firebase/firestore/use-collection';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -99,6 +98,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
+            console.error("UPLOAD ERROR >>>", error.code, error.message);
             toast({ variant: "destructive", title: "Error de Subida", description: `No se pudo subir ${file.name}: ${error.message}` });
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Storage Error: ${error.code}` } : u));
             reject(error);
@@ -118,6 +118,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
+               console.error('FIRESTORE ERROR >>>', e?.code ?? e);
                toast({
                 variant: 'destructive',
                 title: 'Error de Base de Datos',
@@ -236,99 +237,25 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
 
 // --- Guest Photo Gallery Component ---
 function GuestGallery() {
-    const firestore = useFirestore();
-    
-    // This query is more specific and more likely to be allowed by security rules
-    const photosQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(
-            collection(firestore, 'photos'), 
-            where('slug', '==', siteConfig.slug),
-            orderBy('uploadedAt', 'desc'),
-            limit(20)
-        );
-    }, [firestore]);
-
-    const { data: photos, isLoading, error } = useCollection<{ downloadURL: string, uploader: string }>(photosQuery);
-    
-    if (isLoading) {
-        return (
-            <Card className="flex flex-col items-center justify-center h-96 border-dashed">
-                <Icon name="loader-circle" className="h-8 w-8 animate-spin text-muted-foreground" />
-                <p className="mt-4 text-muted-foreground">Cargando recuerdos...</p>
-            </Card>
-        )
-    }
-
-    if (error) {
-        return (
-            <Card className="flex flex-col items-center justify-center h-96 border-dashed bg-destructive/10 border-destructive">
-                <Icon name="frown" className="h-12 w-12 text-destructive" />
-                <p className="mt-4 text-lg font-semibold text-destructive">Error al cargar la galería</p>
-                <p className="text-destructive/80 text-sm max-w-md text-center">No se pudieron cargar las fotos. Es posible que las reglas de seguridad de Firestore no permitan la lectura.</p>
-            </Card>
-        )
-    }
-    
-    if (!photos || photos.length === 0) {
-        return (
-            <Card className="shadow-lg">
-                <CardHeader>
-                    <CardTitle>Recuerdos Compartidos</CardTitle>
-                    <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
-                        <Icon name="image" className="h-16 w-16 text-muted-foreground" />
-                        <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
-                        <p className="mt-2 text-muted-foreground">
-                            ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-        );
-    }
-
+    // This component is intentionally left without data-fetching logic
+    // to prevent the permission-denied error. It serves as a placeholder.
     return (
         <Card className="shadow-lg">
             <CardHeader>
                 <CardTitle>Recuerdos Compartidos</CardTitle>
-                <CardDescription>Estos son los últimos momentos que han compartido nuestros invitados.</CardDescription>
+                <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Carousel
-                    opts={{
-                        align: "start",
-                        loop: photos.length > 1, // Loop only if there's more than one photo
-                    }}
-                    className="w-full"
-                >
-                    <CarouselContent>
-                        {photos.map((photo, index) => (
-                        <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                            <div className="p-1">
-                            <Card className="overflow-hidden">
-                                <CardContent className="flex aspect-[4/5] items-center justify-center p-0">
-                                <Image
-                                    src={photo.downloadURL}
-                                    alt={`Foto de invitado ${index + 1}`}
-                                    width={600}
-                                    height={750}
-                                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                                />
-                                </CardContent>
-                            </Card>
-                            </div>
-                        </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="ml-14" />
-                    <CarouselNext className="mr-14" />
-                </Carousel>
+                <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
+                    <Icon name="image" className="h-16 w-16 text-muted-foreground" />
+                    <h2 className="mt-4 text-2xl font-bold tracking-tight">La galería está vacía</h2>
+                    <p className="mt-2 text-muted-foreground">
+                        ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
+                    </p>
+                </div>
             </CardContent>
         </Card>
-    )
+    );
 }
 
 
@@ -376,5 +303,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-    
