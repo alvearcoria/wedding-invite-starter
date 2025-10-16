@@ -3,12 +3,11 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useAuth, useFirestore, useFirebaseApp, useMemoFirebase, useUser } from '@/firebase/provider';
+import { useFirestore, useFirebaseApp, useMemoFirebase } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { siteConfig } from '@/config/site';
-import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
 import { Icon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -27,7 +26,6 @@ import {
 } from '@/components/ui/dialog';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
-import type { Auth, User } from 'firebase/auth';
 
 type FileWithPreview = File & { preview: string };
 type UploadProgress = {
@@ -104,8 +102,6 @@ function GuestGallery() {
 
 function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
   const { toast } = useToast();
-  const auth = useAuth();
-  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const firebaseApp = useFirebaseApp();
   
@@ -141,38 +137,10 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
     setFiles(prev => prev.filter(file => file.name !== fileName));
   };
   
-  const handleAuthenticationAndUpload = async () => {
+  const handleUpload = async () => {
+    if (!firestore || !firebaseApp || files.length === 0) return;
+
     setIsUploading(true);
-
-    let currentUser = user;
-
-    // Step 1: Ensure user is authenticated
-    if (!currentUser) {
-      toast({
-        title: 'Autenticando...',
-        description: 'Preparando todo para subir tus fotos de forma segura.',
-      });
-      try {
-        currentUser = await initiateAnonymousSignIn(auth);
-        if (!currentUser) throw new Error("Anonymous sign-in failed to return a user.");
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Error de Autenticación',
-          description: 'No se pudo iniciar sesión anónimamente. Por favor, inténtalo de nuevo.',
-        });
-        setIsUploading(false);
-        return;
-      }
-    }
-
-    // Step 2: Proceed with upload
-    await handleUpload(currentUser);
-  };
-
-
-  const handleUpload = async (authedUser: User) => {
-    if (!firestore || !firebaseApp) return;
 
     const initialUploads = files.map(file => ({
       fileName: file.name,
@@ -197,33 +165,34 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress, status: 'uploading' } : u));
           },
           (error) => {
+            console.error('Upload error for', file.name, error);
             setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: error.message } : u));
             reject(error);
           },
           async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            const photoData = {
-              storagePath,
-              downloadURL,
-              uploadedAt: serverTimestamp(),
-              uploader: 'guest-upload',
-            };
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              const photoData = {
+                storagePath,
+                downloadURL,
+                uploadedAt: serverTimestamp(),
+                uploader: 'guest-upload',
+              };
 
-            addDoc(photosCollection, photoData)
-              .then(() => {
-                setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
-                resolve();
-              })
-              .catch(serverError => {
-                const contextualError = new FirestorePermissionError({
-                  path: photosCollection.path,
-                  operation: 'create',
-                  requestResourceData: photoData,
-                });
-                errorEmitter.emit('permission-error', contextualError);
-                setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: (serverError as Error).message } : u));
-                reject(serverError);
+              await addDoc(photosCollection, photoData);
+              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
+              resolve();
+            } catch (serverError: any) {
+              console.error("Error writing document to Firestore:", serverError);
+              const contextualError = new FirestorePermissionError({
+                path: photosCollection.path,
+                operation: 'create',
+                requestResourceData: { uploader: 'guest-upload' },
               });
+              errorEmitter.emit('permission-error', contextualError);
+              setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: serverError.message } : u));
+              reject(serverError);
+            }
           }
         );
       });
@@ -236,7 +205,6 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
         description: 'Tus fotos han sido añadidas al álbum. ¡Gracias por compartir!',
       });
       setTimeout(() => {
-        // Do not close the dialog automatically, let user upload more or close manually
         setFiles([]);
         setUploads([]);
         setIsUploading(false);
@@ -316,6 +284,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
                         </span>
                     </div>
                     <Progress value={upload.progress} />
+                    {upload.error && <p className="text-xs text-destructive mt-1">{upload.error}</p>}
                     </div>
                 ))}
                 </div>
@@ -327,7 +296,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
                 <Icon name="plus" className="mr-2" /> Subir más fotos
             </Button>
         ) : (
-            <Button onClick={handleAuthenticationAndUpload} disabled={files.length === 0 || isUploading || isUserLoading} size="lg" className="w-full">
+            <Button onClick={handleUpload} disabled={files.length === 0 || isUploading} size="lg" className="w-full">
                 {isUploading ? <><Icon name="loader-circle" className="animate-spin mr-2"/> Subiendo...</> : <><Icon name="upload" className="mr-2"/> Subir {files.length} foto(s)</>}
             </Button>
         )}
@@ -376,3 +345,5 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+    
