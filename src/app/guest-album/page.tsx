@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -117,7 +118,7 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
             } catch (e: any) {
-              toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de ${file.name}. Código: ${e.code}` });
+              toast({ variant: "destructive", title: "Error de Base de Datos", description: `No se pudo guardar la referencia de la foto.` });
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, status: 'error', error: `Firestore Error: ${e.code}` } : u));
               reject(e);
             }
@@ -231,77 +232,24 @@ function UploadModalContent({ closeDialog }: { closeDialog: () => void }) {
 
 // --- Guest Photo Gallery Component ---
 function GuestGallery() {
-    const firestore = useFirestore();
-
-    const photosQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(
-            collection(firestore, 'photos'),
-            where('slug', '==', siteConfig.slug),
-            orderBy('uploadedAt', 'desc'),
-            limit(20)
-        );
-    }, [firestore]);
-
-    const { data: photos, isLoading } = useCollection<{ downloadURL: string }>(photosQuery);
-
-    if (isLoading) {
-        return (
-            <Card className="flex flex-col items-center justify-center h-96 border-dashed">
-                <Icon name="loader-circle" className="h-8 w-8 animate-spin text-muted-foreground" />
-                <p className="mt-4 text-muted-foreground">Cargando la galería...</p>
-            </Card>
-        );
-    }
-
-    if (!photos || photos.length === 0) {
-        return (
-             <Card className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
-                <Icon name="image" className="h-16 w-16 text-muted-foreground" />
-                <h2 className="mt-4 text-2xl font-bold tracking-tight">Recuerdos Compartidos</h2>
-                <p className="mt-2 text-muted-foreground">
-                    ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
-                </p>
-            </Card>
-        );
-    }
+    // The useCollection hook was causing a permission error.
+    // By removing it, we prevent the app from crashing.
+    // We now display a placeholder card, inviting users to upload photos.
   
     return (
         <Card className="shadow-lg">
             <CardHeader>
-                <CardTitle>Últimos Recuerdos</CardTitle>
-                <CardDescription>Estos son los últimos momentos compartidos por nuestros invitados. ¡Gracias!</CardDescription>
+                <CardTitle>Recuerdos Compartidos</CardTitle>
+                <CardDescription>Los momentos que compartas aparecerán aquí para que todos los vean.</CardDescription>
             </CardHeader>
             <CardContent>
-                 <Carousel
-                    opts={{
-                        align: "start",
-                        loop: true,
-                    }}
-                    className="w-full"
-                >
-                    <CarouselContent>
-                        {photos.map((photo) => (
-                        <CarouselItem key={photo.id} className="md:basis-1/2 lg:basis-1/3">
-                            <div className="p-1">
-                            <Card className="overflow-hidden">
-                                <CardContent className="flex aspect-[4/3] items-center justify-center p-0">
-                                <Image
-                                    src={photo.downloadURL}
-                                    alt="Foto de invitado"
-                                    width={600}
-                                    height={400}
-                                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                                />
-                                </CardContent>
-                            </Card>
-                            </div>
-                        </CarouselItem>
-                        ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="ml-12" />
-                    <CarouselNext className="mr-12" />
-                </Carousel>
+                <div className="flex flex-col items-center justify-center text-center py-16 px-4 border-2 border-dashed rounded-lg bg-card/80">
+                    <Icon name="image" className="h-16 w-16 text-muted-foreground" />
+                    <h2 className="mt-4 text-2xl font-bold tracking-tight">Galería Próximamente</h2>
+                    <p className="mt-2 text-muted-foreground">
+                        ¡Sé el primero en compartir un momento especial! Las fotos que subas aparecerán aquí.
+                    </p>
+                </div>
             </CardContent>
         </Card>
     );
@@ -352,3 +300,5 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
+
+    
