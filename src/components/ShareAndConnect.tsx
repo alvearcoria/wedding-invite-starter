@@ -2,9 +2,10 @@
 import { siteConfig } from "@/config/site";
 import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { CopyToClipboard } from "./CopyToClipboard";
-import QrCode from "./QrCode";
+//import QrCode from "./QrCode";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Icon } from "./icons";
+import Image from "next/image";
 
 export function ShareAndConnect() {
   const { hashtag, qrAlbum } = siteConfig;
@@ -54,13 +55,21 @@ export function ShareAndConnect() {
                 Escanea el código para subir tus fotos y videos a nuestro álbum compartido.
               </CardDescription>
             </CardHeader>
+
             <CardContent>
               {qrAlbum.url && (
-                <a href={qrAlbum.url} target="_blank" rel="noopener noreferrer" className="inline-block">
-                  <QrCode value={qrAlbum.url} />
-                </a>
-              )}
+    <a href={qrAlbum.url} target="_blank" rel="noopener noreferrer" className="inline-block">
+      <Image
+        src="https://ik.imagekit.io/alvearcoria92/qr-code.png?updatedAt=1760728958018"
+        alt="Código QR para el álbum de invitados"
+        width={160} // El mismo tamaño que el QR actual
+        height={160} // El mismo tamaño que el QR actual
+        className="rounded-md"
+      />
+    </a>
+  )}
             </CardContent>
+
           </Card>
         )}
       </div>

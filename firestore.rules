@@ -42,16 +42,19 @@ service cloud.firestore {
      * @description Controls access to photos in the photo gallery.
      * @path /photos/{photoId}
      * @allow (get, list) Allows any user to read photo data.
-     * @allow (create) Allows authenticated users to create photos, validating that the uploaderId matches their auth UID.
+     * @allow (create) Allows ANY user to create photos, enabling the guest album feature.
      * @allow (update, delete) Allows authenticated users to update and delete photos they own.
      * @deny (create) Denies create if the uploaderId does not match the authenticated user's UID.
      * @deny (update, delete) Denies updates and deletes if the user is not the owner of the photo.
-     * @principle Public read, owner-only writes.
+     * @principle Public read, public create for guests.
      */
     match /photos/{photoId} {
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn() && request.resource.data.uploaderId == request.auth.uid;
+      // --- REGLA CORREGIDA ---
+      // Permite que cualquiera pueda subir una foto, igual que el formulario de RSVP.
+      allow create: if true; 
+      // Las reglas de update y delete se mantienen para una posible gestión futura.
       allow update: if isSignedIn() && isExistingOwner(resource.data.uploaderId);
       allow delete: if isSignedIn() && isExistingOwner(resource.data.uploaderId);
     }

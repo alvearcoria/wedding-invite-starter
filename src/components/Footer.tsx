@@ -15,7 +15,7 @@ export function Footer() {
         <div className="text-xs text-foreground/50">
           <span>Hecho con ❤️ por </span>
           <a
-            href="https://www.linkedin.com/in/alexalvear/"
+            href="https://www.linkedin.com/in/alexalvear92/"
             target="_blank"
             rel="noopener noreferrer"
             className="underline transition-colors hover:text-foreground/80"

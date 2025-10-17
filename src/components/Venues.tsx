@@ -22,7 +22,7 @@ export function Venues() {
         <Card className="flex flex-col overflow-hidden">
             <div className="relative h-48 w-full">
                 <Image
-                    src={siteConfig.seeYouImage.src}
+                    src={ceremony.imageSrc}
                     alt="Fondo decorativo para la ceremonia"
                     fill
                     className="object-cover"
@@ -52,7 +52,7 @@ export function Venues() {
         <Card className="flex flex-col overflow-hidden">
              <div className="relative h-48 w-full">
                 <Image
-                    src={siteConfig.seeYouImage.src}
+                    src={reception.imageSrc}
                     alt="Fondo decorativo para la recepción"
                     fill
                     className="object-cover"

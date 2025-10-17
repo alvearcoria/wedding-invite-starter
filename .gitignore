@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ==========================================
+# 🔸 Dependencias
 /node_modules
 /.pnp
 .pnp.*
@@ -10,36 +11,55 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# ==========================================
+# 🔸 Testing
 /coverage
 
-# next.js
+# ==========================================
+# 🔸 Next.js
 /.next/
 /out/
 
-# production
+# ==========================================
+# 🔸 Producción / Build
 /build
 
-# misc
+# ==========================================
+# 🔸 Archivos temporales del sistema
 .DS_Store
 *.pem
 
-# debug
+# ==========================================
+# 🔸 Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# vercel
+# ==========================================
+# 🔸 Vercel
 .vercel
 
-# typescript
+# ==========================================
+# 🔸 TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
+# ==========================================
+# 🔸 Genkit & Entornos
 .genkit/*
 .env*
 
-# firebase
+# ==========================================
+# 🔸 Firebase
 firebase-debug.log
 firestore-debug.log
+
+# Ignorar archivos de despliegue (¡Importante!)
+/.firebase/
+
+# ==========================================
+# 🔸 Archivos de audio o media generados automáticamente
+# (solo si no quieres subir archivos que se generan en hosting)
+# /public/audio/*
+# public/audio/.gitkeep

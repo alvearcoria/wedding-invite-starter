@@ -1,0 +1,29 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Regla para la carpeta de subidas de cada boda
+    match /weddings/{slug}/uploads/{fileId} {
+
+      // Función para verificar si el archivo es una imagen
+      function isImage() {
+        return request.resource.contentType.matches('image/.*');
+      }
+
+      // Función para verificar que el archivo sea menor a 10MB
+      function isSmallEnough() {
+        return request.resource.size < 10 * 1024 * 1024;
+      }
+
+      // PERMITE LA CREACIÓN (subida) si el archivo es una imagen y es menor a 10MB.
+      // Esto es lo que permite que la subida funcione.
+      allow create: if isImage() && isSmallEnough();
+
+      // PERMITE LA LECTURA a cualquiera. Esto es necesario si en el futuro quieres
+      // mostrar las imágenes subidas por los invitados en una galería.
+      allow read: if true;
+
+      // NO PERMITE actualizar o borrar archivos a nadie desde la aplicación, por seguridad.
+      allow update, delete: if false;
+    }
+  }
+}

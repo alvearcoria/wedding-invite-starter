@@ -91,12 +91,14 @@ export const siteConfig = {
       address: "Mimas 230, Cosmópolis, 66614 Cdad. Apodaca, N.L.",
       mapsUrl: "https://maps.app.goo.gl/qauGCHY6QL5kMeHGA",
       location: { lat: 25.81718855435814, lng: -100.24636189477839 },
+      imageSrc: "https://ik.imagekit.io/alvearcoria92/parroquia.jpg?updatedAt=1760727887523",
     },
     reception: {
       name: "Hacienda Paraiso Eventos",
       address: "Robles 510, 65556 Villas Campestres, N.L.",
       mapsUrl: "https://maps.app.goo.gl/XyZt56fVLM47wu5a9",
       location: { lat: 25.917908636423558, lng: -100.22116388503963 },
+      imageSrc: "https://ik.imagekit.io/alvearcoria92/hacienda.jpg?updatedAt=1760727887406",
     },
   },
   
