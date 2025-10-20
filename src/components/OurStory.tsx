@@ -11,7 +11,7 @@ export function OurStory() {
         <div className="mb-10">
           <p className="mb-2 uppercase tracking-[0.2em] text-foreground/60">{story.intro_title}</p>
           <h2 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl">
-            {couple.her} <span className="text-accent">&amp;</span> {couple.him}
+            {couple.her} <span className="text-accent text-4xl sm:text-5xl">&amp;</span> {couple.him}
           </h2>
         </div>
 
