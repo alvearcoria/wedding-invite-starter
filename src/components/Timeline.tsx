@@ -49,7 +49,7 @@ const TimelineItem = ({
         <p className="font-semibold">{item.time}</p>
         <h3
           className={cn(
-            "font-headline text-xl transition-colors font-bold",
+            "font-headline text-xl transition-colors duration-500 font-bold",
             isActive && "text-primary"
           )}
         >
@@ -57,7 +57,7 @@ const TimelineItem = ({
         </h3>
         <p
           className={cn(
-            "text-sm transition-colors text-foreground/70",
+            "text-sm transition-colors duration-500 text-foreground/70",
             isActive && "text-foreground"
           )}
         >
@@ -69,7 +69,7 @@ const TimelineItem = ({
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
         <div
           className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300",
+            "flex h-12 w-12 items-center justify-center rounded-full transition-all duration-500",
             isActive
               ? "bg-primary text-primary-foreground scale-110 shadow-lg ring-4 ring-primary/20"
               : "bg-accent text-accent-foreground scale-100"
