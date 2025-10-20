@@ -5,31 +5,35 @@ import { SectionHeader } from "./SectionWrapper";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 import { IconName, Icon } from "@/components/icons";
+import { useInCenterBand } from "@/hooks/useInCenterBand";
+import { useInViewHalf } from "@/hooks/useInViewHalf";
 
 type TimelineEvent = (typeof siteConfig.timelineEvents)[0];
 
 const TimelineItem = ({
   item,
   index,
-  isActive,
-  inView,
 }: {
   item: TimelineEvent;
   index: number;
-  isActive: boolean;
-  inView: boolean;
 }) => {
   const isEven = index % 2 === 0;
   const iconName = item.icon as IconName;
 
+  // Hook para detectar si está en el centro (resaltado)
+  const { centerRef, active: isActive } = useInCenterBand<HTMLDivElement>();
+  // Hook para detectar si está visible (animación de entrada)
+  const { ref: inViewRef, inView } = useInViewHalf<HTMLDivElement>();
+
+  // Combinar las refs
+  const combinedRef = (node: HTMLDivElement) => {
+    centerRef.current = node;
+    inViewRef.current = node;
+  };
+
   return (
-    <div
-      className={cn(
-        "relative flex items-center",
-        // Esto añade el data-index que usaremos para el observador
-        `[data-index="${index}"]`
-      )}
-    >
+    <div ref={combinedRef} className="relative flex items-center">
+      {/* --- Contenido del evento (Izquierda o Derecha) --- */}
       <div
         className={cn(
           "w-1/2 will-change-transform transition-all duration-700 ease-out",
@@ -61,7 +65,7 @@ const TimelineItem = ({
         </p>
       </div>
 
-      {/* Ícono */}
+      {/* --- Ícono central --- */}
       <div className="absolute left-1/2 z-10 -translate-x-1/2 transform">
         <div
           className={cn(
@@ -74,82 +78,24 @@ const TimelineItem = ({
           <Icon name={iconName} className="h-6 w-6" />
         </div>
       </div>
-
-      {/* Separador invisible para layout */}
+      
+      {/* Separador invisible para mantener el layout */}
       <div className={cn("w-1/2", isEven ? "pl-8" : "pr-8")} />
     </div>
   );
 };
 
+
 export function Timeline() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [visibleIndexes, setVisibleIndexes] = useState<Set<number>>(new Set());
-  const [lineHeight, setLineHeight] = useState(0);
-  const timelineRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const timelineNode = timelineRef.current;
-    if (!timelineNode) return;
-
-    const items = Array.from(timelineNode.querySelectorAll("[data-index]"));
-    if (items.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const index = Number(entry.target.getAttribute("data-index"));
-
-          // Para la animación de entrada
-          if (entry.isIntersecting) {
-            setVisibleIndexes((prev) => new Set(prev).add(index));
-          } else {
-             setVisibleIndexes((prev) => {
-               const newSet = new Set(prev);
-               newSet.delete(index);
-               return newSet;
-             });
-          }
-
-          // Para la barra activa y la línea
-          if (entry.intersectionRatio > 0.5) {
-            setActiveIndex(index);
-            
-            // Calcular la altura de la línea
-            const itemTop = (entry.target as HTMLElement).offsetTop;
-            const itemHeight = entry.target.clientHeight;
-            const newHeight = itemTop + itemHeight / 2;
-            setLineHeight(newHeight);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: "0px",
-        threshold: [0.1, 0.6], // Umbrales para inView y active
-      }
-    );
-
-    items.forEach((item) => observer.observe(item));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <>
       <SectionHeader
         title="El Gran Día"
         description="Esto es lo que pueden esperar durante la celebración de nuestra boda."
       />
-      <div ref={timelineRef} className="relative mx-auto max-w-2xl">
-        {/* Línea vertical estática de fondo */}
+      <div className="relative mx-auto max-w-2xl">
         <div
           className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-border"
-          aria-hidden="true"
-        />
-        {/* Línea vertical animada */}
-        <div
-          className="absolute left-1/2 top-0 w-px -translate-x-1/2 bg-primary transition-all duration-500 ease-out"
-          style={{ height: `${lineHeight}px` }}
           aria-hidden="true"
         />
 
@@ -159,8 +105,6 @@ export function Timeline() {
               key={index}
               item={item}
               index={index}
-              isActive={activeIndex === index}
-              inView={visibleIndexes.has(index)}
             />
           ))}
         </div>
