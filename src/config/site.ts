@@ -41,9 +41,10 @@ export const siteConfig = {
     gallery: true,
     shareAndConnect: true,
     gifts: true,
+    adultsOnly: true, // <-- Nueva sección
+    rsvp: true,
     share: true,
     seeYou: true,
-    rsvp: true,
   },
 
   musicUrl: "/audio/wedding-song.mp3",
@@ -142,6 +143,11 @@ export const siteConfig = {
     giftListUrl: "https://www.example.com/gift-registry",
   },
 
+  adultsOnly: {
+    title: "Evento Sólo para Adultos",
+    description: "Apreciamos su comprensión y apoyo para permitir que todos los invitados disfruten de una velada de relajación y celebración. ¡Gracias!",
+  },
+  
   share: {
     whatsappMessage: "¡Estás invitado a nuestra boda! Acompáñanos a celebrar el día más importante de nuestras vidas. Encuentra todos los detalles aquí:",
   },

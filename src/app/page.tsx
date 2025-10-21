@@ -15,6 +15,7 @@ import { ScrollToTopOnMount } from "@/components/ScrollToTopOnMount";
 import { ShareAndConnect } from "@/components/ShareAndConnect";
 import { WelcomeModal } from "@/components/WelcomeModal";
 import { SectionWrapper } from "@/components/SectionWrapper";
+import { AdultsOnlyNotice } from "@/components/AdultsOnlyNotice";
 
 export default function Home() {
   return (
@@ -68,14 +69,20 @@ export default function Home() {
             </SectionWrapper>
         )}
 
+        {siteConfig.sections.adultsOnly && (
+            <SectionWrapper id="adults-only" bgClass="bg-card py-16 md:py-20" dividerColor="hsl(var(--background))">
+              <AdultsOnlyNotice />
+            </SectionWrapper>
+        )}
+
         {siteConfig.sections.rsvp && (
-            <SectionWrapper id="rsvp" bgClass="bg-card py-16 md:py-20" dividerColor="hsl(var(--background))">
+            <SectionWrapper id="rsvp" bgClass="bg-background-transparent py-16 md:py-20" dividerColor="hsl(var(--card))">
               <Rsvp />
             </SectionWrapper>
         )}
 
         {siteConfig.sections.share && (
-            <SectionWrapper id="share" bgClass="bg-background-transparent py-16 md:py-20">
+            <SectionWrapper id="share" bgClass="bg-card py-16 md:py-20">
               <ShareInvitation />
             </SectionWrapper>
         )}
