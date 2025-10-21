@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Marca activo cuando el elemento entra a la "banda central" del viewport.
- * Se logra con rootMargin: -20% arriba y -20% abajo (queda una franja central del 60%).
- * Este margen más amplio ayuda a suavizar la transición entre elementos activos.
+ * Se logra con rootMargin: -50% arriba y -50% abajo (define la línea central exacta).
  */
 export function useInCenterBand<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
@@ -22,9 +21,8 @@ export function useInCenterBand<T extends HTMLElement>() {
       {
         root: null,
         threshold: 0, // Se activa en cuanto toca la banda.
-        // Margen superior e inferior del 20% para crear una banda de activación del 60% en el centro.
-        // Esto previene cambios bruscos o parpadeos al hacer scroll.
-        rootMargin: "-20% 0px -20% 0px",
+        // Margen superior e inferior del 50% para crear una línea de activación en el centro exacto.
+        rootMargin: "-50% 0px -50% 0px",
       }
     );
     obs.observe(el);
