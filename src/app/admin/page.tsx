@@ -13,6 +13,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AdminAuth } from './AdminAuth';
 
 interface GuestData extends RsvpInput {
   id: string;
@@ -162,7 +163,7 @@ function GuestListTable({ guests, isLoading, error }: { guests: GuestData[] | nu
     );
 }
 
-export default function AdminPage() {
+function AdminDashboard() {
   const firestore = useFirestore();
 
   const guestsQuery = useMemoFirebase(() => {
@@ -191,42 +192,51 @@ export default function AdminPage() {
     link.click();
     document.body.removeChild(link);
   };
+  
+  return (
+    <>
+      <Card>
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                  <CardTitle>Panel de Administración</CardTitle>
+                  <CardDescription>Bienvenido al panel de tu boda. Aquí puedes ver todas las confirmaciones en tiempo real.</CardDescription>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                  <Button onClick={handleExport} disabled={!guests || guests.length === 0}>
+                      <Icon name="download" className="mr-2 h-4 w-4" />
+                      Exportar a CSV
+                  </Button>
+                  <Button asChild variant="outline">
+                      <a href="/guest-album"><Icon name="image" className="mr-2" />Ir al Álbum</a>
+                  </Button>
+              </div>
+          </CardHeader>
+      </Card>
+      
+      <AdminStats guests={guests} isLoading={isLoading} />
+      
+      <Card>
+          <CardHeader>
+              <CardTitle>Lista de Invitados</CardTitle>
+              <CardDescription>
+                  Aquí se muestran todas las respuestas del formulario de RSVP.
+              </CardDescription>
+          </CardHeader>
+          <CardContent>
+             <GuestListTable guests={guests} isLoading={isLoading} error={error} />
+          </CardContent>
+      </Card>
+    </>
+  );
+}
 
+export default function AdminPage() {
   return (
     <div className="bg-muted/20 min-h-screen">
       <main className="container mx-auto flex flex-1 flex-col gap-6 p-4 md:gap-8 md:p-8">
-        <Card>
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex flex-col gap-2">
-                    <CardTitle>Panel de Administración</CardTitle>
-                    <CardDescription>Bienvenido al panel de tu boda. Aquí puedes ver todas las confirmaciones en tiempo real.</CardDescription>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    <Button onClick={handleExport} disabled={!guests || guests.length === 0}>
-                        <Icon name="download" className="mr-2 h-4 w-4" />
-                        Exportar a CSV
-                    </Button>
-                    <Button asChild variant="outline">
-                        <a href="/guest-album"><Icon name="image" className="mr-2" />Ir al Álbum</a>
-                    </Button>
-                </div>
-            </CardHeader>
-        </Card>
-        
-        <AdminStats guests={guests} isLoading={isLoading} />
-        
-        <Card>
-            <CardHeader>
-                <CardTitle>Lista de Invitados</CardTitle>
-                <CardDescription>
-                    Aquí se muestran todas las respuestas del formulario de RSVP.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-               <GuestListTable guests={guests} isLoading={isLoading} error={error} />
-            </CardContent>
-        </Card>
-
+        <AdminAuth>
+          <AdminDashboard />
+        </AdminAuth>
       </main>
     </div>
   );

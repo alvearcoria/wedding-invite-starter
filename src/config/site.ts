@@ -29,6 +29,9 @@ export const siteConfig = {
   weddingDate: "2025-11-29T17:00:00-06:00", // YYYY-MM-DDTHH:mm:ss con TZ
   city: "Apodaca, N.L., México",
   hashtag: "#MelyYNoeParaSiempre",
+  
+  // Contraseña para el panel de administración
+  adminPassword: "BodaMelyYNoe2025!",
 
   heroIcon: 'flower' as IconName,
 
@@ -41,7 +44,7 @@ export const siteConfig = {
     gallery: true,
     shareAndConnect: true,
     gifts: true,
-    adultsOnly: true, // <-- Nueva sección
+    adultsOnly: true,
     rsvp: true,
     share: true,
     seeYou: true,
