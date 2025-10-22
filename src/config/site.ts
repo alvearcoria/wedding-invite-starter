@@ -145,7 +145,7 @@ export const siteConfig = {
 
   adultsOnly: {
     title: "Evento Sólo para Adultos",
-    description: "Apreciamos su comprensión y apoyo para permitir que todos los invitados disfruten de una velada de relajación y celebración. ¡Gracias!",
+    description: "Aunque adoramos a los pequeños, esta será una celebración pensada especialmente para disfrutar entre adultos. ¡Gracias por comprender y acompañarnos en este día tan especial!",
   },
   
   share: {

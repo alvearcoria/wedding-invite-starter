@@ -7,7 +7,7 @@ export function AdultsOnlyNotice() {
   const { adultsOnly } = siteConfig;
 
   return (
-    <div className="mx-auto max-w-2xl text-center">
+    <div className="mx-auto max-w-2xl text-center rounded-2xl p-8 border bg-gradient-to-t from-card/50 to-transparent">
       <Icon name="baby" className="mx-auto h-12 w-12 text-primary/80 mb-4" />
       <SectionHeader
         title={adultsOnly.title}
