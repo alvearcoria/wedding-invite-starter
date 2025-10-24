@@ -6,13 +6,15 @@ import { Firestore } from 'firebase/firestore';
 import { Storage } from 'firebase/storage';
 import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
+import { Analytics } from 'firebase/analytics';
 
 interface FirebaseProviderProps {
   children: ReactNode;
   firebaseApp: FirebaseApp;
   firestore: Firestore;
   auth: Auth;
-  storage: Storage; // Añadir storage a las props
+  storage: Storage;
+  analytics: Promise<Analytics | null>;
 }
 
 // Internal state for user authentication
@@ -28,7 +30,8 @@ export interface FirebaseContextState {
   firebaseApp: FirebaseApp | null;
   firestore: Firestore | null;
   auth: Auth | null;
-  storage: Storage | null; // Añadir storage al contexto
+  storage: Storage | null;
+  analytics: Analytics | null;
   user: User | null;
   isUserLoading: boolean;
   userError: Error | null;
@@ -39,7 +42,8 @@ export interface FirebaseServicesAndUser {
   firebaseApp: FirebaseApp;
   firestore: Firestore;
   auth: Auth;
-  storage: Storage; // Añadir storage al hook principal
+  storage: Storage;
+  analytics: Analytics | null;
   user: User | null;
   isUserLoading: boolean;
   userError: Error | null;
@@ -56,13 +60,20 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   firebaseApp,
   firestore,
   auth,
-  storage, // Recibir storage
+  storage,
+  analytics: analyticsPromise,
 }) => {
   const [userAuthState, setUserAuthState] = useState<UserAuthState>({
     user: null,
     isUserLoading: true,
     userError: null,
   });
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+
+  // Resolve analytics promise
+  useEffect(() => {
+    analyticsPromise.then(setAnalytics).catch(console.error);
+  }, [analyticsPromise]);
 
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
@@ -99,12 +110,13 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       firebaseApp: servicesAvailable ? firebaseApp : null,
       firestore: servicesAvailable ? firestore : null,
       auth: servicesAvailable ? auth : null,
-      storage: servicesAvailable ? storage : null, // Proveer storage
+      storage: servicesAvailable ? storage : null,
+      analytics: analytics,
       user: userAuthState.user,
       isUserLoading: userAuthState.isUserLoading,
       userError: userAuthState.userError,
     };
-  }, [firebaseApp, firestore, auth, storage, userAuthState]);
+  }, [firebaseApp, firestore, auth, storage, analytics, userAuthState]);
 
   return (
     <FirebaseContext.Provider value={contextValue}>
@@ -129,7 +141,8 @@ export const useFirebase = (): FirebaseServicesAndUser => {
     firebaseApp: context.firebaseApp,
     firestore: context.firestore,
     auth: context.auth,
-    storage: context.storage, // Devolver storage
+    storage: context.storage,
+    analytics: context.analytics,
     user: context.user,
     isUserLoading: context.isUserLoading,
     userError: context.userError,
@@ -139,7 +152,8 @@ export const useFirebase = (): FirebaseServicesAndUser => {
 export const useAuth = (): Auth => useFirebase().auth;
 export const useFirestore = (): Firestore => useFirebase().firestore;
 export const useFirebaseApp = (): FirebaseApp => useFirebase().firebaseApp;
-export const useStorage = (): Storage => useFirebase().storage; // Hook para storage
+export const useStorage = (): Storage => useFirebase().storage;
+export const useAnalytics = (): Analytics | null => useFirebase().analytics;
 
 type MemoFirebase <T> = T & {__memo?: boolean};
 
