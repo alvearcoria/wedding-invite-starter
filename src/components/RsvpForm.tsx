@@ -6,8 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { rsvpSchema, type RsvpInput } from "@/types/rsvp";
 import confetti from "canvas-confetti";
-import { useFirestore } from "@/firebase/provider";
+import { useFirestore, useAnalytics } from "@/firebase/provider";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { logEvent } from "firebase/analytics";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
 
@@ -36,6 +37,7 @@ import { useEffect } from "react";
 export function RsvpForm() {
   const { toast } = useToast();
   const firestore = useFirestore();
+  const analytics = useAnalytics();
 
   const form = useForm<RsvpInput>({
     resolver: zodResolver(rsvpSchema),
@@ -110,6 +112,13 @@ export function RsvpForm() {
           description: "No se pudo guardar tu confirmación. Verifica que los datos sean válidos.",
       });
     });
+
+    if (analytics) {
+      logEvent(analytics, 'submit_rsvp', {
+        attending: data.attending,
+        companions: data.companions,
+      });
+    }
 
     if (data.attending) {
       toast({

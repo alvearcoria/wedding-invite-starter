@@ -3,9 +3,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useFirestore, useStorage } from '@/firebase/provider';
+import { useFirestore, useStorage, useAnalytics } from '@/firebase/provider';
 import { collection, addDoc, serverTimestamp, getDocs, query, where, orderBy, startAt, limit as firestoreLimit } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { logEvent } from 'firebase/analytics';
 import { siteConfig } from '@/config/site';
 import { useToast } from '@/hooks/use-toast';
 import { Icon } from '@/components/icons';
@@ -97,6 +98,7 @@ function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: ()
   const { toast } = useToast();
   const firestore = useFirestore();
   const storage = useStorage();
+  const analytics = useAnalytics();
   
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
@@ -169,6 +171,14 @@ function UploadModalContent({ closeDialog, onUploadComplete }: { closeDialog: ()
                 uploader: 'guest-upload',
                 rand: Math.random(),
               });
+
+              if (analytics) {
+                logEvent(analytics, 'upload_photo_to_album', {
+                  file_name: file.name,
+                  file_size: file.size,
+                  file_type: file.type,
+                });
+              }
 
               setUploads(prev => prev.map(u => u.fileName === file.name ? { ...u, progress: 100, status: 'completed' } : u));
               resolve();
@@ -438,6 +448,3 @@ export default function GuestAlbumPage() {
     </div>
   );
 }
-
-
-    

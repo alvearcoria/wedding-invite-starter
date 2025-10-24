@@ -1,4 +1,5 @@
 
+'use client';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,9 +7,20 @@ import { SectionWrapper, SectionHeader } from "./SectionWrapper";
 import { siteConfig } from "@/config/site";
 import MapWrapper from "./Map";
 import { Icon } from "./icons";
+import { useAnalytics } from "@/firebase";
+import { logEvent } from "firebase/analytics";
 
 export function Venues() {
   const { ceremony, reception } = siteConfig.venues;
+  const analytics = useAnalytics();
+
+  const handleMapClick = (venue: 'ceremony' | 'reception') => {
+    if (analytics) {
+      logEvent(analytics, 'click_map_link', {
+        venue_name: venue,
+      });
+    }
+  };
   
   return (
     <SectionWrapper id="venues" bgClass="bg-card">
@@ -40,7 +52,7 @@ export function Venues() {
                     <p className="mt-4 text-center text-sm text-foreground/70">{ceremony.address}</p>
                 </div>
                 <Button variant="outline" asChild className="mt-4 w-full">
-                <a href={ceremony.mapsUrl} target="_blank" rel="noopener noreferrer">
+                <a href={ceremony.mapsUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleMapClick('ceremony')}>
                     <Icon name="map-pin" className="mr-2 h-4 w-4" />
                     Abrir en Mapas
                 </a>
@@ -70,7 +82,7 @@ export function Venues() {
                 <p className="mt-4 text-center text-sm text-foreground/70">{reception.address}</p>
                 </div>
                 <Button variant="outline" asChild className="mt-4 w-full">
-                <a href={reception.mapsUrl} target="_blank" rel="noopener noreferrer">
+                <a href={reception.mapsUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleMapClick('reception')}>
                     <Icon name="map-pin" className="mr-2 h-4 w-4" />
                     Abrir en Mapas
                 </a>
